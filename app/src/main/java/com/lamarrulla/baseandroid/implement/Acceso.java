@@ -1,69 +1,64 @@
 package com.lamarrulla.baseandroid.implement;
 
 import android.content.Context;
-
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.utils.API;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-public class Acceso {
+public class Acceso implements IAcceso {
 
     API api = new API();
 
-    public String getUsername() {
+    /*public String getUsername() {
         return username;
+    }*/
+
+    public void setUsername(String user) {
+        this.username = user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
+    /*public String getPassword() {
         return password;
-    }
+    }*/
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String pass) {
+        this.password = pass;
     }
 
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    /*public void setToken(String token) {
         this.token = token;
-    }
+    }*/
 
     public String getSalt() {
         return salt;
     }
 
-    public void setSalt(String salt) {
+    /*public void setSalt(String salt) {
         this.salt = salt;
-    }
+    }*/
 
-    public Context getContext() {
+    /*public Context getContext() {
         return context;
-    }
+    }*/
 
-    public void setContext(Context context) {
-        this.context = context;
+    public void setContext(Context cont) {
+        this.context = cont;
     }
 
     public Boolean getAccesoCorrecto() {
         return accesoCorrecto;
     }
 
-    public void setAccesoCorrecto(Boolean accesoCorrecto) {
+    /*public void setAccesoCorrecto(Boolean accesoCorrecto) {
         this.accesoCorrecto = accesoCorrecto;
-    }
+    }*/
 
     private String username;
     private String password;
@@ -72,7 +67,7 @@ public class Acceso {
     private Context context;
     private Boolean accesoCorrecto;
 
-    public void validaUsuario() throws IOException, URISyntaxException, JSONException {
+    public boolean validaUsuario(){
         accesoCorrecto = false;
         try{
             api.setContext(context);
@@ -87,8 +82,8 @@ public class Acceso {
             if(api.isResponseOK()){
                 System.out.println(api.getSalida());
                 JSONObject jso = new JSONObject(api.getSalida());
-                setToken(jso.getString(context.getString(R.string.Token)));
-                setSalt(jso.getString(context.getString(R.string.Salt)));
+                token = jso.getString(context.getString(R.string.Token));
+                salt = jso.getString(context.getString(R.string.Salt));
                 accesoCorrecto = true;
             }else{
                 accesoCorrecto = false;
@@ -97,6 +92,6 @@ public class Acceso {
             System.out.println(ex.getMessage());
             accesoCorrecto = false;
         }
+        return accesoCorrecto;
     }
-
 }

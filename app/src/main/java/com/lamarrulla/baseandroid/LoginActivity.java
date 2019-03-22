@@ -21,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,12 +30,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.lamarrulla.baseandroid.implement.Acceso;
+import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.utils.Utils;
 
-import org.json.JSONException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +46,8 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     Context context = this;
-    Acceso acceso = new Acceso();
+    //Acceso acceso = new Acceso();
+    IAcceso iAcceso = new Acceso();
     Utils utils = new Utils();
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -322,29 +321,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 // Simulate network access.
-                acceso.setUsername(mEmail);
-                acceso.setPassword(mPassword);
-                acceso.setContext(context);
-                acceso.validaUsuario();
+                iAcceso.setUsername(mEmail);
+                iAcceso.setPassword(mPassword);
+                iAcceso.setContext(context);
+                iAcceso.validaUsuario();
                 //Thread.sleep(2000);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
                 e.printStackTrace();
             }
 
-            /*for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
-
             // TODO: register the new account here.
-            return acceso.getAccesoCorrecto();
+            return iAcceso.getAccesoCorrecto();
         }
 
         @Override
@@ -353,9 +341,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                utils.guardaShared(LoginActivity.this, R.string.Token, acceso.getToken());
-                utils.guardaShared(LoginActivity.this, R.string.Salt, acceso.getSalt());
-                //finish();
+                utils.guardaShared(LoginActivity.this, R.string.Token, iAcceso.getToken());
+                utils.guardaShared(LoginActivity.this, R.string.Salt, iAcceso.getSalt());
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
