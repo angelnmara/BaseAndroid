@@ -12,8 +12,16 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <!--API-->
     <string name="Server">http://192.168.1.114:9090/</string>
     <string name="Authentitacion">lamarrullaWS/rest/Authentication</string>
+    <!--API-->
+
     <string name="Token">token</string>
     <string name="Salt">salt</string>
+    <string name="Username">username</string>
+    <string name="Password">password</string>
+    <string name="StatusLine">{\"Error\":\"%s\", \"StatusCode\":%03d}</string>
+    <string name="preference_file_key">preference_file_key</string>
+
 </resources>

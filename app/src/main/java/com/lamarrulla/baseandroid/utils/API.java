@@ -1,7 +1,13 @@
 package com.lamarrulla.baseandroid.utils;
 
+import android.content.Context;
+
+import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.models.Login;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -51,6 +57,30 @@ public class API {
         this.secure = secure;
     }
 
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public boolean isResponseOK() {
+        return responseOK;
+    }
+
+    public void setResponseOK(boolean responseOK) {
+        this.responseOK = responseOK;
+    }
+
+    public List<Login.Parametro> getParametroList() {
+        return parametroList;
+    }
+
+    public void setParametroList(List<Login.Parametro> parametroList) {
+        this.parametroList = parametroList;
+    }
+
     private String url;
     private String salida;
     /*
@@ -66,31 +96,49 @@ public class API {
         False.- Unsecure
     */
     private boolean secure;
+    private Context context;
+    private boolean responseOK;
+    private List<Login.Parametro> parametroList;
 
     public void EjecutaAPI() throws IOException, URISyntaxException {
-        HttpClient httpclient = new DefaultHttpClient();
-        BufferedReader in = null;
-        HttpResponse response = null;
+        try{
+            HttpClient httpclient = new DefaultHttpClient();
+            BufferedReader in = null;
+            HttpResponse response = null;
 
-        URI website = new URI(url);
-        if(tipoPeticion == 1){
-            HttpGet request = new HttpGet();
-            request.setURI(website);
-            response = httpclient.execute(request);
-        }else if(tipoPeticion == 2){
-            HttpPost request = new HttpPost(url);
-            //request.setURI(website);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-            nameValuePairs.add(new BasicNameValuePair("username", "daver2"));
-            nameValuePairs.add(new BasicNameValuePair("password", "12345678"));
-            request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            response = httpclient.execute(request);
+            URI website = new URI(url);
+            if(tipoPeticion == 1){
+                HttpGet request = new HttpGet();
+                request.setURI(website);
+                response = httpclient.execute(request);
+            }else if(tipoPeticion == 2){
+                HttpPost request = new HttpPost(url);
+                //request.setURI(website);
+                if(parametroList.size()>0){
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(parametroList.size());
+                    for (Login.Parametro param : parametroList
+                         ) {
+                        nameValuePairs.add(new BasicNameValuePair(param.nombreParametro, param.valorParametro));
+                    }
+                    request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                }
+                response = httpclient.execute(request);
+            }
+            StatusLine sl = response.getStatusLine(); 
+            if(sl.getStatusCode()!=200){
+                salida =  String.format(context.getString(R.string.StatusLine), sl.getReasonPhrase(), sl.getStatusCode());
+                responseOK = false;
+            }
+            else{
+                in = new BufferedReader(new InputStreamReader(
+                        response.getEntity().getContent()));
+                // NEW CODE
+                salida = in.readLine();
+                System.out.println(salida);
+                responseOK = true;
+            }
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
         }
-
-        in = new BufferedReader(new InputStreamReader(
-                response.getEntity().getContent()));
-        // NEW CODE
-        salida = in.readLine();
-        System.out.println(salida);
     }
 }

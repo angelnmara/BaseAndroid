@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +32,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.lamarrulla.baseandroid.implement.Acceso;
+import com.lamarrulla.baseandroid.utils.Utils;
+
 import org.json.JSONException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     Context context = this;
     Acceso acceso = new Acceso();
+    Utils utils = new Utils();
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -348,7 +353,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                finish();
+                utils.guardaShared(LoginActivity.this, R.string.Token, acceso.getToken());
+                utils.guardaShared(LoginActivity.this, R.string.Salt, acceso.getSalt());
+                //finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
