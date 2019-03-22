@@ -29,10 +29,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.lamarrulla.baseandroid.utils.API;
-
+import com.lamarrulla.baseandroid.implement.Acceso;
+import org.json.JSONException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -45,8 +43,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    API api = new API();
     Context context = this;
+    Acceso acceso = new Acceso();
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -179,11 +177,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        }
+        /*else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }
+        }*/
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -318,29 +317,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 // Simulate network access.
-                api.setUrl("http://192.168.1.114:9090/lamarrullaWS/rest/Authentication");
-                api.setTipoPeticion(2);
-                api.EjecutaAPI();
-                Toast.makeText(context, api.getSalida(), Toast.LENGTH_SHORT).show();
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                acceso.setUsername(mEmail);
+                acceso.setPassword(mPassword);
+                acceso.setContext(context);
+                acceso.validaUsuario();
+                //Thread.sleep(2000);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
-            }
+            }*/
 
             // TODO: register the new account here.
-            return true;
+            return acceso.getAccesoCorrecto();
         }
 
         @Override
@@ -363,4 +362,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
-
