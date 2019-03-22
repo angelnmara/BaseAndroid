@@ -3,13 +3,12 @@ package com.lamarrulla.baseandroid;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class Splash extends Activity {
+public class SplashActivity extends Activity {
 
     private final int SPLASH_DISPLAY_LENGTH = 1000;
-    private final String splash = "Splash";
+    private final String splash = "SplashActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +24,9 @@ public class Splash extends Activity {
     }
 
     private void validaToken(){
-        Intent mainIntent = new Intent(Splash.this, LoginActivity.class);
+        Intent mainIntent = new Intent(SplashActivity.this, LoginActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        Splash.this.startActivity(mainIntent);
-        Splash.this.finish();
+        SplashActivity.this.startActivity(mainIntent);
+        SplashActivity.this.finish();
     }
 }
