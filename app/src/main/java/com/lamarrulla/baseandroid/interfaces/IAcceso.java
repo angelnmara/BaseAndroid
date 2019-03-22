@@ -14,5 +14,5 @@ public interface IAcceso {
     String getToken();
     String getSalt();
     Boolean getAccesoCorrecto();
-    boolean validaUsuario() throws IOException, URISyntaxException, JSONException;
+    boolean autenticaUsuario() throws IOException, URISyntaxException, JSONException;
 }

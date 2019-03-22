@@ -67,7 +67,7 @@ public class Acceso implements IAcceso {
     private Context context;
     private Boolean accesoCorrecto;
 
-    public boolean validaUsuario(){
+    public boolean autenticaUsuario(){
         accesoCorrecto = false;
         try{
             api.setContext(context);

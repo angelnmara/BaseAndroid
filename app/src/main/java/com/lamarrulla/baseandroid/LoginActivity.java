@@ -323,7 +323,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 iAcceso.setUsername(mEmail);
                 iAcceso.setPassword(mPassword);
                 iAcceso.setContext(context);
-                iAcceso.validaUsuario();
+                iAcceso.autenticaUsuario();
                 //Thread.sleep(2000);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
