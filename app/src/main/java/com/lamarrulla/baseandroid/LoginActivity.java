@@ -46,7 +46,6 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     Context context = this;
-    //Acceso acceso = new Acceso();
     IAcceso iAcceso = new Acceso();
     Utils utils = new Utils();
     /**
