@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">BaseAndroid</string>
+    <!-- Facebook ID -->
+    <string name="facebook_app_id">408586353024011</string>
+    <string name="fb_login_protocol_scheme">fb408586353024011</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
