@@ -1,7 +1,11 @@
 package com.lamarrulla.baseandroid;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -31,12 +35,17 @@ public class MainActivity extends AppCompatActivity
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
+    private View mProgressView;
+    private View mPrincipalSV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mProgressView = findViewById(R.id.login_progress);
+        mPrincipalSV = findViewById(R.id.svPrincipal);
+
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -58,19 +67,11 @@ public class MainActivity extends AppCompatActivity
 
 
         /*  select menu */
-        try {
-            getMenu(context, "tbmodulo");
-            if(iAcceso.getEsCorrecto()){
-                agregaMenu(navigationView, null);
-            }else{
-                Toast.makeText(context, "No se puede obtener el menu", Toast.LENGTH_SHORT).show();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        new getMenu(context, "tbmodulo");
+        if(iAcceso.getEsCorrecto()){
+            agregaMenu(navigationView, null);
+        }else{
+            Toast.makeText(context, "No se puede obtener el menu", Toast.LENGTH_SHORT).show();
         }
         /*  select menu */
         navigationView.setNavigationItemSelectedListener(this);
@@ -87,10 +88,36 @@ public class MainActivity extends AppCompatActivity
         }
         @Override
         protected Boolean doInBackground(Void... voids) {
-            iAcceso.setContext(context);
-            iAcceso.setTabla();
-            iAcceso.ejecutaSelect();
-            return null;
+            try {
+                showProgress(true);
+                iAcceso.setContext(context);
+                iAcceso.setTabla(mTabla);
+                iAcceso.ejecutaSelect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return iAcceso.getEsCorrecto();
+        }
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            showProgress(false);
+
+            if (success) {
+                System.out.println("post succes");
+            } else {
+                System.out.println("post fail");
+                mPrincipalSV.requestFocus();
+                showProgress(false);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            showProgress(false);
         }
     }
 
@@ -167,5 +194,36 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mPrincipalSV.setVisibility(show ? View.GONE : View.VISIBLE);
+            mPrincipalSV.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mPrincipalSV.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mPrincipalSV.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 }
