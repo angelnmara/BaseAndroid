@@ -1,5 +1,7 @@
 package com.lamarrulla.baseandroid;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +14,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.lamarrulla.baseandroid.implement.Acceso;
+import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.models.Login;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    IAcceso iAcceso = new Acceso();
+    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +55,61 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+
+        /*  select menu */
+        try {
+            getMenu(context, "tbmodulo");
+            if(iAcceso.getEsCorrecto()){
+                agregaMenu(navigationView, null);
+            }else{
+                Toast.makeText(context, "No se puede obtener el menu", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        /*  select menu */
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public class getMenu extends AsyncTask<Void, Void, Boolean>{
+
+        private final Context mContext;
+        private final String mTabla;
+
+        getMenu(Context context, String tabla){
+            mContext = context;
+            mTabla = tabla;
+        }
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            iAcceso.setContext(context);
+            iAcceso.setTabla();
+            iAcceso.ejecutaSelect();
+            return null;
+        }
+    }
+
+    public void agregaMenu(NavigationView navigationView, List<Login.Menu> menuList){
+        try{
+            /* Obten menu */
+            Menu menu =navigationView.getMenu();
+            /* Limpia menu */
+            menu.clear();
+            if(!menuList.isEmpty()){
+                for (Login.Menu m: menuList
+                ){
+                    int resource = getResources().getIdentifier(m.nombreMenu, "drawable", getPackageName());
+                    menu.add(1, m.ordenMenu, m.ordenMenu, m.nombreMenu).setIcon(resource);
+                }
+            }
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
     @Override

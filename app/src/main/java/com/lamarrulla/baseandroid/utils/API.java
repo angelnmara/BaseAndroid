@@ -1,6 +1,7 @@
 package com.lamarrulla.baseandroid.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.models.Login;
@@ -14,12 +15,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +103,14 @@ public class API {
     private Context context;
     private boolean responseOK;
     private List<Login.Parametro> parametroList;
+    private String token;
+    private String salt;
+
+    private void getCredenciales(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        token = sharedPreferences.getString(context.getString(R.string.Token), "");
+        salt = sharedPreferences.getString(context.getString(R.string.Salt), "");
+    }
 
     public void EjecutaAPI() throws IOException, URISyntaxException {
         try{
@@ -106,11 +118,20 @@ public class API {
             BufferedReader in = null;
             HttpResponse response = null;
 
-            URI website = new URI(url);
             if(tipoPeticion == 1){
-                HttpGet request = new HttpGet();
-                request.setURI(website);
-                response = httpclient.execute(request);
+                URL website = new URL(url);
+                HttpURLConnection conn = (HttpURLConnection)website.openConnection();
+                if(secure){
+                    getCredenciales();
+                    conn.setRequestProperty("Authorization", String.format(context.getString(R.string.BarerToken), token));
+                    conn.setRequestProperty(context.getString(R.string.Secret), salt);
+                    conn.setRequestProperty("Content-Type","application/json");
+                    conn.setRequestMethod("GET");
+                }
+                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                //HttpGet request = new HttpGet();
+                //request.setURI(website);
+                //response = httpclient.execute(request);
             }else if(tipoPeticion == 2){
                 HttpPost request = new HttpPost(url);
                 //request.setURI(website);
@@ -123,6 +144,8 @@ public class API {
                     request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 }
                 response = httpclient.execute(request);
+                in = new BufferedReader(new InputStreamReader(
+                        response.getEntity().getContent()));
             }
             StatusLine sl = response.getStatusLine(); 
             if(sl.getStatusCode()!=200){
@@ -130,8 +153,7 @@ public class API {
                 responseOK = false;
             }
             else{
-                in = new BufferedReader(new InputStreamReader(
-                        response.getEntity().getContent()));
+
                 // NEW CODE
                 salida = in.readLine();
                 System.out.println(salida);
@@ -139,6 +161,7 @@ public class API {
             }
         }catch (Exception ex){
             System.out.println(ex.getMessage());
+            responseOK = false;
         }
     }
 }

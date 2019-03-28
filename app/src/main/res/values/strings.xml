@@ -18,6 +18,8 @@
     <!--API-->
     <string name="Server">http://192.168.1.114:9090/</string>
     <string name="Authentitacion">lamarrullaWS/rest/Authentication</string>
+    <string name="API">lamarrullaWS/rest/lamarrullaAPI</string>
+    <string name="APISelectAll">lamarrullaWS/rest/lamarrullaAPI/%s/0</string>
     <!--API-->
 
     <string name="Token">token</string>
@@ -33,5 +35,7 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="Secret">secret</string>
+    <string name="BarerToken">Bearer %s</string>
 
 </resources>

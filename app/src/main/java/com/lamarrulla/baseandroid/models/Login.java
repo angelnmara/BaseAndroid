@@ -9,4 +9,15 @@ public class Login {
             this.valorParametro = valorParametro;
         }
     }
+    public static class Menu{
+        public String nombreMenu;
+        public String imagenMenu;
+        public int ordenMenu;
+
+        public Menu(String nombreMenu, String imagenMenu, int ordenMenu){
+            this.imagenMenu = imagenMenu;
+            this.nombreMenu = nombreMenu;
+            this.ordenMenu = ordenMenu;
+        }
+    }
 }
