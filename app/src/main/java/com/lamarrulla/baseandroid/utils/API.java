@@ -105,11 +105,13 @@ public class API {
     private List<Login.Parametro> parametroList;
     private String token;
     private String salt;
+    private String username;
 
     private void getCredenciales(){
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         token = sharedPreferences.getString(context.getString(R.string.Token), "");
         salt = sharedPreferences.getString(context.getString(R.string.Salt), "");
+        username = sharedPreferences.getString(context.getString(R.string.Username), "");
     }
 
     public void EjecutaAPI() throws IOException, URISyntaxException {
@@ -125,6 +127,7 @@ public class API {
                     getCredenciales();
                     conn.setRequestProperty("Authorization", String.format(context.getString(R.string.BarerToken), token));
                     conn.setRequestProperty(context.getString(R.string.Secret), salt);
+                    conn.setRequestProperty(context.getString(R.string.Username), username);
                     conn.setRequestProperty("Content-Type","application/json");
                     conn.setRequestMethod("GET");
                 }

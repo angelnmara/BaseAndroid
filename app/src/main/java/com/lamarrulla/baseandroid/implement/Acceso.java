@@ -1,6 +1,10 @@
 package com.lamarrulla.baseandroid.implement;
 
 import android.content.Context;
+import android.content.Intent;
+
+import com.lamarrulla.baseandroid.LoginActivity;
+import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
@@ -19,6 +23,10 @@ public class Acceso implements IAcceso {
 
     public void setUsername(String user) {
         this.username = user;
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     public void setPassword(String pass) {
@@ -93,6 +101,7 @@ public class Acceso implements IAcceso {
                 JSONObject jso = new JSONObject(api.getSalida());
                 token = jso.getString(context.getString(R.string.Token));
                 salt = jso.getString(context.getString(R.string.Salt));
+                username = jso.getString(context.getString(R.string.Username));
                 esCorrecto = true;
             }else{
                 esCorrecto = false;

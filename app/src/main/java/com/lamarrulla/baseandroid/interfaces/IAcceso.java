@@ -15,6 +15,7 @@ public interface IAcceso {
     void setTabla(String tabla);
     String getToken();
     String getSalt();
+    String getUsername();
     Boolean getEsCorrecto();
     JSONObject getJso();
     void autenticaUsuario() throws IOException, URISyntaxException, JSONException;

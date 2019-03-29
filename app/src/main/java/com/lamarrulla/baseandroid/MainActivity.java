@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
@@ -37,13 +36,15 @@ public class MainActivity extends AppCompatActivity
     Context context = this;
     private View mProgressView;
     private View mPrincipalSV;
+    NavigationView navigationView;
+    private getMenu mAuthTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mProgressView = findViewById(R.id.login_progress);
+        mProgressView = findViewById(R.id.main_progress);
         mPrincipalSV = findViewById(R.id.svPrincipal);
 
         setSupportActionBar(toolbar);
@@ -63,17 +64,15 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
 
         /*  select menu */
-        new getMenu(context, "tbmodulo");
-        if(iAcceso.getEsCorrecto()){
-            agregaMenu(navigationView, null);
-        }else{
-            Toast.makeText(context, "No se puede obtener el menu", Toast.LENGTH_SHORT).show();
-        }
+        showProgress(true);
+        mAuthTask = new getMenu(context, "tbmodulo");
+        mAuthTask.execute((Void)null);
         /*  select menu */
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                showProgress(true);
                 iAcceso.setContext(context);
                 iAcceso.setTabla(mTabla);
                 iAcceso.ejecutaSelect();
@@ -107,11 +105,15 @@ public class MainActivity extends AppCompatActivity
             showProgress(false);
 
             if (success) {
-                System.out.println("post succes");
+                agregaMenu(navigationView, null);
             } else {
                 System.out.println("post fail");
-                mPrincipalSV.requestFocus();
+                //mPrincipalSV.requestFocus();
                 showProgress(false);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         }
 

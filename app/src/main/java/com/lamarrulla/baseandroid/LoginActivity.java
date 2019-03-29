@@ -384,6 +384,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 utils.guardaShared(LoginActivity.this, R.string.Token, iAcceso.getToken());
                 utils.guardaShared(LoginActivity.this, R.string.Salt, iAcceso.getSalt());
+                utils.guardaShared(LoginActivity.this, R.string.Username, iAcceso.getUsername());
+                //utils.guardaShared(LoginActivity.this, R.string.Username, mEmail);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
