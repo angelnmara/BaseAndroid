@@ -119,6 +119,8 @@ public class API {
             HttpClient httpclient = new DefaultHttpClient();
             BufferedReader in = null;
             HttpResponse response = null;
+            int code = 0;
+            String mensajeError ="";
 
             if(tipoPeticion == 1){
                 URL website = new URL(url);
@@ -130,6 +132,8 @@ public class API {
                     conn.setRequestProperty(context.getString(R.string.Username), username);
                     conn.setRequestProperty("Content-Type","application/json");
                     conn.setRequestMethod("GET");
+                    code = conn.getResponseCode();
+                    mensajeError = conn.getResponseMessage();
                 }
                 in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 //HttpGet request = new HttpGet();
@@ -149,10 +153,13 @@ public class API {
                 response = httpclient.execute(request);
                 in = new BufferedReader(new InputStreamReader(
                         response.getEntity().getContent()));
+                StatusLine sl = response.getStatusLine();
+                code = sl.getStatusCode();
+                mensajeError = sl.getReasonPhrase();
             }
-            StatusLine sl = response.getStatusLine(); 
-            if(sl.getStatusCode()!=200){
-                salida =  String.format(context.getString(R.string.StatusLine), sl.getReasonPhrase(), sl.getStatusCode());
+
+            if(code != 200){
+                salida =  String.format(context.getString(R.string.StatusLine), mensajeError, code);
                 responseOK = false;
             }
             else{

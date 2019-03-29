@@ -18,16 +18,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
+import com.lamarrulla.baseandroid.utils.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private View mPrincipalSV;
     NavigationView navigationView;
     private getMenu mAuthTask = null;
+    Utils utils = new Utils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +110,19 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(final Boolean success) {
             showProgress(false);
-
             if (success) {
-                agregaMenu(navigationView, null);
+                try{
+                    JSONObject jso = iAcceso.getJso();
+                    JSONArray jsa = jso.getJSONArray("tbmodulo");
+                    ArrayList<Login.Menu> menuList = new ArrayList<Login.Menu>();
+                    for(int i = 0; i<jsa.length(); i++){
+                        JSONObject jsoM = jsa.getJSONObject(i);
+                        menuList.add(new Login.Menu(jsoM.getString("fcmodulo"), jsoM.getString("fcmoduloimg"), i));
+                    }
+                    agregaMenu(navigationView, menuList);
+                }catch (Exception ex){
+                    System.out.println(ex.getMessage());
+                }
             } else {
                 System.out.println("post fail");
                 //mPrincipalSV.requestFocus();
@@ -132,8 +149,7 @@ public class MainActivity extends AppCompatActivity
             if(!menuList.isEmpty()){
                 for (Login.Menu m: menuList
                 ){
-                    int resource = getResources().getIdentifier(m.nombreMenu, "drawable", getPackageName());
-                    menu.add(1, m.ordenMenu, m.ordenMenu, m.nombreMenu).setIcon(resource);
+                    menu.add(1, m.ordenMenu, m.ordenMenu, m.nombreMenu).setIcon(utils.getResourceDrawforName(m.imagenMenu));
                 }
             }
         }catch (Exception ex){
@@ -188,7 +204,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-
+            Toast.makeText(this, "share", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_send) {
 
         }

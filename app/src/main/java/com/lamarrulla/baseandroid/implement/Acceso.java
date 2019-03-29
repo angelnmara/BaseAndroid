@@ -10,6 +10,7 @@ import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.utils.API;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,7 +67,8 @@ public class Acceso implements IAcceso {
     private JSONObject jso;
     private String tabla;
 
-    public void ejecutaSelect() throws IOException, URISyntaxException, JSONException {
+    public void
+    ejecutaSelect() throws IOException, URISyntaxException, JSONException {
         try{
             api.setContext(context);
             api.setUrl(context.getString(R.string.Server) + String.format(context.getString(R.string.APISelectAll), "tbmodulo"));
@@ -75,6 +77,7 @@ public class Acceso implements IAcceso {
             api.EjecutaAPI();
             if(api.isResponseOK()){
                 System.out.println(api.getSalida());
+                jso = new JSONObject(api.getSalida());
                 esCorrecto = true;
             }else{
                 System.out.println(api.getSalida());

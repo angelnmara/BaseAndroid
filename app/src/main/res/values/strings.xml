@@ -16,7 +16,7 @@
         completions."
     </string>
     <!--API-->
-    <string name="Server">http://192.168.1.114:9090/</string>
+    <string name="Server">http://192.168.0.10:9090/</string>
     <string name="Authentitacion">lamarrullaWS/rest/Authentication</string>
     <string name="API">lamarrullaWS/rest/lamarrullaAPI</string>
     <string name="APISelectAll">lamarrullaWS/rest/lamarrullaAPI/%s/0</string>
