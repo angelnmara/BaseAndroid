@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "253804100294",
+    "firebase_url": "https://geolocalizacion-5dfc5.firebaseio.com",
+    "project_id": "geolocalizacion-5dfc5",
+    "storage_bucket": "geolocalizacion-5dfc5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253804100294:android:e0db0db27d0b3bcc",
+        "android_client_info": {
+          "package_name": "com.lamarrulla.baseandroid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChTJxhH1cYCFWS-WcpAdQYyIWOO7Iq0qY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "253804100294-hsg2gkgvt1o03t8t3lnrmutn2ht4fjfq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
