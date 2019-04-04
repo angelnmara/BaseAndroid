@@ -3,6 +3,7 @@ package com.lamarrulla.baseandroid;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -60,8 +61,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     Context context = this;
     IAcceso iAcceso = new Acceso();
-    Utils utils = new Utils();
     CallbackManager callbackManager = CallbackManager.Factory.create();
+    private final String RegistroFragment = "RegistroFragment";
+    private final String TAG = "LoginActivity";
+    private int funcion;
+    private int tipoAcceso;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -85,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    Utils utils = new Utils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +108,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                    funcion = 1;
                     attemptLogin();
                     return true;
                 }
@@ -114,6 +120,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                funcion = 1;
                 attemptLogin();
             }
         });
@@ -130,6 +137,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Toast.makeText(LoginActivity.this, "Usuario Logeado", Toast.LENGTH_SHORT).show();
+                utils.guardaShared((Activity) context, R.string.TipoAcceso, "3");
             }
 
             @Override
@@ -143,6 +151,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
         /*  End Facebook */
+
+        /*  Boton Registrar */
+        Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
+        mRegistrarButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                funcion = 2;
+                attemptLogin();
+            }
+        });
+        /*  End Boton Registrar*/
     }
 
     private void populateAutoComplete() {
@@ -195,6 +214,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+        /*
+            1.- Login
+            2.- Registro
+        */
         if (mAuthTask != null) {
             return;
         }
@@ -236,9 +259,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            utils.showProgress(true, mLoginFormView, mProgressView, context);
+            iAcceso.setContext(context);
+            tipoAcceso = getResources().getInteger(R.integer.AccesoUsuarioConstasenna);
+            if(tipoAcceso == 1){
+                mAuthTask = new UserLoginTask(email, password);
+                mAuthTask.execute((Void) null);
+            }else{
+                iAcceso.setUsername(email);
+                iAcceso.setPassword(password);
+                switch (funcion){
+                    case 1:
+                        /*  autentica usuario por firebase  */
+
+                        iAcceso.autenticaUsuarioFirebase();
+                        break;
+                    case 2:
+                        /*  alta usurio por firebase    */
+                        iAcceso.altaUsuarioFirebase();
+                        break;
+                }
+            }
         }
     }
 
@@ -256,7 +297,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
+    public void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -331,7 +372,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -361,11 +401,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
+                // Valida Autenticacion
                 iAcceso.setUsername(mEmail);
                 iAcceso.setPassword(mPassword);
-                iAcceso.setContext(context);
-                iAcceso.autenticaUsuario();
+                switch (funcion){
+                        case 1:
+                            //autentica usuario por servidor
+                            iAcceso.autenticaUsuarioServer();
+                            break;
+                        case 2:
+                            //Alta usuario por servidor
+                            iAcceso.altaUsarioServer();
+                            cancel(true);
+                            break;
+                        default:
+                            iAcceso.autenticaUsuarioServer();
+                            break;
+                }
+
+
                 //Thread.sleep(2000);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -381,25 +435,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                utils.guardaShared(LoginActivity.this, R.string.Token, iAcceso.getToken());
-                utils.guardaShared(LoginActivity.this, R.string.Salt, iAcceso.getSalt());
-                utils.guardaShared(LoginActivity.this, R.string.Username, iAcceso.getUsername());
-                //utils.guardaShared(LoginActivity.this, R.string.Username, mEmail);
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            if(funcion==1){
+                if (success) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                }
             }
         }
 
         @Override
         protected void onCancelled() {
             mAuthTask = null;
-            showProgress(false);
         }
     }
     @Override

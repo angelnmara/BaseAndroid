@@ -1,14 +1,24 @@
 package com.lamarrulla.baseandroid.implement;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.lamarrulla.baseandroid.LoginActivity;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.utils.API;
+import com.lamarrulla.baseandroid.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,8 +27,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 public class Acceso implements IAcceso {
+
+    Utils utils = new Utils();
+
+    private FirebaseAuth mAuth;
+
+    private final String TAG = "ACCESO";
 
     API api = new API();
 
@@ -26,20 +43,8 @@ public class Acceso implements IAcceso {
         this.username = user;
     }
 
-    public String getUsername(){
-        return username;
-    }
-
     public void setPassword(String pass) {
         this.password = pass;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public String getSalt() {
-        return salt;
     }
 
     public void setContext(Context cont) {
@@ -60,8 +65,6 @@ public class Acceso implements IAcceso {
 
     private String username;
     private String password;
-    private String token;
-    private String salt;
     private Context context;
     private Boolean esCorrecto = false;
     private JSONObject jso;
@@ -88,7 +91,7 @@ public class Acceso implements IAcceso {
         }
     }
 
-    public void autenticaUsuario(){
+    public void autenticaUsuarioServer(){
         try{
             api.setContext(context);
             api.setUrl(context.getString(R.string.Server) + context.getString(R.string.Authentitacion));
@@ -102,9 +105,13 @@ public class Acceso implements IAcceso {
             if(api.isResponseOK()){
                 System.out.println(api.getSalida());
                 JSONObject jso = new JSONObject(api.getSalida());
-                token = jso.getString(context.getString(R.string.Token));
-                salt = jso.getString(context.getString(R.string.Salt));
-                username = jso.getString(context.getString(R.string.Username));
+                //token = jso.getString(context.getString(R.string.Token));
+                //salt = jso.getString(context.getString(R.string.Salt));
+                //username = jso.getString(context.getString(R.string.Username));
+                utils.guardaShared((Activity) context, R.string.Token, jso.getString(context.getString(R.string.Token)));
+                utils.guardaShared((Activity) context, R.string.Salt, jso.getString(context.getString(R.string.Salt)));
+                utils.guardaShared((Activity) context, R.string.Username, jso.getString(context.getString(R.string.Username)));
+                utils.guardaShared((Activity) context, R.string.TipoAcceso, "1");
                 esCorrecto = true;
             }else{
                 esCorrecto = false;
@@ -113,5 +120,65 @@ public class Acceso implements IAcceso {
             System.out.println(ex.getMessage());
             esCorrecto = false;
         }
+    }
+
+    @Override
+    public void autenticaUsuarioFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signInWithEmailAndPassword(username, password)
+                .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            utils.guardaShared((Activity) context, R.string.TipoAcceso, "2");
+                            EnviaMain();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(context, context.getString(R.string.AutenticacionInvalida),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    public void EnviaMain(){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    @Override
+    public void altaUsarioServer() {
+        Toast.makeText(context, "alta usuario server", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "altaUsarioServer");
+    }
+
+    @Override
+    public void altaUsuarioFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.createUserWithEmailAndPassword(username, password)
+                .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            EnviaMain();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(context, task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

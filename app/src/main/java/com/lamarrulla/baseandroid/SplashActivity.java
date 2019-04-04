@@ -8,13 +8,17 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SplashActivity extends Activity {
 
     private final int SPLASH_DISPLAY_LENGTH = 1000;
     private final String splash = "SplashActivity";
     boolean isLoggedInFacebook = false;
+    boolean isLoggedInFirebase = false;
     Intent mainIntent;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,12 @@ public class SplashActivity extends Activity {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         isLoggedInFacebook = accessToken != null && !accessToken.isExpired();
         /* valida si ya esta logeado con facebook */
+
+        /*  inicializa firebase */
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        isLoggedInFirebase = (currentUser!=null?true:false);
+        /*  inicializa firebase */
 
         setContentView(R.layout.activity_splash);
         new Handler().postDelayed(new Runnable(){
@@ -41,7 +51,7 @@ public class SplashActivity extends Activity {
     }
 
     private void validaToken(){
-        if(isLoggedInFacebook){
+        if(isLoggedInFacebook||isLoggedInFirebase){
             mainIntent = new Intent(SplashActivity.this, MainActivity.class);
         }else{
             mainIntent = new Intent(SplashActivity.this, LoginActivity.class);

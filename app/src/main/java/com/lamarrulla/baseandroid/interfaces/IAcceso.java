@@ -14,11 +14,11 @@ public interface IAcceso {
     void setUsername(String user);
     void setPassword(String pass);
     void setTabla(String tabla);
-    String getToken();
-    String getSalt();
-    String getUsername();
     Boolean getEsCorrecto();
     JSONObject getJso();
-    void autenticaUsuario() throws IOException, URISyntaxException, JSONException;
+    void autenticaUsuarioServer() throws IOException, URISyntaxException, JSONException;
+    void autenticaUsuarioFirebase();
+    void altaUsarioServer();
+    void altaUsuarioFirebase();
     void ejecutaSelect() throws IOException, URISyntaxException, JSONException;
 }

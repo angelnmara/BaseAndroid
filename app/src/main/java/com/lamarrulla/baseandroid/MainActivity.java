@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     private getMenu mAuthTask = null;
     Utils utils = new Utils();
+    SharedPreferences sharedPreferences;
+    private int TipoAcceso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         mProgressView = findViewById(R.id.main_progress);
         mPrincipalSV = findViewById(R.id.svPrincipal);
+        sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         setSupportActionBar(toolbar);
 
@@ -73,12 +78,16 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), ""));
 
-        /*  select menu */
-        showProgress(true);
-        mAuthTask = new getMenu(context, "tbmodulo");
-        mAuthTask.execute((Void)null);
-        /*  select menu */
+        if(TipoAcceso == 1){
+            /*  obtine modulo desde servidor    */
+            /*  select menu */
+            showProgress(true);
+            mAuthTask = new getMenu(context, "tbmodulo");
+            mAuthTask.execute((Void)null);
+            /*  select menu */
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -205,14 +214,39 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "share", Toast.LENGTH_LONG).show();
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_exit) {
+            salir();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void salir() {
+        switch (TipoAcceso){
+            case 1:
+            case 2:
+            case 3:
+                salirFirebase();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void salirFirebase() {
+        FirebaseAuth.getInstance().signOut();
+        regresaLogin();
+    }
+
+    private void regresaLogin(){
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
