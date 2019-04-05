@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -12,7 +13,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.lamarrulla.baseandroid.LoginActivity;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
@@ -20,14 +20,12 @@ import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.utils.API;
 import com.lamarrulla.baseandroid.utils.Utils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 public class Acceso implements IAcceso {
 
@@ -135,22 +133,17 @@ public class Acceso implements IAcceso {
                             FirebaseUser user = mAuth.getCurrentUser();
                             utils.guardaShared((Activity) context, R.string.Token, user.toString());
                             utils.guardaShared((Activity) context, R.string.TipoAcceso, "2");
-                            EnviaMain();
+                            utils.OpenMain(context);
 
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(context, context.getString(R.string.AutenticacionInvalida),
                                     Toast.LENGTH_SHORT).show();
+                            showProgress();
                         }
                     }
                 });
-    }
-
-    public void EnviaMain(){
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 
     @Override
@@ -171,14 +164,20 @@ public class Acceso implements IAcceso {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             utils.guardaShared((Activity) context, R.string.Token, user.toString());
-                            EnviaMain();
+                            utils.OpenMain(context);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(context, task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
+                            showProgress();
                         }
                     }
                 });
+    }
+    public void showProgress(){
+        View mLoginFormView = ((Activity)context).findViewById(R.id.login_form);
+        View mProgressView = ((Activity)context).findViewById(R.id.login_progress);
+        utils.showProgress(false, mLoginFormView, mProgressView, context);
     }
 }

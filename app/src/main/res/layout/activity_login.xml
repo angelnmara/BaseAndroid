@@ -64,40 +64,36 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:id="@+id/email_sign_in_button"
+            <Button android:id="@+id/email_sign_in_button"
                     style="?android:textAppearanceSmall"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/action_sign_in"
                     android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/email_alta_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/action_registrar"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
 
             <com.facebook.login.widget.LoginButton
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginTop="16dp"/>
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"/>
+
+            <Button
+                android:id="@+id/email_alta_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_registrar"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

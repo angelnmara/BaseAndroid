@@ -37,12 +37,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.utils.Utils;
@@ -57,7 +66,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, View.OnClickListener {
 
     Context context = this;
     IAcceso iAcceso = new Acceso();
@@ -89,12 +98,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private FirebaseAuth mAuth;
+
     Utils utils = new Utils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         //Valida Hash // Si tienes problemas que no cuadre tu hash puedes descomentar esta funcion
         //validaHash();
@@ -117,13 +134,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                funcion = 1;
-                attemptLogin();
-            }
-        });
+        mEmailSignInButton.setOnClickListener(this);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -131,12 +142,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /*  Facebook */
 
         LoginButton loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
+        loginButton.setReadPermissions("email", "public_profile");
         //Callback registration
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(LoginActivity.this, "Usuario Logeado", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
                 utils.guardaShared((Activity) context, R.string.TipoAcceso, "3");
             }
 
@@ -154,14 +166,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         /*  Boton Registrar */
         Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
-        mRegistrarButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                funcion = 2;
-                attemptLogin();
-            }
-        });
+        mRegistrarButton.setOnClickListener(this);
         /*  End Boton Registrar*/
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        showProgress(true);
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            utils.OpenMain(context);
+                            showProgress(false);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            showProgress(false);
+                        }
+                    }
+                });
     }
 
     private void populateAutoComplete() {
@@ -370,6 +402,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.email_sign_in_button:
+                funcion = 1;
+                attemptLogin();
+                break;
+            case R.id.email_alta_button:
+                funcion = 2;
+                attemptLogin();
+            case R.id.sign_in_button:
+
+                break;
+        }
     }
 
     private interface ProfileQuery {

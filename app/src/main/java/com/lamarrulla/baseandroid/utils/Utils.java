@@ -5,10 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.view.View;
 
+import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 
 import java.lang.reflect.Field;
@@ -66,5 +68,10 @@ public class Utils {
             HiddenView.setVisibility(show ? View.VISIBLE : View.GONE);
             ShowView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+    public void OpenMain(Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }
