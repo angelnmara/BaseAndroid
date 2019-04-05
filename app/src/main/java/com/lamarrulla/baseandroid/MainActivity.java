@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -22,6 +23,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     Utils utils = new Utils();
     SharedPreferences sharedPreferences;
     private int TipoAcceso;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,11 +232,24 @@ public class MainActivity extends AppCompatActivity
         switch (TipoAcceso){
             case 1:
             case 2:
+                FirebaseAuth.getInstance().signOut();
+                break;
             case 3:
                 salirFirebase();
                 LoginManager.getInstance().logOut();
                 break;
+            case 4:
+                mGoogleSignInClient.signOut()
+                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                FirebaseAuth.getInstance().signOut();
+                                regresaLogin();
+                            }
+                        });
+                break;
             default:
+                Toast.makeText(context, "opcion invalida", Toast.LENGTH_LONG).show();
                 break;
         }
     }
