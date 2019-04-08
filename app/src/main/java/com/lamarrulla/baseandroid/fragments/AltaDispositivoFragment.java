@@ -7,10 +7,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.models.Dispositivo;
+import com.lamarrulla.baseandroid.utils.FirebaseAPI;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,10 +38,14 @@ public class AltaDispositivoFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Button btnAgregar;
+    private TextView txtMac;
 
     private OnFragmentAltaDispositivoInteractionListener mListener;
 
     private DatabaseReference mDatabase;
+
+    FirebaseAPI firebaseAPI = new FirebaseAPI();
 
     public AltaDispositivoFragment() {
         // Required empty public constructor
@@ -70,7 +83,31 @@ public class AltaDispositivoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_alta_dispositivo, container, false);
+        View view = inflater.inflate(R.layout.fragment_alta_dispositivo, container, false);
+        txtMac = view.findViewById(R.id.txtMacAddres);
+        btnAgregar = view.findViewById(R.id.btnAgregar);
+        btnAgregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), txtMac.getText(), Toast.LENGTH_LONG).show();
+                List listDispositivoUsuario = new ArrayList();
+                Date date = new Date();
+                /*Dispositivo.DispositivoUsuario dispositivoUSuario = new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
+                        true,
+                        date,
+                        null);*/
+                listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
+                        true,
+                        date,
+                        null));
+                listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
+                        false,
+                        date,
+                        date));
+                firebaseAPI.writeNewObject("dispositivos", listDispositivoUsuario);
+            }
+        });
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

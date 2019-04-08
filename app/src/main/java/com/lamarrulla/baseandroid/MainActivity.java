@@ -30,6 +30,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
+import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
+import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
@@ -45,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener, DispositivosFragment.OnListFragmentDispositivosInteractionListener {
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "MainActivity";
     private static final String altadispositivofragment = "AltaDispositivoFragment";
+    private static final String dispositivosfragment = "DispositivosFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +109,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentAltaDispositivoInteraction(Uri uri) {
         Log.d(TAG, "interaccion de fragment");
+    }
+
+    @Override
+    public void onListFragmentDispositivosInteraction(DummyContent.DummyItem item) {
+        Log.d(TAG, "interaccion Dispositivo");
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{
@@ -228,7 +237,12 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack(altadispositivofragment)
                     .commit();
         } else if (id == R.id.nav_gallery) {
-
+            DispositivosFragment dispositivosFragment = new DispositivosFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.lnlPrincipalFragment, dispositivosFragment, dispositivosfragment)
+                    .addToBackStack(dispositivosfragment)
+                    .commit();
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
