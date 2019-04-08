@@ -23,6 +23,12 @@
             android:id="@+id/svPrincipal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/lnlPrincipalFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+            </LinearLayout>
         </ScrollView>
     </LinearLayout>
 

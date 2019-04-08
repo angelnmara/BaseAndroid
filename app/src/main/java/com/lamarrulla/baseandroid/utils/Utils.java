@@ -16,6 +16,7 @@ import com.lamarrulla.baseandroid.R;
 import java.lang.reflect.Field;
 
 public class Utils {
+    FirebaseAPI firebaseAPI = new FirebaseAPI();
     public void guardaShared(Activity activity, int variable, String valor){
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -70,6 +71,7 @@ public class Utils {
         }
     }
     public void OpenMain(Context context){
+        firebaseAPI.writeNewUser();
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

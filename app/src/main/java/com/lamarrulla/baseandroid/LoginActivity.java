@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.WebClient))
+                //.requestIdToken(getString(R.string.WebClient))
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -520,8 +520,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(LoginActivity.this, "ActivityResult", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this, "ActivityResult", Toast.LENGTH_SHORT).show();
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        Log.d(TAG, data.toString() + requestCode);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
@@ -555,8 +556,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //utils.guardaShared((Activity) context, R.string.Token, user.toString());
                             utils.OpenMain(context);
                             showProgress(false);
                         } else {

@@ -49,5 +49,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="AutenticacionInvalida">Usuario o password incorrecto.</string>
     <string name="WebClient">253804100294-cbr3j5hdm4nsbk4h6keckclhlspqopis.apps.googleusercontent.com</string>
+    <string name="alta_de_dispositivo">Alta de dispositivo</string>
+    <string name="mac_addres">MAC ADDRES</string>
+    <string name="agregar">Agregar</string>
 
 </resources>

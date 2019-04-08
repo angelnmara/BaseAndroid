@@ -5,12 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
@@ -42,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener {
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sharedPreferences;
     private int TipoAcceso;
     private GoogleSignInClient mGoogleSignInClient;
+    private static final String TAG = "MainActivity";
+    private static final String altadispositivofragment = "AltaDispositivoFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +100,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onFragmentAltaDispositivoInteraction(Uri uri) {
+        Log.d(TAG, "interaccion de fragment");
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{
@@ -210,7 +220,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            Toast.makeText(this, "alta dispositivo", Toast.LENGTH_SHORT).show();
+            AltaDispositivoFragment altaDispositivoFragment = new AltaDispositivoFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.lnlPrincipalFragment, altaDispositivoFragment, altadispositivofragment)
+                    .addToBackStack(altadispositivofragment)
+                    .commit();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -232,7 +248,7 @@ public class MainActivity extends AppCompatActivity
         switch (TipoAcceso){
             case 1:
             case 2:
-                FirebaseAuth.getInstance().signOut();
+                salirFirebase();
                 break;
             case 3:
                 salirFirebase();
