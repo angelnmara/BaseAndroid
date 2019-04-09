@@ -52,5 +52,6 @@
     <string name="alta_de_dispositivo">Alta de dispositivo</string>
     <string name="mac_addres">MAC ADDRES</string>
     <string name="agregar">Agregar</string>
+    <string name="mis_dispositivos">Mis dispositivos</string>
 
 </resources>

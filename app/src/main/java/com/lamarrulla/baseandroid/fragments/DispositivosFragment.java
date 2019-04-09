@@ -1,5 +1,6 @@
 package com.lamarrulla.baseandroid.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,22 +12,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,9 @@ public class DispositivosFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentDispositivosInteractionListener mListener;
+    private OnSwitchFragmentListener mListener2;
     FirebaseAPI firebaseAPI = new FirebaseAPI();
+    List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -77,28 +78,31 @@ public class DispositivosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dispositivos_list, container, false);
-
+        final RecyclerView recyclerView = view.findViewById(R.id.list);
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        if (recyclerView instanceof RecyclerView) {
             Context context = view.getContext();
-            final RecyclerView recyclerView = (RecyclerView) view;
+            //final RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-            final List<Dispositivo.User> listUser = new ArrayList();
-            Query query = mDatabase.child("users").child("aYS6q2jjIXNznXlAPVSbhl3E5o42");
+            FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
+
+            listDispositivoUsuario = new ArrayList();
+            Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()){
-                    /*for(DataSnapshot user : dataSnapshot.getChildren()){
-                        Log.d(TAG, user.getValue().toString());
-                    }*/
-                        Dispositivo.User user = dataSnapshot.getValue(Dispositivo.User.class);
-                        listUser.add(user);
+                    for(DataSnapshot du : dataSnapshot.getChildren()){
+                        Log.d(TAG, du.getValue().toString());
+                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
+                        listDispositivoUsuario.add(dispositivoUsuario);
+                    }
+
                     /*try {
                         Gson gso = new Gson();
                         String s1 = gso.toJson(dataSnapshot.getValue());
@@ -108,7 +112,7 @@ public class DispositivosFragment extends Fragment {
                         e.printStackTrace();
                     }*/
                     }
-                    recyclerView.setAdapter(new MyDispositivosRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+                    recyclerView.setAdapter(new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener, mListener2));
                 }
 
                 @Override
@@ -117,6 +121,26 @@ public class DispositivosFragment extends Fragment {
                 }
             });
         }
+        Button btnAgregar = view.findViewById(R.id.btnAgregar);
+        btnAgregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_alta_dispositivo, null);
+                mBuilder.setView(mViewAgregar);
+                final AlertDialog dialog = mBuilder.create();
+                EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
+                Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
+                btnAgregar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(), "Click fragmet dispositovo", Toast.LENGTH_LONG).show();
+                        dialog.hide();
+                    }
+                });
+                dialog.show();
+            }
+        });
         return view;
     }
 
@@ -128,6 +152,11 @@ public class DispositivosFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentDispositivosInteractionListener");
+        }
+        if(context instanceof OnSwitchFragmentListener){
+            mListener2 = (OnSwitchFragmentListener) context;
+        }else{
+            throw new RuntimeException(context.toString() + " must implement OnListFragmentDispositivosInteractionListener");
         }
     }
 
@@ -149,6 +178,9 @@ public class DispositivosFragment extends Fragment {
      */
     public interface OnListFragmentDispositivosInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentDispositivosInteraction(DummyItem item);
+        void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item);
+    }
+    public interface OnSwitchFragmentListener{
+        void onSwitchFragmentInteraction(boolean valor);
     }
 }

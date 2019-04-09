@@ -34,6 +34,7 @@ import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.utils.Utils;
 
@@ -48,7 +49,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener, DispositivosFragment.OnListFragmentDispositivosInteractionListener {
+        AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
+        DispositivosFragment.OnListFragmentDispositivosInteractionListener, DispositivosFragment.OnSwitchFragmentListener{
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -112,8 +114,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentDispositivosInteraction(DummyContent.DummyItem item) {
-        Log.d(TAG, "interaccion Dispositivo");
+    public void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item) {
+        Log.d(TAG, "interaccion de fragment");
+    }
+
+    @Override
+    public void onSwitchFragmentInteraction(boolean valor) {
+        Log.d(TAG, "interaction listener switch");
+        Toast.makeText(this, "switch cambio", Toast.LENGTH_LONG).show();
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{
@@ -233,19 +241,19 @@ public class MainActivity extends AppCompatActivity
             AltaDispositivoFragment altaDispositivoFragment = new AltaDispositivoFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.lnlPrincipalFragment, altaDispositivoFragment, altadispositivofragment)
+                    .replace(R.id.lnlPrincipalFragment, altaDispositivoFragment, altadispositivofragment)
                     .addToBackStack(altadispositivofragment)
                     .commit();
         } else if (id == R.id.nav_gallery) {
             DispositivosFragment dispositivosFragment = new DispositivosFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.lnlPrincipalFragment, dispositivosFragment, dispositivosfragment)
+                    .replace(R.id.lnlPrincipalFragment, dispositivosFragment, dispositivosfragment)
                     .addToBackStack(dispositivosfragment)
                     .commit();
-        } else if (id == R.id.nav_slideshow) {
+        /*} else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {*/
 
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "share", Toast.LENGTH_LONG).show();

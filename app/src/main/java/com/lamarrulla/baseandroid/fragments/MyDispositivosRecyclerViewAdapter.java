@@ -4,11 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment.OnListFragmentDispositivosInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
+import com.lamarrulla.baseandroid.models.Dispositivo;
 
 import java.util.List;
 
@@ -19,12 +22,16 @@ import java.util.List;
  */
 public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDispositivosRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Dispositivo.DispositivoUsuario> mValues;
     private final OnListFragmentDispositivosInteractionListener mListener;
+    private final DispositivosFragment.OnSwitchFragmentListener mListener2;
 
-    public MyDispositivosRecyclerViewAdapter(List<DummyItem> items, OnListFragmentDispositivosInteractionListener listener) {
+    public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items,
+                                             OnListFragmentDispositivosInteractionListener listener,
+                                             DispositivosFragment.OnSwitchFragmentListener listener2) {
         mValues = items;
         mListener = listener;
+        mListener2 = listener2;
     }
 
     @Override
@@ -35,10 +42,18 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(mValues.get(position).dispositivo);
+        holder.mContentView.setChecked(mValues.get(position).activo);
+                //.setText(mValues.get(position).activo);
+
+        holder.mContentView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mListener2.onSwitchFragmentInteraction(mValues.get(position).activo);
+            }
+        });
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,14 +75,14 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final Switch mContentView;
+        public Dispositivo.DispositivoUsuario mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mContentView = (Switch) view.findViewById(R.id.content);
         }
 
         @Override
