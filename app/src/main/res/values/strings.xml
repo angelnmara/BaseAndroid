@@ -5,14 +5,15 @@
     <string name="fb_login_protocol_scheme">fb408586353024011</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_password">Password</string>
     <string name="action_sign_in">Entrar</string>
     <string name="action_registrar">Registrar</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_email">Esta email address es invalida</string>
+    <string name="error_invalid_password">El password es muy corto</string>
+    <string name="error_empty_password">El password no puede estar vacio</string>
+    <string name="error_incorrect_password">El password es incorrecto</string>
+    <string name="error_field_required">Este campo es requerido</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -49,5 +50,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="AutenticacionInvalida">Usuario o password incorrecto.</string>
     <string name="WebClient">253804100294-cbr3j5hdm4nsbk4h6keckclhlspqopis.apps.googleusercontent.com</string>
+    <string name="desliza_para_registrar">Desliza para registrar</string>
 
 </resources>

@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity
         switch (TipoAcceso){
             case 1:
             case 2:
-                FirebaseAuth.getInstance().signOut();
+                salirFirebase();
                 break;
             case 3:
                 salirFirebase();

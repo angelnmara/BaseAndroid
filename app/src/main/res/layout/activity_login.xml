@@ -71,6 +71,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/action_sign_in"
+                android:background="@color/colorAccent"
+                android:textColor="#FFFFFF"
                     android:textStyle="bold" />
 
             <com.facebook.login.widget.LoginButton
@@ -111,7 +113,7 @@
                 android:layout_margin="16dp"
                 app:cancelOnYExit="true"
                 app:slideToUnlockBackgroundColor="@color/colorAccent"
-                app:slideToUnlockText="Desliza para registrar"
+                app:slideToUnlockText="@string/desliza_para_registrar"
                 app:slideToUnlockTextColor="#FFFFFF"
                 app:sliderColor="@color/colorPrimary"/>
 
