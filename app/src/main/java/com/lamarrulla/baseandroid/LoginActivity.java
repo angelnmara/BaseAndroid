@@ -201,10 +201,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
-                            utils.OpenMain(context);
-                            showProgress(false);
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            OpenMain(context);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -543,7 +542,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(LoginActivity.this, "ActivityResult", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this, "ActivityResult", Toast.LENGTH_SHORT).show();
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
@@ -578,10 +577,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
-                            utils.OpenMain(context);
-                            showProgress(false);
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            OpenMain(context);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -591,6 +589,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     }
                 });
+    }
+
+    public void OpenMain(Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        showProgress(false);
     }
 
     private void validaHash(){
