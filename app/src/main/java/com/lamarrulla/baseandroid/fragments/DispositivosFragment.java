@@ -46,6 +46,8 @@ public class DispositivosFragment extends Fragment {
     private OnListFragmentDispositivosInteractionListener mListener;
     private OnSwitchFragmentListener mListener2;
     FirebaseAPI firebaseAPI = new FirebaseAPI();
+    DatabaseReference mDatabase;
+    FirebaseAuth mFirebaseAuth;
     List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
 
     /**
@@ -88,8 +90,8 @@ public class DispositivosFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-            FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mFirebaseAuth = FirebaseAuth.getInstance();
 
             listDispositivoUsuario = new ArrayList();
             Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
@@ -181,6 +183,6 @@ public class DispositivosFragment extends Fragment {
         void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item);
     }
     public interface OnSwitchFragmentListener{
-        void onSwitchFragmentInteraction(boolean valor);
+        void onSwitchFragmentInteraction(String dispositivo, boolean valor);
     }
 }
