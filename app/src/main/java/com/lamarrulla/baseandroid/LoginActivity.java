@@ -58,6 +58,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.utils.SlideToUnlock;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.security.MessageDigest;
@@ -70,7 +71,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, View.OnClickListener, SlideToUnlock.OnSlideToUnlockEventListener {
 
     Context context = this;
     Utils utils = new Utils();
@@ -106,6 +107,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private int funcion;
     private int tipoAcceso;
+
+    private SlideToUnlock slideToUnlockView2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,12 +174,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /*  End Facebook */
 
         /*  Boton Registrar */
-        Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
-        mRegistrarButton.setOnClickListener(this);
+        /*Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
+        mRegistrarButton.setOnClickListener(this);*/
         /*  End Boton Registrar*/
         /*  Boton Gmail */
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        /*  End Boton Gmail */
+
+
+        /*slider*/
+        /*slideToUnlockView = (SlideToUnlock) findViewById(R.id.slideToUnlock);
+        slideToUnlockView.setExternalListener(this);*/
+
+        slideToUnlockView2 = (SlideToUnlock) findViewById(R.id.slideToUnlock2);
+        slideToUnlockView2.setExternalListener(this);
+        /*slider*/
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -420,9 +431,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 funcion = 1;
                 attemptLogin();
                 break;
-            case R.id.email_alta_button:
-                funcion = 2;
-                attemptLogin();
             case R.id.sign_in_button:
                 signIn();
                 break;
@@ -432,6 +440,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onSlideToUnlockCanceled() {
+        Toast.makeText(this, "Operacion cancelada", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSlideToUnlockDone() {
+        funcion = 2;
+        attemptLogin();
     }
 
     private interface ProfileQuery {
