@@ -1,10 +1,12 @@
 package com.lamarrulla.baseandroid.fragments;
 
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -25,13 +27,16 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
     private final List<Dispositivo.DispositivoUsuario> mValues;
     private final OnListFragmentDispositivosInteractionListener mListener;
     private final DispositivosFragment.OnSwitchFragmentListener mListener2;
+    private final DispositivosFragment.OnDeleteFragmentListener mListener3;
 
     public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items,
                                              OnListFragmentDispositivosInteractionListener listener,
-                                             DispositivosFragment.OnSwitchFragmentListener listener2) {
+                                             DispositivosFragment.OnSwitchFragmentListener listener2,
+                                             DispositivosFragment.OnDeleteFragmentListener listener3) {
         mValues = items;
         mListener = listener;
         mListener2 = listener2;
+        mListener3 = listener3;
     }
 
     @Override
@@ -67,6 +72,13 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
                 }
             }
         });
+
+        holder.mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener3.onDeleteFragmentInteraction(dispositivo);
+            }
+        });
     }
 
     @Override
@@ -78,6 +90,8 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         public final View mView;
         public final TextView mIdView;
         public final Switch mContentView;
+        public final ImageView mImage;
+
         public Dispositivo.DispositivoUsuario mItem;
 
         public ViewHolder(View view) {
@@ -85,6 +99,7 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (Switch) view.findViewById(R.id.content);
+            mImage = (ImageView)view.findViewById(R.id.delete);
         }
 
         @Override

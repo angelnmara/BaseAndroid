@@ -46,6 +46,7 @@ public class DispositivosFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentDispositivosInteractionListener mListener;
     private OnSwitchFragmentListener mListener2;
+    private OnDeleteFragmentListener mListener3;
     FirebaseAPI firebaseAPI = new FirebaseAPI();
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
@@ -115,7 +116,7 @@ public class DispositivosFragment extends Fragment {
                         e.printStackTrace();
                     }*/
                     }
-                    recyclerView.setAdapter(new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener, mListener2));
+                    recyclerView.setAdapter(new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener, mListener2, mListener3));
                 }
 
                 @Override
@@ -169,6 +170,11 @@ public class DispositivosFragment extends Fragment {
         }else{
             throw new RuntimeException(context.toString() + " must implement OnListFragmentDispositivosInteractionListener");
         }
+        if(context instanceof OnDeleteFragmentListener){
+            mListener3 = (OnDeleteFragmentListener) context;
+        }else{
+            throw new RuntimeException(context.toString()+"must implement OnListFragmentDispositivosInteractionListener");
+        }
     }
 
     @Override
@@ -193,5 +199,8 @@ public class DispositivosFragment extends Fragment {
     }
     public interface OnSwitchFragmentListener{
         void onSwitchFragmentInteraction(String dispositivo, boolean valor);
+    }
+    public interface OnDeleteFragmentListener{
+        void onDeleteFragmentInteraction(String dispositivo);
     }
 }

@@ -5,8 +5,12 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 
 public class FirebaseAPI {
@@ -35,5 +39,23 @@ public class FirebaseAPI {
     }
     public void writeNewObject(String path, Object object){
         mDatabase.child(path).child(mFirebaseAuth.getUid()).setValue(object);
+    }
+    public void deleteObject(String path, String value, String key){
+        Query query = mDatabase.child(path).child(mFirebaseAuth.getUid());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot du : dataSnapshot.getChildren()){
+                        Log.d(TAG, du.getValue().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

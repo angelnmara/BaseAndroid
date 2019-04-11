@@ -36,6 +36,7 @@ import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
+import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import org.json.JSONArray;
@@ -51,10 +52,12 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
         DispositivosFragment.OnListFragmentDispositivosInteractionListener,
-        DispositivosFragment.OnSwitchFragmentListener{
+        DispositivosFragment.OnSwitchFragmentListener,
+        DispositivosFragment.OnDeleteFragmentListener{
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
+    FirebaseAPI firebaseAPI = new FirebaseAPI();
     private View mProgressView;
     private View mPrincipalSV;
     NavigationView navigationView;
@@ -123,6 +126,13 @@ public class MainActivity extends AppCompatActivity
     public void onSwitchFragmentInteraction(String dispositivo, boolean valor) {
         Log.d(TAG, dispositivo + " " + valor);
         Toast.makeText(this, dispositivo + " " + valor, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDeleteFragmentInteraction(String dispositivo) {
+        Log.d(TAG, dispositivo);
+        Toast.makeText(this, dispositivo, Toast.LENGTH_LONG).show();
+        firebaseAPI.deleteObject("dispositivos", dispositivo, "dispositivo");
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{
