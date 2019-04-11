@@ -28,6 +28,7 @@ import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -131,12 +132,20 @@ public class DispositivosFragment extends Fragment {
                 View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_alta_dispositivo, null);
                 mBuilder.setView(mViewAgregar);
                 final AlertDialog dialog = mBuilder.create();
-                EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
+                final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
                 Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
                 btnAgregar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getContext(), "Click fragmet dispositovo", Toast.LENGTH_LONG).show();
+                        Date date = new Date();
+                        listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
+                                txtMacAddres.getText().toString(),
+                                true,
+                                date,
+                                null
+                        ));
+                        firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
                         dialog.hide();
                     }
                 });

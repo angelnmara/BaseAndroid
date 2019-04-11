@@ -53,5 +53,6 @@
     <string name="mac_addres">MAC ADDRES</string>
     <string name="agregar">Agregar</string>
     <string name="mis_dispositivos">Mis dispositivos</string>
+    <string name="dispositivos">dispositivos</string>
 
 </resources>
