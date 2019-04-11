@@ -40,14 +40,17 @@ public class FirebaseAPI {
     public void writeNewObject(String path, Object object){
         mDatabase.child(path).child(mFirebaseAuth.getUid()).setValue(object);
     }
-    public void deleteObject(String path, String value, String key){
+    public void deleteObject(final String path, final String value, final String key){
+        mDatabase.child(path).child(mFirebaseAuth.getUid());
         Query query = mDatabase.child(path).child(mFirebaseAuth.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot du : dataSnapshot.getChildren()){
-                        Log.d(TAG, du.getValue().toString());
+                        if(value.contentEquals(du.child(key).getValue().toString())){
+                            mDatabase.child(path).child(mFirebaseAuth.getUid()).child(du.getKey()).removeValue();
+                        }
                     }
                 }
             }
