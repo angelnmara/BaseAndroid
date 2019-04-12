@@ -1,6 +1,5 @@
 package com.lamarrulla.baseandroid.fragments;
 
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment.OnListFragmentDispositivosInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
 import com.lamarrulla.baseandroid.models.Dispositivo;
+import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 
 import java.util.List;
 
@@ -27,16 +27,15 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
     private final List<Dispositivo.DispositivoUsuario> mValues;
     private final OnListFragmentDispositivosInteractionListener mListener;
     private final DispositivosFragment.OnSwitchFragmentListener mListener2;
-    private final DispositivosFragment.OnDeleteFragmentListener mListener3;
+
+    FirebaseAPI firebaseAPI = new FirebaseAPI();
 
     public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items,
                                              OnListFragmentDispositivosInteractionListener listener,
-                                             DispositivosFragment.OnSwitchFragmentListener listener2,
-                                             DispositivosFragment.OnDeleteFragmentListener listener3) {
+                                             DispositivosFragment.OnSwitchFragmentListener listener2) {
         mValues = items;
         mListener = listener;
         mListener2 = listener2;
-        mListener3 = listener3;
     }
 
     @Override
@@ -58,7 +57,13 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         holder.mContentView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mListener2.onSwitchFragmentInteraction(dispositivo, isChecked);
+                if(isChecked!=holder.mItem.activo){
+                    holder.mContentView.setChecked(isChecked);
+                    holder.mItem.activo = isChecked;
+                    mValues.set(position, holder.mItem);
+                    notifyItemChanged(position, null);
+                }
+                //mListener2.onSwitchFragmentInteraction(dispositivo, isChecked);
             }
         });
 
@@ -76,7 +81,10 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener3.onDeleteFragmentInteraction(dispositivo);
+                mValues.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, mValues.size());
+                //firebaseAPI.deleteObject("dispositivos", dispositivo, "dispositivo");
             }
         });
     }

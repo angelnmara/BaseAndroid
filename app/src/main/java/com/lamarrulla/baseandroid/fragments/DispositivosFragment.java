@@ -46,11 +46,11 @@ public class DispositivosFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentDispositivosInteractionListener mListener;
     private OnSwitchFragmentListener mListener2;
-    private OnDeleteFragmentListener mListener3;
     FirebaseAPI firebaseAPI = new FirebaseAPI();
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
     List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
+    RecyclerView.Adapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -116,7 +116,8 @@ public class DispositivosFragment extends Fragment {
                         e.printStackTrace();
                     }*/
                     }
-                    recyclerView.setAdapter(new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener, mListener2, mListener3));
+                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener, mListener2);
+                    recyclerView.setAdapter(adapter);
                 }
 
                 @Override
@@ -146,6 +147,8 @@ public class DispositivosFragment extends Fragment {
                                 date,
                                 null
                         ));
+                        adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
+                        adapter.notifyDataSetChanged();
                         firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
                         dialog.hide();
                     }
@@ -161,19 +164,16 @@ public class DispositivosFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnListFragmentDispositivosInteractionListener) {
             mListener = (OnListFragmentDispositivosInteractionListener) context;
+            Toast.makeText(getContext(), "pueba toast interaction", Toast.LENGTH_LONG).show();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentDispositivosInteractionListener");
         }
         if(context instanceof OnSwitchFragmentListener){
             mListener2 = (OnSwitchFragmentListener) context;
+            Toast.makeText(getContext(), "switch", Toast.LENGTH_LONG).show();
         }else{
             throw new RuntimeException(context.toString() + " must implement OnListFragmentDispositivosInteractionListener");
-        }
-        if(context instanceof OnDeleteFragmentListener){
-            mListener3 = (OnDeleteFragmentListener) context;
-        }else{
-            throw new RuntimeException(context.toString()+"must implement OnListFragmentDispositivosInteractionListener");
         }
     }
 
@@ -199,8 +199,5 @@ public class DispositivosFragment extends Fragment {
     }
     public interface OnSwitchFragmentListener{
         void onSwitchFragmentInteraction(String dispositivo, boolean valor);
-    }
-    public interface OnDeleteFragmentListener{
-        void onDeleteFragmentInteraction(String dispositivo);
     }
 }
