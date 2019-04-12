@@ -149,7 +149,7 @@ public class DispositivosFragment extends Fragment {
                         ));
                         adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                         adapter.notifyDataSetChanged();
-                        firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
+                        //firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
                         dialog.hide();
                     }
                 });
@@ -180,7 +180,14 @@ public class DispositivosFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
         mListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
     }
 
     /**
