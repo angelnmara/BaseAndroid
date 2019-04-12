@@ -13,7 +13,6 @@ import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment.OnListFragmentDispositivosInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
 import com.lamarrulla.baseandroid.models.Dispositivo;
-import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 
 import java.util.List;
 
@@ -26,16 +25,11 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
 
     private final List<Dispositivo.DispositivoUsuario> mValues;
     private final OnListFragmentDispositivosInteractionListener mListener;
-    private final DispositivosFragment.OnSwitchFragmentListener mListener2;
-
-    FirebaseAPI firebaseAPI = new FirebaseAPI();
 
     public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items,
-                                             OnListFragmentDispositivosInteractionListener listener,
-                                             DispositivosFragment.OnSwitchFragmentListener listener2) {
+                                             OnListFragmentDispositivosInteractionListener listener) {
         mValues = items;
         mListener = listener;
-        mListener2 = listener2;
     }
 
     @Override
@@ -52,7 +46,6 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         holder.mIdView.setText(dispositivo);
         final boolean check = mValues.get(position).activo;
         holder.mContentView.setChecked(check);
-                //.setText(mValues.get(position).activo);
 
         holder.mContentView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -63,7 +56,6 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
                     mValues.set(position, holder.mItem);
                     notifyItemChanged(position, null);
                 }
-                //mListener2.onSwitchFragmentInteraction(dispositivo, isChecked);
             }
         });
 
@@ -84,7 +76,6 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
                 mValues.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mValues.size());
-                //firebaseAPI.deleteObject("dispositivos", dispositivo, "dispositivo");
             }
         });
     }

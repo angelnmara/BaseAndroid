@@ -51,8 +51,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
-        DispositivosFragment.OnListFragmentDispositivosInteractionListener,
-        DispositivosFragment.OnSwitchFragmentListener{
+        DispositivosFragment.OnListFragmentDispositivosInteractionListener{
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -119,12 +118,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item) {
         Log.d(TAG, "interaccion de fragment");
-    }
-
-    @Override
-    public void onSwitchFragmentInteraction(String dispositivo, boolean valor) {
-        Log.d(TAG, dispositivo + " " + valor);
-        Toast.makeText(this, dispositivo + " " + valor, Toast.LENGTH_LONG).show();
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{

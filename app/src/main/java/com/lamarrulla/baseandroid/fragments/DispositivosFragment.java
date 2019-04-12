@@ -2,6 +2,8 @@ package com.lamarrulla.baseandroid.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -45,7 +47,6 @@ public class DispositivosFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentDispositivosInteractionListener mListener;
-    private OnSwitchFragmentListener mListener2;
     FirebaseAPI firebaseAPI = new FirebaseAPI();
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
@@ -116,7 +117,7 @@ public class DispositivosFragment extends Fragment {
                         e.printStackTrace();
                     }*/
                     }
-                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener, mListener2);
+                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener);
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -139,7 +140,6 @@ public class DispositivosFragment extends Fragment {
                 btnAgregar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getContext(), "Click fragmet dispositovo", Toast.LENGTH_LONG).show();
                         Date date = new Date();
                         listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
                                 txtMacAddres.getText().toString(),
@@ -149,10 +149,10 @@ public class DispositivosFragment extends Fragment {
                         ));
                         adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                         adapter.notifyDataSetChanged();
-                        //firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
                         dialog.hide();
                     }
                 });
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
             }
         });
@@ -164,16 +164,9 @@ public class DispositivosFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnListFragmentDispositivosInteractionListener) {
             mListener = (OnListFragmentDispositivosInteractionListener) context;
-            Toast.makeText(getContext(), "pueba toast interaction", Toast.LENGTH_LONG).show();
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentDispositivosInteractionListener");
-        }
-        if(context instanceof OnSwitchFragmentListener){
-            mListener2 = (OnSwitchFragmentListener) context;
-            Toast.makeText(getContext(), "switch", Toast.LENGTH_LONG).show();
-        }else{
-            throw new RuntimeException(context.toString() + " must implement OnListFragmentDispositivosInteractionListener");
         }
     }
 
@@ -203,8 +196,5 @@ public class DispositivosFragment extends Fragment {
     public interface OnListFragmentDispositivosInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item);
-    }
-    public interface OnSwitchFragmentListener{
-        void onSwitchFragmentInteraction(String dispositivo, boolean valor);
     }
 }
