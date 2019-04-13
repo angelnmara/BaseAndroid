@@ -26,17 +26,20 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
-import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import org.json.JSONArray;
@@ -51,11 +54,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
-        DispositivosFragment.OnListFragmentDispositivosInteractionListener{
+        DispositivosFragment.OnListFragmentDispositivosInteractionListener, OnMapReadyCallback {
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
-    FirebaseAPI firebaseAPI = new FirebaseAPI();
     private View mProgressView;
     private View mPrincipalSV;
     NavigationView navigationView;
@@ -67,6 +69,10 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private static final String altadispositivofragment = "AltaDispositivoFragment";
     private static final String dispositivosfragment = "DispositivosFragment";
+
+    private MapView mapView;
+    private GoogleMap gmap;
+    public static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +114,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        /**/
+        Bundle mapViewBundle = null;
+        if(savedInstanceState!=null){
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
+        }
+        mapView = findViewById(R.id.lnlPrincipalFragment);
+        mapView.onCreate(mapViewBundle);
+        mapView.getMapAsync(this);
+        /**/
+
     }
 
     @Override
@@ -118,6 +135,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item) {
         Log.d(TAG, "interaccion de fragment");
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        gmap = googleMap;
+        gmap.setMinZoomPreference(12);
+        LatLng ny = new LatLng(40.7143528, -74.0059731);
+        gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{

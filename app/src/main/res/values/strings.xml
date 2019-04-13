@@ -44,6 +44,7 @@
     <integer name="AccesoUsuarioConstasennaFirebase">2</integer>
     <integer name="AccesoFacebook">3</integer>
     <integer name="AccesoGoogle">4</integer>
+    <string name="google_maps_key"  templateMergeStrategy="preserve" translatable="false">AIzaSyDdQm0AdvHWIhJXs6TAle0Q5v4RRyVkPYE</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
