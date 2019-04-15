@@ -72,9 +72,9 @@ public class MainActivity extends FragmentActivity
     private static final String altadispositivofragment = "AltaDispositivoFragment";
     private static final String dispositivosfragment = "DispositivosFragment";
 
-    private MapView mapView;
+    //private MapView mapView;
     private GoogleMap gmap;
-    public static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
+    //public static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
