@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -30,7 +31,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +41,6 @@ import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
-import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.utils.Utils;
 
@@ -51,10 +53,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends FragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
-        DispositivosFragment.OnListFragmentDispositivosInteractionListener, OnMapReadyCallback {
+        OnMapReadyCallback {
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -79,11 +81,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mProgressView = findViewById(R.id.main_progress);
-        mPrincipalSV = findViewById(R.id.svPrincipal);
+        //mProgressView = findViewById(R.id.main_progress);
+        //mPrincipalSV = findViewById(R.id.svPrincipal);
         sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -115,15 +117,13 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        /**/
-        Bundle mapViewBundle = null;
-        if(savedInstanceState!=null){
-            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
-        }
-        mapView = findViewById(R.id.lnlPrincipalFragment);
-        mapView.onCreate(mapViewBundle);
-        mapView.getMapAsync(this);
-        /**/
+        /*maps*/
+        //setContentView(R.layout.content_main);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.lnlPrincipalFragment);
+        mapFragment.getMapAsync(this);
+        /*maps*/
 
     }
 
@@ -133,16 +133,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item) {
-        Log.d(TAG, "interaccion de fragment");
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
-        gmap.setMinZoomPreference(12);
-        LatLng ny = new LatLng(40.7143528, -74.0059731);
-        gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        gmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{
@@ -258,7 +254,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Toast.makeText(this, "alta dispositivo", Toast.LENGTH_SHORT).show();
+            /*Toast.makeText(this, "alta dispositivo", Toast.LENGTH_SHORT).show();*/
             AltaDispositivoFragment altaDispositivoFragment = new AltaDispositivoFragment();
             getSupportFragmentManager()
                     .beginTransaction()

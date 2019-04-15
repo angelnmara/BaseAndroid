@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +45,6 @@ public class DispositivosFragment extends Fragment {
     private static final String TAG = "DispositivosFragment";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentDispositivosInteractionListener mListener;
     FirebaseAPI firebaseAPI = new FirebaseAPI();
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
@@ -117,7 +115,7 @@ public class DispositivosFragment extends Fragment {
                         e.printStackTrace();
                     }*/
                     }
-                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, mListener);
+                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario);
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -162,19 +160,12 @@ public class DispositivosFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentDispositivosInteractionListener) {
-            mListener = (OnListFragmentDispositivosInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentDispositivosInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
-        mListener = null;
     }
 
     @Override
@@ -193,8 +184,4 @@ public class DispositivosFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentDispositivosInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentDispositivosInteraction(Dispositivo.DispositivoUsuario item);
-    }
 }

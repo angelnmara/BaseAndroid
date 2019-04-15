@@ -10,7 +10,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.fragments.DispositivosFragment.OnListFragmentDispositivosInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 
@@ -24,12 +23,9 @@ import java.util.List;
 public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDispositivosRecyclerViewAdapter.ViewHolder> {
 
     private final List<Dispositivo.DispositivoUsuario> mValues;
-    private final OnListFragmentDispositivosInteractionListener mListener;
 
-    public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items,
-                                             OnListFragmentDispositivosInteractionListener listener) {
+    public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items) {
         mValues = items;
-        mListener = listener;
     }
 
     @Override
@@ -59,7 +55,7 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
             }
         });
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        /*holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -68,7 +64,7 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
                     mListener.onListFragmentDispositivosInteraction(holder.mItem);
                 }
             }
-        });
+        });*/
 
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override

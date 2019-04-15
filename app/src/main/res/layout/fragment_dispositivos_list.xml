@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:name="com.lamarrulla.baseandroid.fragments.DispositivosFragment"
     tools:context=".fragments.DispositivosFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#FFFFFF">
     <android.support.v7.widget.RecyclerView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/list"
