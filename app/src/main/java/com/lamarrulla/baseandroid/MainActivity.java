@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -86,14 +87,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AppBarLayout appBarLay = findViewById(R.id.appBarLay);
-        //appBarLay.setBackgroundColor(Color.TRANSPARENT);
+        /*AppBarLayout appBarLay = findViewById(R.id.appBarLay);
+        appBarLay.setBackgroundColor(Color.TRANSPARENT);*/
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        /*toolbar.setBackgroundColor(Color.TRANSPARENT);
+        toolbar.setBackgroundColor(Color.TRANSPARENT);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("StackOverFlow");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //mProgressView = findViewById(R.id.main_progress);
         //mPrincipalSV = findViewById(R.id.svPrincipal);
