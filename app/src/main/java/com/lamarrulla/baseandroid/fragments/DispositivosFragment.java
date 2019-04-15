@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
+import com.lamarrulla.baseandroid.utils.MaskWatcher;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,6 +135,7 @@ public class DispositivosFragment extends Fragment {
                 mBuilder.setView(mViewAgregar);
                 final AlertDialog dialog = mBuilder.create();
                 final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
+                txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
                 Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
                 btnAgregar.setOnClickListener(new View.OnClickListener() {
                     @Override
