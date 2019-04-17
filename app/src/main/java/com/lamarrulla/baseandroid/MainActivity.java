@@ -43,7 +43,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
-import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
@@ -340,12 +339,12 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, AltaDeviceActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
-            DispositivosFragment dispositivosFragment = new DispositivosFragment();
+            /*DispositivosFragment dispositivosFragment = new DispositivosFragment();
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.lnlPrincipalFragment, dispositivosFragment, dispositivosfragment)
                     .addToBackStack(dispositivosfragment)
-                    .commit();
+                    .commit();*/
         } else if (id == R.id.nav_ubicacion) {
             startActivity(new Intent(MainActivity.this, TrackerActivity.class));
             /*} else if (id == R.id.nav_manage) {*/

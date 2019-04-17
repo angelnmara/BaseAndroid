@@ -8,8 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,7 +29,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.fragments.AltaDispositivoScanFragment;
 import com.lamarrulla.baseandroid.fragments.MyDispositivosRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
@@ -69,12 +66,6 @@ public class AltaDeviceActivity extends AppCompatActivity {
                 case R.id.navigation_dashboard:
                     lnlAltaMAC.setVisibility(View.GONE);
                     lnlAltaScan.setVisibility(View.VISIBLE);
-                    Fragment fragment = new AltaDispositivoScanFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.lnlAltaScan, fragment, TAGADSF)
-                            .addToBackStack(TAGADSF)
-                            .commit();
                     return true;
                 /*case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
