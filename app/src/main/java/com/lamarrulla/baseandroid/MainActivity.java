@@ -1,10 +1,13 @@
 package com.lamarrulla.baseandroid;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +40,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
@@ -75,24 +80,22 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap gmap;
     //public static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
+    private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+    private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
+
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        /*AppBarLayout appBarLay = findViewById(R.id.appBarLay);
-        appBarLay.setBackgroundColor(Color.TRANSPARENT);*/
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.TRANSPARENT);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        CambiosEnToolBar();
 
         //mProgressView = findViewById(R.id.main_progress);
         //mPrincipalSV = findViewById(R.id.svPrincipal);
-        sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -114,12 +117,12 @@ public class MainActivity extends AppCompatActivity
 
         TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), ""));
 
-        if(TipoAcceso == 1){
+        if (TipoAcceso == 1) {
             /*  obtine modulo desde servidor    */
             /*  select menu */
             showProgress(true);
             mAuthTask = new getMenu(context, "tbmodulo");
-            mAuthTask.execute((Void)null);
+            mAuthTask.execute((Void) null);
             /*  select menu */
         }
 
@@ -132,7 +135,14 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.lnlPrincipalFragment);
         mapFragment.getMapAsync(this);
         /*maps*/
+    }
 
+    public void CambiosEnToolBar(){
+        toolbar.setBackgroundColor(Color.TRANSPARENT);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -144,9 +154,60 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
         // Add a marker in Sydney and move the camera
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+
+            return;
+        }else{
+            setMap();
+        }
+
+    }
+
+    @SuppressLint("MissingPermission")
+    public void setMap(){
+        gmap.setMyLocationEnabled(true);
         LatLng sydney = new LatLng(-34, 151);
         gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         gmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    setMap();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Se tienen que autorizar los permisos para continuar", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     public class getMenu extends AsyncTask<Void, Void, Boolean>{
@@ -276,9 +337,9 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.lnlPrincipalFragment, dispositivosFragment, dispositivosfragment)
                     .addToBackStack(dispositivosfragment)
                     .commit();
-        /*} else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {*/
+        } else if (id == R.id.nav_ubicacion) {
+            startActivity(new Intent(MainActivity.this, TrackerActivity.class));
+            /*} else if (id == R.id.nav_manage) {*/
 
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "share", Toast.LENGTH_LONG).show();

@@ -12,11 +12,11 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/mis_dispositivos" />
-        <!--<item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
         <item
+            android:id="@+id/nav_ubicacion"
+            android:icon="@drawable/ic_map_marker"
+            android:title="My ubicacion" />
+        <!--<item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="Tools" />-->
