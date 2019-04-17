@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.DispositivosFragment;
@@ -186,12 +187,12 @@ public class MainActivity extends AppCompatActivity
         gmap.setMyLocationEnabled(true);
         gmap.setMinZoomPreference(6.0f);
         gmap.setMaxZoomPreference(16.0f);
-        //getMyLocation();
         LatLng sydney = new LatLng(-34, 151);
         gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
         gmap.getUiSettings().setCompassEnabled(false);
         gmap.getUiSettings().setMyLocationButtonEnabled(false);
+        getMyLocation();
     }
 
     @Override
@@ -336,12 +337,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             /*Toast.makeText(this, "alta dispositivo", Toast.LENGTH_SHORT).show();*/
-            AltaDispositivoFragment altaDispositivoFragment = new AltaDispositivoFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.lnlPrincipalFragment, altaDispositivoFragment, altadispositivofragment)
-                    .addToBackStack(altadispositivofragment)
-                    .commit();
+            Intent intent = new Intent(this, AltaDeviceActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_gallery) {
             DispositivosFragment dispositivosFragment = new DispositivosFragment();
             getSupportFragmentManager()
@@ -436,8 +433,10 @@ public class MainActivity extends AppCompatActivity
 
     private void getMyLocation() {
         Location location = gmap.getMyLocation();
-        LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-        //gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+        if(location!=null){
+            LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+            //gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+        }
     }
 }

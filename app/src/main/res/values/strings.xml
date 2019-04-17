@@ -64,6 +64,11 @@
     <string name="notification_text">Tracking, tap to cancel</string>
     <string name="wlan0">wlan0</string>
     <string name="comparitir_mi_ubica">Comparitir mi ubicación</string>
+    <string name="title_activity_alta_device">AltaDeviceActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="altaDispositvo">Alta de Dispositivo</string>
 
     <!--firebase-->
 
