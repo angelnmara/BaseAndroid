@@ -63,6 +63,7 @@
     <string name="firebase_password" translatable="false">M@r@dr1980</string>
     <string name="notification_text">Tracking, tap to cancel</string>
     <string name="wlan0">wlan0</string>
+    <string name="comparitir_mi_ubica">Comparitir mi ubicación</string>
 
     <!--firebase-->
 

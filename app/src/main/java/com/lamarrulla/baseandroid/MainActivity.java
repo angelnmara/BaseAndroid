@@ -9,13 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -102,8 +102,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                getMyLocation();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
 
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
 
         TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), ""));
 
@@ -137,9 +139,8 @@ public class MainActivity extends AppCompatActivity
         /*maps*/
     }
 
-    public void CambiosEnToolBar(){
+    public void CambiosEnToolBar() {
         toolbar.setBackgroundColor(Color.TRANSPARENT);
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -163,25 +164,34 @@ public class MainActivity extends AppCompatActivity
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            requestPermissions();
 
 
             return;
-        }else{
+        } else {
             setMap();
         }
 
     }
 
+    public void requestPermissions(){
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+    }
+
     @SuppressLint("MissingPermission")
-    public void setMap(){
+    public void setMap() {
         gmap.setMyLocationEnabled(true);
+        gmap.setMinZoomPreference(6.0f);
+        gmap.setMaxZoomPreference(16.0f);
+        //getMyLocation();
         LatLng sydney = new LatLng(-34, 151);
         gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        gmap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+        gmap.getUiSettings().setCompassEnabled(false);
+        gmap.getUiSettings().setMyLocationButtonEnabled(false);
     }
 
     @Override
@@ -210,15 +220,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class getMenu extends AsyncTask<Void, Void, Boolean>{
+    public class getMenu extends AsyncTask<Void, Void, Boolean> {
 
         private final Context mContext;
         private final String mTabla;
 
-        getMenu(Context context, String tabla){
+        getMenu(Context context, String tabla) {
             mContext = context;
             mTabla = tabla;
         }
+
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
@@ -234,20 +245,21 @@ public class MainActivity extends AppCompatActivity
             }
             return iAcceso.getEsCorrecto();
         }
+
         @Override
         protected void onPostExecute(final Boolean success) {
             showProgress(false);
             if (success) {
-                try{
+                try {
                     JSONObject jso = iAcceso.getJso();
                     JSONArray jsa = jso.getJSONArray("tbmodulo");
                     ArrayList<Login.Menu> menuList = new ArrayList<Login.Menu>();
-                    for(int i = 0; i<jsa.length(); i++){
+                    for (int i = 0; i < jsa.length(); i++) {
                         JSONObject jsoM = jsa.getJSONObject(i);
                         menuList.add(new Login.Menu(jsoM.getString("fcmodulo"), jsoM.getString("fcmoduloimg"), i));
                     }
                     agregaMenu(navigationView, menuList);
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
             } else {
@@ -267,19 +279,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void agregaMenu(NavigationView navigationView, List<Login.Menu> menuList){
-        try{
+    public void agregaMenu(NavigationView navigationView, List<Login.Menu> menuList) {
+        try {
             /* Obten menu */
-            Menu menu =navigationView.getMenu();
+            Menu menu = navigationView.getMenu();
             /* Limpia menu */
             menu.clear();
-            if(!menuList.isEmpty()){
-                for (Login.Menu m: menuList
-                ){
+            if (!menuList.isEmpty()) {
+                for (Login.Menu m : menuList
+                ) {
                     menu.add(1, m.ordenMenu, m.ordenMenu, m.nombreMenu).setIcon(utils.getResourceDrawforName(m.imagenMenu));
                 }
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -353,7 +365,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void salir() {
-        switch (TipoAcceso){
+        switch (TipoAcceso) {
             case 1:
             case 2:
                 salirFirebase();
@@ -383,7 +395,7 @@ public class MainActivity extends AppCompatActivity
         regresaLogin();
     }
 
-    private void regresaLogin(){
+    private void regresaLogin() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -420,5 +432,12 @@ public class MainActivity extends AppCompatActivity
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mPrincipalSV.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    private void getMyLocation() {
+        Location location = gmap.getMyLocation();
+        LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+        //gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
     }
 }

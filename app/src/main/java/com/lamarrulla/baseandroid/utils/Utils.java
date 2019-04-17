@@ -7,15 +7,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Build;
 import android.view.View;
 
+import com.google.android.gms.location.LocationListener;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 
 import java.lang.reflect.Field;
 
 public class Utils {
+
     public void guardaShared(Activity activity, int variable, String valor){
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
