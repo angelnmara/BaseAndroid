@@ -1,0 +1,19 @@
+package com.lamarrulla.baseandroid.utils;
+
+public class Constants {
+    /**
+     * Constantes para {@link MemoryService}
+     */
+    public static final String ACTION_RUN_SERVICE = "com.lamarrulla.baseandroid.action.RUN_SERVICE";
+    public static final String ACTION_MEMORY_EXIT = "com.lamarrulla.baseandroid.action.MEMORY_EXIT";
+
+    public static final String EXTRA_MEMORY = "com.lamarrulla.baseandroid.extra.MEMORY";
+
+    /**
+     * Constantes para {@link ProgressIntentService}
+     */
+    public static final String ACTION_RUN_ISERVICE = "com.lamarrulla.baseandroid.action.RUN_INTENT_SERVICE";
+    public static final String ACTION_PROGRESS_EXIT = "com.lamarrulla.baseandroid.action.PROGRESS_EXIT";
+
+    public static final String EXTRA_PROGRESS = "com.lamarrulla.baseandroid.extra.PROGRESS";
+}

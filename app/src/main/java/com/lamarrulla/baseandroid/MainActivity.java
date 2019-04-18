@@ -4,8 +4,10 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,12 +43,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
+import com.lamarrulla.baseandroid.fragments.MyDispositivosRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
+import com.lamarrulla.baseandroid.services.ReadService;
+import com.lamarrulla.baseandroid.utils.Constants;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import org.json.JSONArray;
@@ -82,6 +96,9 @@ public class MainActivity extends AppCompatActivity
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
+
+    DatabaseReference mDatabase;
+    FirebaseAuth mFirebaseAuth;
 
     Toolbar toolbar;
 
@@ -137,6 +154,56 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.lnlPrincipalFragment);
         mapFragment.getMapAsync(this);
         /*maps*/
+        /*Servicio*/
+        IniciaServicio();
+        /*Servicio*/
+    }
+
+    public void IniciaServicio(){
+        Intent intentReadService = new Intent(getApplicationContext(), ReadService.class);
+        startService(intentReadService);
+        // Filtro de acciones que serán alertadas
+        IntentFilter filter = new IntentFilter(
+                Constants.ACTION_RUN_ISERVICE);
+        filter.addAction(Constants.ACTION_RUN_SERVICE);
+        filter.addAction(Constants.ACTION_MEMORY_EXIT);
+        filter.addAction(Constants.ACTION_PROGRESS_EXIT);
+
+        // Crear un nuevo ResponseReceiver
+        ResponseReceiver receiver =
+                new ResponseReceiver();
+        // Registrar el receiver y su filtro
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                receiver,
+                filter);
+    }
+
+    private class ResponseReceiver extends BroadcastReceiver{
+
+        // Sin instancias
+        private ResponseReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Constants.ACTION_RUN_SERVICE:
+                    Log.d(TAG, intent.getStringExtra(Constants.EXTRA_MEMORY));
+                    break;
+
+                case Constants.ACTION_RUN_ISERVICE:
+                    Log.d(TAG, intent.getStringExtra(Constants.EXTRA_PROGRESS));
+                    break;
+
+                case Constants.ACTION_MEMORY_EXIT:
+                    Log.d(TAG, "memoria");
+                    break;
+
+                case Constants.ACTION_PROGRESS_EXIT:
+                    Log.d(TAG, "progreso");
+                    break;
+            }
+        }
     }
 
     public void CambiosEnToolBar() {
@@ -186,9 +253,58 @@ public class MainActivity extends AppCompatActivity
         gmap.setMyLocationEnabled(true);
         gmap.setMinZoomPreference(6.0f);
         gmap.setMaxZoomPreference(16.0f);
-        LatLng sydney = new LatLng(-34, 151);
-        gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        final List<Dispositivo.DispositivoUsuario> ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
+        Dispositivo.DispositivoUsuario dispositivoUsuario = new Dispositivo.DispositivoUsuario();
+        utils.getMAC(context);
+        Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot du : dataSnapshot.getChildren()){
+                        Log.d(TAG, du.getValue().toString());
+                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
+                        ListDispositivoUsuario.add(dispositivoUsuario);
+                    }
+                    for (final Dispositivo.DispositivoUsuario du:ListDispositivoUsuario
+                         ) {
+                        Log.d(TAG, du.dispositivo);
+                        Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(du.dispositivo);
+                        queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    try {
+                                        Gson gso = new Gson();
+                                        String s1 = gso.toJson(dataSnapshot.getValue());
+                                        JSONObject jso = new JSONObject(s1);
+                                        Log.d(TAG, jso.toString());
+                                        LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
+                                        gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
+                                        //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.d(TAG, "Ocurrio un error al consultar la base de datos");
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        //
         gmap.getUiSettings().setCompassEnabled(false);
         gmap.getUiSettings().setMyLocationButtonEnabled(false);
         getMyLocation();
@@ -338,13 +454,6 @@ public class MainActivity extends AppCompatActivity
             /*Toast.makeText(this, "alta dispositivo", Toast.LENGTH_SHORT).show();*/
             Intent intent = new Intent(this, AltaDeviceActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
-            /*DispositivosFragment dispositivosFragment = new DispositivosFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.lnlPrincipalFragment, dispositivosFragment, dispositivosfragment)
-                    .addToBackStack(dispositivosfragment)
-                    .commit();*/
         } else if (id == R.id.nav_ubicacion) {
             startActivity(new Intent(MainActivity.this, TrackerActivity.class));
             /*} else if (id == R.id.nav_manage) {*/

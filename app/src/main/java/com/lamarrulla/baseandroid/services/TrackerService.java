@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.net.NetworkInterface;
 import java.util.Collections;
@@ -42,7 +43,8 @@ public class TrackerService extends Service {
 
     private static final String TAG = TrackerService.class.getSimpleName();
     String NOTIFICATION_CHANNEL_ID;
-    String macAddress;
+    Utils utils = new Utils();
+    Context context = (Context) this;
 
     public TrackerService() {
     }
@@ -56,7 +58,7 @@ public class TrackerService extends Service {
     public void onCreate() {
         super.onCreate();
         buildNotification();
-        getMAC();
+        utils.getMAC(context);
         requestLocationUpdates();
         //loginToFirebase();
     }
@@ -123,7 +125,7 @@ public class TrackerService extends Service {
         request.setFastestInterval(5000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        final String path = getString(R.string.firebase_path) + "/" + macAddress;
+        final String path = getString(R.string.firebase_path) + "/" + utils.getMacAddress();
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
@@ -141,33 +143,5 @@ public class TrackerService extends Service {
                 }
             }, null);
         }
-    }
-
-    private void getMAC(){
-        try {
-            String interfaceName = getString(R.string.wlan0);
-            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface intf : interfaces) {
-                if (!intf.getName().equalsIgnoreCase(interfaceName)){
-                    continue;
-                }
-
-                byte[] mac = intf.getHardwareAddress();
-                if (mac==null){
-                    return;
-                }
-
-                StringBuilder buf = new StringBuilder();
-                for (byte aMac : mac) {
-                    buf.append(String.format("%02X:", aMac));
-                }
-                if (buf.length()>0) {
-                    buf.deleteCharAt(buf.length() - 1);
-                }
-                macAddress = buf.toString();
-            }
-        } catch (Exception ex) {
-            Log.d(TAG, ex.getMessage());
-        } // for now eat exceptions
     }
 }

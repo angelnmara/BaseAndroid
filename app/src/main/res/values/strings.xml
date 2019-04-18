@@ -69,6 +69,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="altaDispositvo">Alta de Dispositivo</string>
+    <string name="Locations">locations</string>
 
     <!--firebase-->
 

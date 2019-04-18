@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.location.LocationListener;
@@ -16,8 +17,19 @@ import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 
 import java.lang.reflect.Field;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 
 public class Utils {
+
+    public static final String TAG = "Utils";
+
+    private String macAddress;
+
+    public String getMacAddress() {
+        return macAddress;
+    }
 
     public void guardaShared(Activity activity, int variable, String valor){
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -79,5 +91,33 @@ public class Utils {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
+    }
+
+    public void getMAC(Context context){
+        try {
+            String interfaceName = context.getString(R.string.wlan0);
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                if (!intf.getName().equalsIgnoreCase(interfaceName)){
+                    continue;
+                }
+
+                byte[] mac = intf.getHardwareAddress();
+                if (mac==null){
+                    return;
+                }
+
+                StringBuilder buf = new StringBuilder();
+                for (byte aMac : mac) {
+                    buf.append(String.format("%02X:", aMac));
+                }
+                if (buf.length()>0) {
+                    buf.deleteCharAt(buf.length() - 1);
+                }
+                macAddress = buf.toString();
+            }
+        } catch (Exception ex) {
+            Log.d(TAG, ex.getMessage());
+        } // for now eat exceptions
     }
 }
