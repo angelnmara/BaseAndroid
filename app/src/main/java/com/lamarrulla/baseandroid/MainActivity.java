@@ -53,7 +53,6 @@ import com.google.gson.Gson;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
-import com.lamarrulla.baseandroid.fragments.MyDispositivosRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Dispositivo;
@@ -105,6 +104,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         CambiosEnToolBar();
@@ -188,7 +191,10 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Constants.ACTION_RUN_SERVICE:
-                    Log.d(TAG, intent.getStringExtra(Constants.EXTRA_MEMORY));
+                    Log.d(TAG, intent.getStringExtra(Constants.LATITUD));
+                    Log.d(TAG, intent.getStringExtra(Constants.LONGITUD));
+                    Log.d(TAG, intent.getStringExtra(Constants.DISPOSITIVO));
+                    getLocation(Double.parseDouble(intent.getStringExtra(Constants.LATITUD)), Double.parseDouble(intent.getStringExtra(Constants.LONGITUD)), intent.getStringExtra(Constants.DISPOSITIVO));
                     break;
 
                 case Constants.ACTION_RUN_ISERVICE:
@@ -236,6 +242,7 @@ public class MainActivity extends AppCompatActivity
 
             return;
         } else {
+            gmap.setMyLocationEnabled(true);
             setMap();
         }
 
@@ -250,66 +257,14 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressLint("MissingPermission")
     public void setMap() {
-        gmap.setMyLocationEnabled(true);
         gmap.setMinZoomPreference(6.0f);
         gmap.setMaxZoomPreference(16.0f);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        final List<Dispositivo.DispositivoUsuario> ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
-        Dispositivo.DispositivoUsuario dispositivoUsuario = new Dispositivo.DispositivoUsuario();
-        utils.getMAC(context);
-        Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot du : dataSnapshot.getChildren()){
-                        Log.d(TAG, du.getValue().toString());
-                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
-                        ListDispositivoUsuario.add(dispositivoUsuario);
-                    }
-                    for (final Dispositivo.DispositivoUsuario du:ListDispositivoUsuario
-                         ) {
-                        Log.d(TAG, du.dispositivo);
-                        Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(du.dispositivo);
-                        queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()){
-                                    try {
-                                        Gson gso = new Gson();
-                                        String s1 = gso.toJson(dataSnapshot.getValue());
-                                        JSONObject jso = new JSONObject(s1);
-                                        Log.d(TAG, jso.toString());
-                                        LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
-                                        gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
-                                        //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d(TAG, "Ocurrio un error al consultar la base de datos");
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        //
         gmap.getUiSettings().setCompassEnabled(false);
         gmap.getUiSettings().setMyLocationButtonEnabled(false);
-        getMyLocation();
+        //getMyLocation();
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -320,7 +275,8 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    // contacts-
+                    gmap.setMyLocationEnabled(true);
                     setMap();
                 } else {
 
@@ -539,11 +495,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void getMyLocation() {
+    private void getLocation(double latitud, double longitud, String dispositivo) {
+        //Location location = gmap.getMyLocation();
+
+            LatLng sydney = new LatLng(latitud, longitud);
+            gmap.addMarker(new MarkerOptions().position(sydney).title(dispositivo));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+
+    }
+    private void getMyLocation(){
         Location location = gmap.getMyLocation();
         if(location!=null){
             LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-            //gmap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
         }
     }

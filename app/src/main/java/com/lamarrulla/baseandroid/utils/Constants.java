@@ -7,7 +7,9 @@ public class Constants {
     public static final String ACTION_RUN_SERVICE = "com.lamarrulla.baseandroid.action.RUN_SERVICE";
     public static final String ACTION_MEMORY_EXIT = "com.lamarrulla.baseandroid.action.MEMORY_EXIT";
 
-    public static final String EXTRA_MEMORY = "com.lamarrulla.baseandroid.extra.MEMORY";
+    public static final String LATITUD = "com.lamarrulla.baseandroid.extra.LATITUD";
+    public static final String LONGITUD = "com.lamarrulla.baseandroid.extra.LONGITUD";
+    public static final String DISPOSITIVO = "com.lamarrulla.baseandroid.extra.DISPOSITIVO";
 
     /**
      * Constantes para {@link ProgressIntentService}

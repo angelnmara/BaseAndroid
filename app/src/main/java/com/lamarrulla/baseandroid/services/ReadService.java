@@ -1,23 +1,16 @@
 package com.lamarrulla.baseandroid.services;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -97,7 +90,9 @@ public class ReadService extends Service {
                                     JSONObject jso = new JSONObject(s1);
                                     Log.d(TAG, jso.toString());
                                     Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
-                                            .putExtra(Constants.EXTRA_MEMORY, jso.getString("latitude"));
+                                            .putExtra(Constants.LATITUD, jso.getString("latitude"))
+                                            .putExtra(Constants.LONGITUD, jso.getString("longitude"))
+                                            .putExtra(Constants.DISPOSITIVO, du.dispositivo);
                                     // Emitir el intent a la actividad
                                     LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
                                     //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
