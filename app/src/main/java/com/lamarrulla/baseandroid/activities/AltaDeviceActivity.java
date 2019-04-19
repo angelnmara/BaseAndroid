@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -54,6 +55,10 @@ public class AltaDeviceActivity extends AppCompatActivity {
     Context context = AltaDeviceActivity.this;
     CoordinatorLayout lnlAltaMAC;
     LinearLayout lnlAltaScan;
+
+    public interface OnItemClickListener{
+        void onItemClick(Dispositivo.DispositivoUsuario item);
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -123,7 +128,13 @@ public class AltaDeviceActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }*/
                     }
-                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario);
+                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, new OnItemClickListener(){
+                        @Override
+                        public void onItemClick(Dispositivo.DispositivoUsuario item) {
+                            Log.d(TAG, "");
+                            createDialog(item, 2);
+                        }
+                    });
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -137,35 +148,47 @@ public class AltaDeviceActivity extends AppCompatActivity {
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-                View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_alta_dispositivo, null);
-                mBuilder.setView(mViewAgregar);
-                final AlertDialog dialog = mBuilder.create();
-                final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
-                txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
-                Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
-                btnAgregar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Date date = new Date();
-                        listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
-                                txtMacAddres.getText().toString(),
-                                true,
-                                date,
-                                null
-                        ));
-                        adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
-                        adapter.notifyDataSetChanged();
-                        dialog.hide();
-                    }
-                });
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.show();
+                createDialog(null, 1);
             }
         });
     }
+
+    public void createDialog(final Dispositivo.DispositivoUsuario item, final int opcion){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_alta_dispositivo, null);
+        mBuilder.setView(mViewAgregar);
+        final AlertDialog dialog = mBuilder.create();
+        final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
+        if(item!=null){
+            txtMacAddres.setText(item.dispositivo);
+        }
+        txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
+        Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
+        btnAgregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (opcion == 2){
+                    listDispositivoUsuario.remove(item);
+                }
+                Date date = new Date();
+                listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
+                        txtMacAddres.getText().toString().toUpperCase(),
+                        true,
+                        date,
+                        null
+                ));
+                adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
+                adapter.notifyDataSetChanged();
+                dialog.hide();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
     public boolean onOptionsItemSelected(MenuItem item){
         Intent myIntent = new Intent(context, MainActivity.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivityForResult(myIntent, 0);
         return true;
     }

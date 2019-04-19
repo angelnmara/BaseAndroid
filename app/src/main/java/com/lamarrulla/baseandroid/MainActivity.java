@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity
 
     Toolbar toolbar;
 
+    Intent intentReadService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +114,8 @@ public class MainActivity extends AppCompatActivity
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        intentReadService = new Intent(getApplicationContext(), ReadService.class);
 
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -181,11 +185,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void IniciaServicio(){
-        Intent intentReadService = new Intent(getApplicationContext(), ReadService.class);
         startService(intentReadService);
         // Filtro de acciones que serán alertadas
-        IntentFilter filter = new IntentFilter(
-                Constants.ACTION_RUN_ISERVICE);
+        IntentFilter filter = new IntentFilter(Constants.ACTION_RUN_ISERVICE);
         filter.addAction(Constants.ACTION_RUN_SERVICE);
         filter.addAction(Constants.ACTION_MEMORY_EXIT);
         filter.addAction(Constants.ACTION_PROGRESS_EXIT);
@@ -266,8 +268,6 @@ public class MainActivity extends AppCompatActivity
         gmap.setMyLocationEnabled(true);
         setMap();
         getMyLocation();
-        /*inicia servicio*/
-        IniciaServicio();
     }
 
     public void requestPermissions(){
@@ -526,6 +526,7 @@ public class MainActivity extends AppCompatActivity
             //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
 
     }
+
     private void getMyLocation(){
         Location location = gmap.getMyLocation();
             if(location!=null){
@@ -534,5 +535,20 @@ public class MainActivity extends AppCompatActivity
         }else{
                 getLastLocation();
             }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopService(intentReadService);
+        Log.d(TAG, "Para Servicio");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /*inicia servicio*/
+        IniciaServicio();
+        Log.d(TAG, "Inicia Servicio");
     }
 }

@@ -126,7 +126,7 @@ public class Utils {
                 if (buf.length() > 0) {
                     buf.deleteCharAt(buf.length() - 1);
                 }
-                macAddress = buf.toString();
+                macAddress = buf.toString().toLowerCase();
             }
         } catch (Exception ex) {
             Log.d(TAG, ex.getMessage());

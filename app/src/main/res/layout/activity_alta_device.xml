@@ -34,14 +34,7 @@
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/fragment_dispositivos"/>
-        <!--<Button
-            android:id="@+id/btnAgregar"
-            android:text="@string/agregar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:textColor="#FFFFFF"
-            android:background="@color/colorAccent"/>-->
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btnAgregar"
             android:layout_width="wrap_content"

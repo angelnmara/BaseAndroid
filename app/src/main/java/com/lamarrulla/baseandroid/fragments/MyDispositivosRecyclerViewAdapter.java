@@ -4,12 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 
@@ -20,12 +22,14 @@ import java.util.List;
  * specified {@link OnListFragmentDispositivosInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDispositivosRecyclerViewAdapter.ViewHolder> {
+public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDispositivosRecyclerViewAdapter.ViewHolder>{
 
     private final List<Dispositivo.DispositivoUsuario> mValues;
+    private final AltaDeviceActivity.OnItemClickListener mListener;
 
-    public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> items) {
-        mValues = items;
+    public MyDispositivosRecyclerViewAdapter(List<Dispositivo.DispositivoUsuario> listDispositivoUsuario, AltaDeviceActivity.OnItemClickListener onItemClickListener) {
+        mValues = listDispositivoUsuario;
+        mListener = (AltaDeviceActivity.OnItemClickListener) onItemClickListener;
     }
 
     @Override
@@ -55,16 +59,17 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
             }
         });
 
-        /*holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                /*if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentDispositivosInteraction(holder.mItem);
-                }
+                }*/
+                mListener.onItemClick(holder.mItem);
             }
-        });*/
+        });
 
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override

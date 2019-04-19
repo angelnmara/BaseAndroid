@@ -79,7 +79,7 @@ public class ReadService extends Service {
                 for (final Dispositivo.DispositivoUsuario du:ListDispositivoUsuario
                 ) {
                     Log.d(TAG, du.dispositivo);
-                    Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(du.dispositivo);
+                    Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(du.dispositivo.toUpperCase());
                     queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

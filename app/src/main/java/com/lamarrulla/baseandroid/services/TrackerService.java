@@ -125,7 +125,7 @@ public class TrackerService extends Service {
         request.setFastestInterval(5000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        final String path = getString(R.string.firebase_path) + "/" + utils.getMacAddress();
+        final String path = getString(R.string.firebase_path) + "/" + utils.getMacAddress().toUpperCase();
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
