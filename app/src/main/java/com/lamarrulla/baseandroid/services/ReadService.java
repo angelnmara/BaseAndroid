@@ -2,6 +2,7 @@ package com.lamarrulla.baseandroid.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,6 +24,7 @@ import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,71 +50,68 @@ public class ReadService extends Service {
         Log.d(TAG, "servicio creado");
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "servicio iniciado");
-        ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
-        Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot du : dataSnapshot.getChildren()){
-                        Log.d(TAG, du.getValue().toString());
-                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
-                        ListDispositivoUsuario.add(dispositivoUsuario);
+        try{
+            Log.d(TAG, "servicio iniciado");
+            Bundle extras = intent.getExtras();
+            final JSONArray jsa = new JSONArray(extras.getString("listaDispositivos"));
+            final Timer timer = new Timer();
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    for(int i=0;i<jsa.length();i++){
+                        try {
+                            JSONObject jso = jsa.getJSONObject(i);
+                            final String dispositivoJSO =jso.getString("dispositivo").toUpperCase();
+                            Log.d(TAG, dispositivoJSO);
+                            Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
+                            queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()){
+                                        try {
+                                            Gson gso = new Gson();
+                                            String s1 = gso.toJson(dataSnapshot.getValue());
+                                            JSONObject jso = new JSONObject(s1);
+                                            Log.d(TAG, jso.toString());
+                                            Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
+                                                    .putExtra(Constants.LATITUD, jso.getString("latitude"))
+                                                    .putExtra(Constants.LONGITUD, jso.getString("longitude"))
+                                                    .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
+                                            // Emitir el intent a la actividad
+                                            LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
+                                            //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
+                                            //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
+                                            //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }else{
+                                        timer.cancel();
+                                        stopSelf();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.d(TAG, "Ocurrio un error al consultar la base de datos");
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "No regresaron datos desde firebase");
-            }
-        });
-        Timer timer = new Timer();
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                for (final Dispositivo.DispositivoUsuario du:ListDispositivoUsuario
-                ) {
-                    Log.d(TAG, du.dispositivo);
-                    Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(du.dispositivo.toUpperCase());
-                    queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
-                                try {
-                                    Gson gso = new Gson();
-                                    String s1 = gso.toJson(dataSnapshot.getValue());
-                                    JSONObject jso = new JSONObject(s1);
-                                    Log.d(TAG, jso.toString());
-                                    Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
-                                            .putExtra(Constants.LATITUD, jso.getString("latitude"))
-                                            .putExtra(Constants.LONGITUD, jso.getString("longitude"))
-                                            .putExtra(Constants.DISPOSITIVO, du.dispositivo);
-                                    // Emitir el intent a la actividad
-                                    LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
-                                    //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
-                                    //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
-                                    //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(TAG, "Ocurrio un error al consultar la base de datos");
-                        }
-                    });
-                }
-            }
-        };
-        timer.scheduleAtFixedRate(timerTask, 0, 1000);
+            };
+            timer.scheduleAtFixedRate(timerTask, 0, 1000);
+        }catch(Exception ex){
+            stopSelf();
+            Log.d(TAG, ex.getMessage());
+        }
         return START_NOT_STICKY;
     }
 
@@ -128,7 +127,7 @@ public class ReadService extends Service {
         Log.d(TAG, "Servicio destruido...");
     }
 
-        private void responseLocation() {
+        /*private void responseLocation() {
         ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
         LocationRequest request = new LocationRequest();
         request.setInterval(10000);
@@ -182,7 +181,7 @@ public class ReadService extends Service {
             }
         });
 
-    }
+    }*/
 
     @Override
     public IBinder onBind(Intent intent) {

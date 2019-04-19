@@ -184,7 +184,8 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    public void IniciaServicio(){
+    public void IniciaServicio(String jso){
+        intentReadService.putExtra("listaDispositivos", jso);
         startService(intentReadService);
         // Filtro de acciones que serán alertadas
         IntentFilter filter = new IntentFilter(Constants.ACTION_RUN_ISERVICE);
@@ -547,8 +548,34 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        /*inicia servicio*/
-        IniciaServicio();
+        //ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
+        Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    try {
+                        Gson gso = new Gson();
+                        String s1 = gso.toJson(dataSnapshot.getValue());
+                        JSONArray jsa = new JSONArray(s1);
+                        /*inicia servicio*/
+                        IniciaServicio(jsa.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    /*for(DataSnapshot du : dataSnapshot.getChildren()){
+                        Log.d(TAG, du.getValue().toString());
+                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
+                        //ListDispositivoUsuario.add(dispositivoUsuario);
+                    }*/
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "No regresaron datos desde firebase");
+            }
+        });
         Log.d(TAG, "Inicia Servicio");
     }
 }
