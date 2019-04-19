@@ -8,6 +8,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,7 +52,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
     List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
     RecyclerView.Adapter adapter;
     Context context = AltaDeviceActivity.this;
-    LinearLayout lnlAltaMAC;
+    CoordinatorLayout lnlAltaMAC;
     LinearLayout lnlAltaScan;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -80,7 +82,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alta_device);
         lnlAltaScan = (LinearLayout) findViewById(R.id.lnlAltaScan);
-        lnlAltaMAC = (LinearLayout) findViewById(R.id.lnlAltaMAC);
+        lnlAltaMAC = (CoordinatorLayout) findViewById(R.id.lnlAltaMAC);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.altaDispositvo);
 
@@ -131,7 +133,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
                 }
             });
         }
-        Button btnAgregar = findViewById(R.id.btnAgregar);
+        FloatingActionButton btnAgregar = findViewById(R.id.btnAgregar);
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -34,6 +34,8 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,6 +43,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
+    private FusedLocationProviderClient fusedLocationClient;
 
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
@@ -107,6 +111,7 @@ public class MainActivity extends AppCompatActivity
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -157,9 +162,22 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.lnlPrincipalFragment);
         mapFragment.getMapAsync(this);
         /*maps*/
-        /*Servicio*/
-        IniciaServicio();
-        /*Servicio*/
+    }
+
+    @SuppressLint("MissingPermission")
+    public void getLastLocation(){
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                        }
+                    }
+                });
     }
 
     public void IniciaServicio(){
@@ -224,10 +242,10 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "interaccion de fragment");
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
-        // Add a marker in Sydney and move the camera
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -236,16 +254,20 @@ public class MainActivity extends AppCompatActivity
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-
             requestPermissions();
-
-
             return;
-        } else {
-            gmap.setMyLocationEnabled(true);
-            setMap();
+        }else{
+            iniciaTodo();
         }
+    }
 
+    @SuppressLint("MissingPermission")
+    public void iniciaTodo(){
+        gmap.setMyLocationEnabled(true);
+        setMap();
+        getMyLocation();
+        /*inicia servicio*/
+        IniciaServicio();
     }
 
     public void requestPermissions(){
@@ -276,13 +298,14 @@ public class MainActivity extends AppCompatActivity
 
                     // permission was granted, yay! Do the
                     // contacts-
-                    gmap.setMyLocationEnabled(true);
-                    setMap();
+                    Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show();
+                    iniciaTodo();
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(this, "Se tienen que autorizar los permisos para continuar", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 return;
             }
@@ -500,14 +523,16 @@ public class MainActivity extends AppCompatActivity
 
             LatLng sydney = new LatLng(latitud, longitud);
             gmap.addMarker(new MarkerOptions().position(sydney).title(dispositivo));
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+            //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
 
     }
     private void getMyLocation(){
         Location location = gmap.getMyLocation();
-        if(location!=null){
+            if(location!=null){
             LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
             gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
-        }
+        }else{
+                getLastLocation();
+            }
     }
 }
