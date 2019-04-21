@@ -127,62 +127,6 @@ public class ReadService extends Service {
         Log.d(TAG, "Servicio destruido...");
     }
 
-        /*private void responseLocation() {
-        ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
-        LocationRequest request = new LocationRequest();
-        request.setInterval(10000);
-        request.setFastestInterval(5000);
-        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot du : dataSnapshot.getChildren()){
-                        Log.d(TAG, du.getValue().toString());
-                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
-                        ListDispositivoUsuario.add(dispositivoUsuario);
-                    }
-                    for (final Dispositivo.DispositivoUsuario du:ListDispositivoUsuario
-                    ) {
-                        Log.d(TAG, du.dispositivo);
-                        Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(du.dispositivo);
-                        queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()){
-                                    try {
-                                        Gson gso = new Gson();
-                                        String s1 = gso.toJson(dataSnapshot.getValue());
-                                        JSONObject jso = new JSONObject(s1);
-                                        Log.d(TAG, jso.toString());
-                                        LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
-                                        //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
-                                        //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d(TAG, "Ocurrio un error al consultar la base de datos");
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }*/
-
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.

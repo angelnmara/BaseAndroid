@@ -40,7 +40,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,7 +61,6 @@ import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
-import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.services.ReadService;
 import com.lamarrulla.baseandroid.utils.Constants;
@@ -106,6 +108,9 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
 
     Intent intentReadService;
+
+    MarkerOptions mo;
+    Marker m;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,6 +289,8 @@ public class MainActivity extends AppCompatActivity
         gmap.setMaxZoomPreference(16.0f);
         gmap.getUiSettings().setCompassEnabled(false);
         gmap.getUiSettings().setMyLocationButtonEnabled(false);
+        UiSettings uiSettings = gmap.getUiSettings();
+        uiSettings.setAllGesturesEnabled(true);
         //getMyLocation();
     }
 
@@ -523,9 +530,17 @@ public class MainActivity extends AppCompatActivity
         //Location location = gmap.getMyLocation();
 
             LatLng sydney = new LatLng(latitud, longitud);
-            gmap.addMarker(new MarkerOptions().position(sydney).title(dispositivo));
-            //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
 
+        if(mo==null){
+            mo = new MarkerOptions()
+                    .position(sydney)
+                    .title(dispositivo)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
+                    .zIndex(1.0f);
+            m = gmap.addMarker(mo);
+        }else{
+            m.setPosition(sydney);
+        }
     }
 
     private void getMyLocation(){
