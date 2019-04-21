@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("MissingPermission")
     public void setMap() {
         gmap.setMinZoomPreference(6.0f);
-        gmap.setMaxZoomPreference(16.0f);
+        gmap.setMaxZoomPreference(18.0f);
         gmap.getUiSettings().setCompassEnabled(false);
         gmap.getUiSettings().setMyLocationButtonEnabled(false);
         UiSettings uiSettings = gmap.getUiSettings();
@@ -536,6 +536,7 @@ public class MainActivity extends AppCompatActivity
                     .position(sydney)
                     .title(dispositivo)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
+                    .anchor(0.5f,0.5f)
                     .zIndex(1.0f);
             m = gmap.addMarker(mo);
         }else{
@@ -547,7 +548,7 @@ public class MainActivity extends AppCompatActivity
         Location location = gmap.getMyLocation();
             if(location!=null){
             LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
         }else{
                 getLastLocation();
             }
