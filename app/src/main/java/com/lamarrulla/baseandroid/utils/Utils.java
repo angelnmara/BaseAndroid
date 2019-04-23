@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -22,12 +24,22 @@ import com.google.android.gms.location.LocationServices;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.net.NetworkInterface;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 public class Utils {
+
+    public Bitmap getMyBitmap() {
+        return myBitmap;
+    }
+
+    private Bitmap myBitmap;
 
     public static final String TAG = "Utils";
 

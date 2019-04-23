@@ -190,8 +190,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //utils.guardaShared((Activity) context, R.string.Token, user.toString());
                             utils.OpenMain(context);
                             showProgress(false);
                         } else {

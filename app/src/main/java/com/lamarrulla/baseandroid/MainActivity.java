@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -20,6 +23,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +35,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -49,6 +55,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,8 +77,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
+    FirebaseUser user;
 
     Toolbar toolbar;
 
@@ -112,17 +125,21 @@ public class MainActivity extends AppCompatActivity
     MarkerOptions mo;
     Marker m;
 
+    Bitmap Icon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        user = mFirebaseAuth.getCurrentUser();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         intentReadService = new Intent(getApplicationContext(), ReadService.class);
 
         setContentView(R.layout.activity_main);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         CambiosEnToolBar();
 
@@ -149,6 +166,14 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        View header = navigationView.getHeaderView(0);
+        //final ImageView imgView = header.findViewById(R.id.imageView);
+
+        if(user.getPhotoUrl()!=null){
+            new DownloadImageTask((ImageView) header.findViewById(R.id.imageView)).execute(user.getPhotoUrl().toString());
+        }
+
         toolbar.setNavigationIcon(R.drawable.ic_menu);
 
         TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), ""));
@@ -171,6 +196,33 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.lnlPrincipalFragment);
         mapFragment.getMapAsync(this);
         /*maps*/
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>{
+        ImageView bmImage;
+        public DownloadImageTask(ImageView bmImage){
+            this.bmImage = bmImage;
+        }
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            String urldisplay = strings[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+        protected void onPostExecute(Bitmap result){
+            Resources resources = getResources();
+            RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, result);
+            dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight())/2.0f);
+            //bmImage.setImageBitmap(Bitmap.createScaledBitmap(result, 120, 120, false));
+            bmImage.setImageDrawable(dr);
+        }
     }
 
     @SuppressLint("MissingPermission")
