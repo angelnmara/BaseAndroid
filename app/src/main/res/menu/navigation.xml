@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/codigo_qr"
         android:icon="@drawable/ic_qrcode"
         android:title="@string/codigo_qr" />
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/mac_address"
         android:icon="@drawable/ic_crosshairs_gps"
         android:title="@string/mac_address" />
 

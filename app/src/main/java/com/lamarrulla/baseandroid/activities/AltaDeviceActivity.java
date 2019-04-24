@@ -88,16 +88,16 @@ public class AltaDeviceActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_dashboard:
+                case R.id.mac_address:
                     lnlAltaScan.setVisibility(View.GONE);
                     lnlAltaMAC.setVisibility(View.VISIBLE);
                     cameraSource.stop();
                     return true;
-                case R.id.navigation_home:
+                case R.id.codigo_qr:
                     try {
-                        cameraSource.start(cameraView.getHolder());
                         lnlAltaMAC.setVisibility(View.GONE);
                         lnlAltaScan.setVisibility(View.VISIBLE);
+                        cameraSource.start(cameraView.getHolder());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -168,9 +168,25 @@ public class AltaDeviceActivity extends AppCompatActivity {
                     // obtenemos el token
                     token = barcodes.valueAt(0).displayValue.toString();
 
+                    if(!token.isEmpty()){
+                        lnlAltaMAC.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                lnlAltaMAC.setVisibility(View.VISIBLE);
+                                lnlAltaScan.setVisibility(View.GONE);
+                                createDialog(null, 1);
+                                cameraSource.stop();
+                            }
+                        });
+                        //lnlAltaScan.setVisibility(View.GONE);
+                        //lnlAltaMAC.setVisibility(View.VISIBLE);
+                        //cameraSource.stop();
+
+                    }
+
                     // verificamos que el token anterior no se igual al actual
                     // esto es util para evitar multiples llamadas empleando el mismo token
-                    if (!token.equals(tokenanterior)) {
+                    /*if (!token.equals(tokenanterior)) {
 
                         // guardamos el ultimo token proceado
                         tokenanterior = token;
@@ -204,7 +220,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
                                 }
                             }
                         }).start();
-                    }
+                    }*/
                 }
             }
         });
@@ -322,7 +338,10 @@ public class AltaDeviceActivity extends AppCompatActivity {
         if(item!=null){
             txtMacAddres.setText(item.dispositivo);
         }
-        txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
+        //txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
+        if(token!=null){
+            txtMacAddres.setText(token);
+        }
         Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override

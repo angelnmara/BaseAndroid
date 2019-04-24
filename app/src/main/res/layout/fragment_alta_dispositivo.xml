@@ -17,13 +17,20 @@
         android:textSize="20sp"
         android:textColor="@color/colorAccent"/>
     <!-- TODO: Update blank fragment layout -->
-    <EditText
-        android:id="@+id/txtMacAddres"
-        android:hint="@string/mac_addres"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/txtMacAddres"
+            android:hint="@string/mac_addres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"/>
+
+    </android.support.design.widget.TextInputLayout>
+
     <EditText
         android:id="@+id/txtUsuario"
         android:hint="@string/usuario"
