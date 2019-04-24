@@ -22,6 +22,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -36,6 +39,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -66,6 +70,7 @@ import com.google.gson.Gson;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
+import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.models.Login;
@@ -77,13 +82,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,10 +169,18 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         View header = navigationView.getHeaderView(0);
-        //final ImageView imgView = header.findViewById(R.id.imageView);
 
+        //final ImageView imgView = header.findViewById(R.id.imageView);
+        if(user.getDisplayName()!=null){
+            TextView textView = header.findViewById(R.id.txtHeaderName);
+            textView.setText(user.getDisplayName());
+        }
         if(user.getPhotoUrl()!=null){
             new DownloadImageTask((ImageView) header.findViewById(R.id.imageView)).execute(user.getPhotoUrl().toString());
+        }
+        if(user.getEmail()!=null){
+            TextView textViewCorreo = header.findViewById(R.id.txtHeaderCorreo);
+            textViewCorreo.setText(user.getEmail());
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_menu);
@@ -497,8 +506,11 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, TrackerActivity.class));
             /*} else if (id == R.id.nav_manage) {*/
 
-        } else if (id == R.id.nav_share) {
-            Toast.makeText(this, "share", Toast.LENGTH_LONG).show();
+        } else if (id == R.id.nav_manage) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.lnlPrincipalFragment, new GeneraCodigoFragment(), "GeneraCodigoFragment").addToBackStack("GeneraCodigoFragment").commit();
+
         } else if (id == R.id.nav_exit) {
             salir();
         }

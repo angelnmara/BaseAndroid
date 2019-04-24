@@ -70,6 +70,9 @@
     <string name="title_notifications">Notifications</string>
     <string name="altaDispositvo">Alta de Dispositivo</string>
     <string name="Locations">locations</string>
+    <string name="obtener_codigo">Obtener código</string>
+    <string name="codigo_qr">Código QR</string>
+    <string name="mac_address">MAC ADDRESS</string>
 
     <!--firebase-->
 
