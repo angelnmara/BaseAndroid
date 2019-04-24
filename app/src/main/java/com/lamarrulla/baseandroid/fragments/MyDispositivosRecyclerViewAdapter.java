@@ -45,6 +45,8 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         final String dispositivo = mValues.get(position).dispositivo;
         holder.mIdView.setText(dispositivo);
         final boolean check = mValues.get(position).activo;
+        final String usuario = mValues.get(position).usuario;
+        holder.mtxtUsuario.setText(usuario);
         holder.mContentView.setChecked(check);
 
         holder.mContentView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -91,6 +93,7 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         public final TextView mIdView;
         public final Switch mContentView;
         public final ImageView mImage;
+        public final TextView mtxtUsuario;
 
         public Dispositivo.DispositivoUsuario mItem;
 
@@ -100,6 +103,7 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (Switch) view.findViewById(R.id.content);
             mImage = (ImageView)view.findViewById(R.id.delete);
+            mtxtUsuario = view.findViewById(R.id.txtUsuario);
         }
 
         @Override

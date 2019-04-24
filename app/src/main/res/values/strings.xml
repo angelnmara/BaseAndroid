@@ -73,6 +73,7 @@
     <string name="obtener_codigo">Obtener código</string>
     <string name="codigo_qr">Código QR</string>
     <string name="mac_address">MAC ADDRESS</string>
+    <string name="usuario">USUARIO</string>
 
     <!--firebase-->
 

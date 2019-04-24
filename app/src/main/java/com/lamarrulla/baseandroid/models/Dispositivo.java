@@ -23,14 +23,16 @@ public class Dispositivo {
     @IgnoreExtraProperties
     public static class DispositivoUsuario {
         public String dispositivo;
+        public String usuario;
         public boolean activo;
         public Date fechaAlta;
         public Date fechaBaja;
         public DispositivoUsuario(){
             // Default constructor required for calls to DataSnapshot.getValue(Post.class)
         }
-        public DispositivoUsuario(String dispositivo, boolean activo, Date fechaAlta, Date fechaBaja){
+        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Date fechaAlta, Date fechaBaja){
             this.dispositivo = dispositivo;
+            this.usuario = usuario;
             this.activo = activo;
             this.fechaAlta = fechaAlta;
             this.fechaBaja = fechaBaja;

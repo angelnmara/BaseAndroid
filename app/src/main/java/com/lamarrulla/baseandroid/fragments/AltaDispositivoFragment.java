@@ -40,6 +40,7 @@ public class AltaDispositivoFragment extends Fragment {
     private String mParam2;
     private Button btnAgregar;
     private TextView txtMac;
+    private TextView txtUsuario;
 
     private OnFragmentAltaDispositivoInteractionListener mListener;
 
@@ -85,6 +86,7 @@ public class AltaDispositivoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_alta_dispositivo, container, false);
         txtMac = view.findViewById(R.id.txtMacAddres);
+        txtUsuario = view.findViewById(R.id.txtUsuario);
         btnAgregar = view.findViewById(R.id.btnAgregar);
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,13 +99,14 @@ public class AltaDispositivoFragment extends Fragment {
                         date,
                         null);*/
                 listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
+                        txtUsuario.getText().toString(),
                         true,
                         date,
                         null));
-                listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
+                /*listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
                         false,
                         date,
-                        date));
+                        date));*/
                 firebaseAPI.writeNewObject("dispositivos", listDispositivoUsuario);
             }
         });

@@ -1,14 +1,25 @@
 package com.lamarrulla.baseandroid.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeReader;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.utils.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +39,11 @@ public class GeneraCodigoFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private static final String TAG = GeneraCodigoFragment.class.getSimpleName();
+
+    Bitmap bitmap;
+
+    Utils utils = new Utils();
     //private OnFragmentInteractionListener mListener;
 
     public GeneraCodigoFragment() {
@@ -65,7 +81,19 @@ public class GeneraCodigoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_genera_codigo, container, false);
+        View view = inflater.inflate(R.layout.fragment_genera_codigo, container, false);
+        try {
+            utils.getMAC(getContext());
+            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+            BitMatrix bitMatrix = multiFormatWriter.encode(utils.getMacAddress(), BarcodeFormat.QR_CODE,200,200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            bitmap = barcodeEncoder.createBitmap(bitMatrix);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        ImageView imageView = view.findViewById(R.id.ivCodigo);
+        imageView.setImageBitmap(bitmap);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

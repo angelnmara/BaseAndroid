@@ -318,6 +318,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
         mBuilder.setView(mViewAgregar);
         final AlertDialog dialog = mBuilder.create();
         final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
+        final EditText txtUsuario = mViewAgregar.findViewById(R.id.txtUsuario);
         if(item!=null){
             txtMacAddres.setText(item.dispositivo);
         }
@@ -332,6 +333,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
                 Date date = new Date();
                 listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
                         txtMacAddres.getText().toString().toUpperCase(),
+                        txtUsuario.getText().toString().toUpperCase(),
                         true,
                         date,
                         null
