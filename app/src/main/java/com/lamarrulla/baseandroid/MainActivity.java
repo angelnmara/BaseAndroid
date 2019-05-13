@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,7 +29,6 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -87,6 +85,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -125,7 +124,8 @@ public class MainActivity extends AppCompatActivity
     Intent intentReadService;
 
     MarkerOptions mo;
-    Marker m;
+    Marker marker;
+    HashMap<String, Marker> markersAndObjects;
 
     Bitmap Icon;
 
@@ -252,12 +252,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void IniciaServicio(String jso) throws JSONException {
-        JSONArray jsa = new JSONArray(jso);
+        final JSONArray jsa = new JSONArray(jso);
         for(int i = 0; i< jsa.length(); i++){
+            markersAndObjects = new HashMap<String, Marker>();
             JSONObject jsobj = jsa.getJSONObject(i);
             final String dispositivoJSO =jsobj.getString("dispositivo").toUpperCase();
             Log.d(TAG, dispositivoJSO);
             Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
+            final int finalI = i;
             queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -276,7 +278,11 @@ public class MainActivity extends AppCompatActivity
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
                                     .anchor(0.5f,0.5f)
                                     .zIndex(1.0f);
-                            m = gmap.addMarker(mo);
+                            marker = gmap.addMarker(mo);
+                            markersAndObjects.put(dispositivoJSO, marker);
+                            if(finalI ==jsa.length()-1){
+                                ejecutaIntent(markersAndObjects);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -289,10 +295,12 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+    }
 
-        intentReadService.putExtra("listaDispositivos", jso);
+    private void ejecutaIntent(HashMap<String, Marker> markersAndObjects){
+        intentReadService.putExtra("listaDispositivos", markersAndObjects);
         startService(intentReadService);
-        // Filtro de acciones que serán alertadas
+        // Filtro de acciones que serán alertadasObject HashMap
         IntentFilter filter = new IntentFilter(Constants.ACTION_RUN_ISERVICE);
         filter.addAction(Constants.ACTION_RUN_SERVICE);
         filter.addAction(Constants.ACTION_MEMORY_EXIT);
@@ -313,6 +321,7 @@ public class MainActivity extends AppCompatActivity
         private ResponseReceiver() {
         }
 
+        /*Regresa información desde el servicio*/
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
@@ -641,9 +650,9 @@ public class MainActivity extends AppCompatActivity
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
                     .anchor(0.5f,0.5f)
                     .zIndex(1.0f);
-            m = gmap.addMarker(mo);
+            marker = gmap.addMarker(mo);
         }else{*/
-            m.setPosition(sydney);
+            marker.setPosition(sydney);
         /*}*/
     }
 

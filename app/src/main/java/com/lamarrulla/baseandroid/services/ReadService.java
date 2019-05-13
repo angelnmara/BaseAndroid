@@ -12,6 +12,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,6 +61,7 @@ public class ReadService extends Service {
             Log.d(TAG, "servicio iniciado");
             Bundle extras = intent.getExtras();
             final JSONArray jsa = new JSONArray(extras.getString("listaDispositivos"));
+            final HashMap<String, Marker> markersAndObjects = (HashMap<String, Marker>)intent.getSerializableExtra("listaDispositivos");
             final Timer timer = new Timer();
             timerTask = new TimerTask() {
                 @Override
