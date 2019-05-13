@@ -423,6 +423,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             case R.id.email_alta_button:
                 funcion = 2;
                 attemptLogin();
+                break;
             case R.id.sign_in_button:
                 signIn();
                 break;

@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity
 
         toolbar.setNavigationIcon(R.drawable.ic_menu);
 
-        TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), ""));
+        TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), "2"));
 
         if (TipoAcceso == 1) {
             /*  obtine modulo desde servidor    */

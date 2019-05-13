@@ -162,8 +162,9 @@ public class Acceso implements IAcceso {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            utils.guardaShared((Activity) context, R.string.TipoAcceso, "2");
                             utils.OpenMain(context);
                         } else {
                             // If sign in fails, display a message to the user.
