@@ -30,6 +30,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -250,7 +251,45 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    public void IniciaServicio(String jso){
+    public void IniciaServicio(String jso) throws JSONException {
+        JSONArray jsa = new JSONArray(jso);
+        for(int i = 0; i< jsa.length(); i++){
+            JSONObject jsobj = jsa.getJSONObject(i);
+            final String dispositivoJSO =jsobj.getString("dispositivo").toUpperCase();
+            Log.d(TAG, dispositivoJSO);
+            Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
+            queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        try {
+                            Gson gso = new Gson();
+                            String s1 = gso.toJson(dataSnapshot.getValue());
+                            JSONObject jso = new JSONObject(s1);
+                            Log.d(TAG, jso.toString());
+                            Double lati = Double.parseDouble(jso.getString("latitude"));
+                            Double longi = Double.parseDouble(jso.getString("longitude"));
+                            LatLng sydney = new LatLng(lati, longi);
+                            mo = new MarkerOptions()
+                                    .position(sydney)
+                                    .title(dispositivoJSO)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
+                                    .anchor(0.5f,0.5f)
+                                    .zIndex(1.0f);
+                            m = gmap.addMarker(mo);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(TAG, "Ocurrio un error al consultar la base de datos");
+                }
+            });
+        }
+
         intentReadService.putExtra("listaDispositivos", jso);
         startService(intentReadService);
         // Filtro de acciones que serán alertadas
@@ -595,7 +634,7 @@ public class MainActivity extends AppCompatActivity
 
             LatLng sydney = new LatLng(latitud, longitud);
 
-        if(mo==null){
+        /*if(mo==null){
             mo = new MarkerOptions()
                     .position(sydney)
                     .title(dispositivo)
@@ -603,9 +642,9 @@ public class MainActivity extends AppCompatActivity
                     .anchor(0.5f,0.5f)
                     .zIndex(1.0f);
             m = gmap.addMarker(mo);
-        }else{
+        }else{*/
             m.setPosition(sydney);
-        }
+        /*}*/
     }
 
     private void getMyLocation(){
