@@ -72,6 +72,7 @@ import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.services.ReadService;
 import com.lamarrulla.baseandroid.utils.Constants;
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity
     MarkerOptions mo;
     Marker marker;
     HashMap<String, Marker> markersAndObjects;
+    List<Dispositivo.DispositivosMarks> listDispositivosMarks;
 
     Bitmap Icon;
 
@@ -251,15 +253,16 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    public void IniciaServicio(String jso) throws JSONException {
-        final JSONArray jsa = new JSONArray(jso);
+    public void IniciaServicio(final String dispositivo) throws JSONException {
+        /*final JSONArray jsa = new JSONArray(jso);
         for(int i = 0; i< jsa.length(); i++){
             markersAndObjects = new HashMap<String, Marker>();
             JSONObject jsobj = jsa.getJSONObject(i);
             final String dispositivoJSO =jsobj.getString("dispositivo").toUpperCase();
-            Log.d(TAG, dispositivoJSO);
-            Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
-            final int finalI = i;
+            Log.d(TAG, dispositivoJSO);*/
+        listDispositivosMarks = new ArrayList<>();
+            Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivo);
+            //final int finalI = i;
             queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -274,31 +277,36 @@ public class MainActivity extends AppCompatActivity
                             LatLng sydney = new LatLng(lati, longi);
                             mo = new MarkerOptions()
                                     .position(sydney)
-                                    .title(dispositivoJSO)
+                                    .title(dispositivo)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
                                     .anchor(0.5f,0.5f)
                                     .zIndex(1.0f);
                             marker = gmap.addMarker(mo);
-                            markersAndObjects.put(dispositivoJSO, marker);
-                            if(finalI ==jsa.length()-1){
+                            Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
+                            dispositivosMarks.dispositivo = dispositivo;
+                            dispositivosMarks.marker = marker;
+                            listDispositivosMarks.add(dispositivosMarks);
+                            //markersAndObjects.put(dispositivo, marker);
+                            /*if(finalI ==jsa.length()-1){
                                 ejecutaIntent(markersAndObjects);
-                            }
+                            }*/
+                            //ejecutaIntent("");
+                            Log.d(TAG, "se guardan marks");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.d(TAG, "Ocurrio un error al consultar la base de datos");
                 }
             });
-        }
+        //}
     }
 
-    private void ejecutaIntent(HashMap<String, Marker> markersAndObjects){
-        intentReadService.putExtra("listaDispositivos", markersAndObjects);
+    private void ejecutaIntent(String jsa){
+        intentReadService.putExtra("listaDispositivos", jsa);
         startService(intentReadService);
         // Filtro de acciones que serán alertadasObject HashMap
         IntentFilter filter = new IntentFilter(Constants.ACTION_RUN_ISERVICE);
@@ -329,7 +337,17 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, intent.getStringExtra(Constants.LATITUD));
                     Log.d(TAG, intent.getStringExtra(Constants.LONGITUD));
                     Log.d(TAG, intent.getStringExtra(Constants.DISPOSITIVO));
-                    getLocation(Double.parseDouble(intent.getStringExtra(Constants.LATITUD)), Double.parseDouble(intent.getStringExtra(Constants.LONGITUD)), intent.getStringExtra(Constants.DISPOSITIVO));
+                    String dispositivo = intent.getStringExtra(Constants.DISPOSITIVO);
+                    Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
+                    Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
+                    LatLng latLng = new LatLng(latitud, longitud);
+                    for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
+                         ) {
+                        if(dispositivoMarks.dispositivo.equals(dispositivo)){
+                            dispositivoMarks.marker.setPosition(latLng);
+                        }
+                    }
+                    //getLocation(Double.parseDouble(intent.getStringExtra(Constants.LATITUD)), Double.parseDouble(intent.getStringExtra(Constants.LONGITUD)), intent.getStringExtra(Constants.DISPOSITIVO));
                     break;
 
                 case Constants.ACTION_RUN_ISERVICE:
@@ -687,7 +705,11 @@ public class MainActivity extends AppCompatActivity
                         String s1 = gso.toJson(dataSnapshot.getValue());
                         JSONArray jsa = new JSONArray(s1);
                         /*inicia servicio*/
-                        IniciaServicio(jsa.toString());
+                        for(int i = 0; i<jsa.length();i++){
+                            JSONObject jso = jsa.getJSONObject(i);
+                            IniciaServicio(jso.getString("dispositivo"));
+                        }
+                        ejecutaIntent(jsa.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

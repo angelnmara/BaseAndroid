@@ -61,7 +61,7 @@ public class ReadService extends Service {
             Log.d(TAG, "servicio iniciado");
             Bundle extras = intent.getExtras();
             final JSONArray jsa = new JSONArray(extras.getString("listaDispositivos"));
-            final HashMap<String, Marker> markersAndObjects = (HashMap<String, Marker>)intent.getSerializableExtra("listaDispositivos");
+            //final HashMap<String, Marker> markersAndObjects = (HashMap<String, Marker>)intent.getSerializableExtra("listaDispositivos");
             final Timer timer = new Timer();
             timerTask = new TimerTask() {
                 @Override

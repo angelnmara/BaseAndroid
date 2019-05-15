@@ -1,5 +1,6 @@
 package com.lamarrulla.baseandroid.models;
 
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.Date;
 
@@ -36,6 +37,16 @@ public class Dispositivo {
             this.activo = activo;
             this.fechaAlta = fechaAlta;
             this.fechaBaja = fechaBaja;
+        }
+    }
+    public static class DispositivosMarks{
+        public String dispositivo;
+        public Marker marker;
+        public DispositivosMarks(){}
+        public DispositivosMarks(String dispositivo, Marker marker){
+            this.dispositivo = dispositivo;
+            this.marker = marker;
+
         }
     }
 }
