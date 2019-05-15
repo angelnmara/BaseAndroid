@@ -286,11 +286,6 @@ public class MainActivity extends AppCompatActivity
                             dispositivosMarks.dispositivo = dispositivo;
                             dispositivosMarks.marker = marker;
                             listDispositivosMarks.add(dispositivosMarks);
-                            //markersAndObjects.put(dispositivo, marker);
-                            /*if(finalI ==jsa.length()-1){
-                                ejecutaIntent(markersAndObjects);
-                            }*/
-                            //ejecutaIntent("");
                             Log.d(TAG, "se guardan marks");
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -688,13 +683,16 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
         stopService(intentReadService);
+        for (Dispositivo.DispositivosMarks dm: listDispositivosMarks
+             ) {
+            dm.marker.remove();
+        }
         Log.d(TAG, "Para Servicio");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
         Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
