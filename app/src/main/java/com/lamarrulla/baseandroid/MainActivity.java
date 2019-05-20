@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
     private FusedLocationProviderClient fusedLocationClient;
+    JSONArray jsaDispositivos = new JSONArray();
 
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
@@ -169,6 +170,8 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        /*  Carga valores de usuario en menu    */
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         View header = navigationView.getHeaderView(0);
@@ -186,8 +189,13 @@ public class MainActivity extends AppCompatActivity
             textViewCorreo.setText(user.getEmail());
         }
 
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        /*  Fin Carga valores de usuario en menu    */
 
+        /*  Cambia icono del menu   */
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        /*  Cambia icono del menu   */
+
+        /*  Selecciona el tipo de acceso    */
         TipoAcceso = Integer.parseInt(sharedPreferences.getString(context.getString(R.string.TipoAcceso), "2"));
 
         if (TipoAcceso == 1) {
@@ -198,6 +206,7 @@ public class MainActivity extends AppCompatActivity
             mAuthTask.execute((Void) null);
             /*  select menu */
         }
+        /*  Selecciona el tipo de acceso    */
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -209,6 +218,28 @@ public class MainActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
         /*maps*/
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        menu.clear();
+        for(int i = 0; i<jsaDispositivos.length();i++){
+            try {
+                JSONObject jso = jsaDispositivos.getJSONObject(i);
+                if(!jso.has("valor")){
+                    jso.put("valor", true);
+                }
+                menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        //menu.add(0,1, Menu.CATEGORY_ALTERNATIVE, "primero").setChecked(true);
+        //menu.add(0,2, Menu.CATEGORY_ALTERNATIVE, "primero2");
+        menu.setGroupCheckable(0, true, false);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>{
         ImageView bmImage;
@@ -274,10 +305,11 @@ public class MainActivity extends AppCompatActivity
                             Log.d(TAG, jso.toString());
                             Double lati = Double.parseDouble(jso.getString("latitude"));
                             Double longi = Double.parseDouble(jso.getString("longitude"));
+                            String usuario = jso.getString("usuario");
                             LatLng sydney = new LatLng(lati, longi);
                             mo = new MarkerOptions()
                                     .position(sydney)
-                                    .title(dispositivo)
+                                    .title(usuario)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
                                     .anchor(0.5f,0.5f)
                                     .zIndex(1.0f);
@@ -543,14 +575,32 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        /*switch (item.getItemId()) {
+            case 0:
+            case 1:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }*/
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        Boolean valor = (item.isChecked()?false:true);
+
+        if (item.isChecked()) item.setChecked(false);
+        else item.setChecked(true);
+
+        try {
+            JSONObject jso = jsaDispositivos.getJSONObject(item.getItemId());
+            if(jso.has("valor")){
+                jso.remove("valor");
+            }
+            jso.put("valor", valor);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -651,24 +701,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void getLocation(double latitud, double longitud, String dispositivo) {
-        //Location location = gmap.getMyLocation();
-
-            LatLng sydney = new LatLng(latitud, longitud);
-
-        /*if(mo==null){
-            mo = new MarkerOptions()
-                    .position(sydney)
-                    .title(dispositivo)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
-                    .anchor(0.5f,0.5f)
-                    .zIndex(1.0f);
-            marker = gmap.addMarker(mo);
-        }else{*/
-            marker.setPosition(sydney);
-        /*}*/
-    }
-
     private void getMyLocation(){
         Location location = gmap.getMyLocation();
             if(location!=null){
@@ -701,13 +733,14 @@ public class MainActivity extends AppCompatActivity
                     try {
                         Gson gso = new Gson();
                         String s1 = gso.toJson(dataSnapshot.getValue());
-                        JSONArray jsa = new JSONArray(s1);
+                        jsaDispositivos = new JSONArray(s1);
                         /*inicia servicio*/
-                        for(int i = 0; i<jsa.length();i++){
-                            JSONObject jso = jsa.getJSONObject(i);
+                        for(int i = 0; i<jsaDispositivos.length();i++){
+                            JSONObject jso = jsaDispositivos.getJSONObject(i);
                             IniciaServicio(jso.getString("dispositivo"));
                         }
-                        ejecutaIntent(jsa.toString());
+                        ejecutaIntent(jsaDispositivos.toString());
+                        invalidateOptionsMenu();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
