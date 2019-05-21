@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    public void IniciaServicio(final String dispositivo) throws JSONException {
+    public void IniciaServicio(final String dispositivo, final String usuario) throws JSONException {
         /*final JSONArray jsa = new JSONArray(jso);
         for(int i = 0; i< jsa.length(); i++){
             markersAndObjects = new HashMap<String, Marker>();
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity
                             Log.d(TAG, jso.toString());
                             Double lati = Double.parseDouble(jso.getString("latitude"));
                             Double longi = Double.parseDouble(jso.getString("longitude"));
-                            String usuario = jso.getString("usuario");
+                            //String usuario = jso.getString("usuario");
                             LatLng sydney = new LatLng(lati, longi);
                             mo = new MarkerOptions()
                                     .position(sydney)
@@ -715,9 +715,11 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
         stopService(intentReadService);
-        for (Dispositivo.DispositivosMarks dm: listDispositivosMarks
-             ) {
-            dm.marker.remove();
+        if(listDispositivosMarks != null){
+            for (Dispositivo.DispositivosMarks dm: listDispositivosMarks
+            ) {
+                dm.marker.remove();
+            }
         }
         Log.d(TAG, "Para Servicio");
     }
@@ -737,7 +739,7 @@ public class MainActivity extends AppCompatActivity
                         /*inicia servicio*/
                         for(int i = 0; i<jsaDispositivos.length();i++){
                             JSONObject jso = jsaDispositivos.getJSONObject(i);
-                            IniciaServicio(jso.getString("dispositivo"));
+                            IniciaServicio(jso.getString("dispositivo"), jso.getString("usuario"));
                         }
                         ejecutaIntent(jsaDispositivos.toString());
                         invalidateOptionsMenu();
