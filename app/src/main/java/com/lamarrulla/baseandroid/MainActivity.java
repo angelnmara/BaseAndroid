@@ -225,9 +225,6 @@ public class MainActivity extends AppCompatActivity
         for(int i = 0; i<jsaDispositivos.length();i++){
             try {
                 JSONObject jso = jsaDispositivos.getJSONObject(i);
-                if(!jso.has("valor")){
-                    jso.put("valor", true);
-                }
                 menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -596,7 +593,8 @@ public class MainActivity extends AppCompatActivity
                 jso.remove("valor");
             }
             jso.put("valor", valor);
-
+            removeMarks();
+            getDispositivos();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -715,50 +713,66 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
         stopService(intentReadService);
+        removeMarks();
+        Log.d(TAG, "Para Servicio");
+    }
+
+    public void removeMarks(){
         if(listDispositivosMarks != null){
             for (Dispositivo.DispositivosMarks dm: listDispositivosMarks
             ) {
                 dm.marker.remove();
             }
         }
-        Log.d(TAG, "Para Servicio");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    try {
-                        Gson gso = new Gson();
-                        String s1 = gso.toJson(dataSnapshot.getValue());
-                        jsaDispositivos = new JSONArray(s1);
-                        /*inicia servicio*/
-                        for(int i = 0; i<jsaDispositivos.length();i++){
-                            JSONObject jso = jsaDispositivos.getJSONObject(i);
-                            IniciaServicio(jso.getString("dispositivo"), jso.getString("usuario"));
+        getDispositivos();
+    }
+    public void getDispositivos() {
+        if(jsaDispositivos.length()==0){
+            Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        try {
+                            Gson gso = new Gson();
+                            String s1 = gso.toJson(dataSnapshot.getValue());
+                            jsaDispositivos = new JSONArray(s1);
+                            /*inicia servicio*/
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        ejecutaIntent(jsaDispositivos.toString());
-                        invalidateOptionsMenu();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                    /*for(DataSnapshot du : dataSnapshot.getChildren()){
-                        Log.d(TAG, du.getValue().toString());
-                        Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
-                        //ListDispositivoUsuario.add(dispositivoUsuario);
-                    }*/
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "No regresaron datos desde firebase");
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(TAG, "No regresaron datos desde firebase");
+                }
+            });
+            Log.d(TAG, "Inicia Servicijo");
+        }
+        try {
+            iniciaServicioDispositivos();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void iniciaServicioDispositivos() throws JSONException {
+        for(int i = 0; i<jsaDispositivos.length();i++){
+            JSONObject jso = jsaDispositivos.getJSONObject(i);
+            if(!jso.has("valor")){
+                jso.put("valor", true);
             }
-        });
-        Log.d(TAG, "Inicia Servicio");
+            if(jso.getBoolean("valor")){
+                IniciaServicio(jso.getString("dispositivo"), jso.getString("usuario"));
+            }
+        }
+        ejecutaIntent(jsaDispositivos.toString());
+        invalidateOptionsMenu();
     }
 }

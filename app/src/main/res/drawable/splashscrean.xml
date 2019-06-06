@@ -2,10 +2,10 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="false">
     <item
-        android:drawable="@drawable/ferrari"
-        android:duration="250" />
+        android:drawable="@drawable/auto_load"
+        android:duration="250"/>
     <item
-        android:drawable="@drawable/yckrgry5i"
+        android:drawable="@drawable/auto_gif"
         android:duration="250" />
     <item
         android:drawable="@drawable/pt7rgrb6c"
