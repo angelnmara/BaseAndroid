@@ -6,7 +6,7 @@
         </shape>
     </item>
     <item>
-        <bitmap android:gravity="center" android:src="@drawable/auto" android:tint="@color/colorAccent"/>
+        <bitmap android:gravity="center" android:src="@drawable/auto300" android:tint="@color/colorAccent"/>
     </item>
 </layer-list>
 <!--
