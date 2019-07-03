@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity
     //public static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
-    private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
+    //private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
     private FusedLocationProviderClient fusedLocationClient;
     JSONArray jsaDispositivos = new JSONArray();
 
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity
     HashMap<String, Marker> markersAndObjects;
     List<Dispositivo.DispositivosMarks> listDispositivosMarks;
 
-    Bitmap Icon;
+    //Bitmap Icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,9 +142,7 @@ public class MainActivity extends AppCompatActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         intentReadService = new Intent(getApplicationContext(), ReadService.class);
-
         setContentView(R.layout.activity_main);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         CambiosEnToolBar();
 
@@ -221,11 +219,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
+        Log.d(TAG, "onPrepareOptionMenu" + jsaDispositivos.length());
+        Log.d(TAG, jsaDispositivos.toString());
         menu.clear();
         for(int i = 0; i<jsaDispositivos.length();i++){
             try {
                 JSONObject jso = jsaDispositivos.getJSONObject(i);
-                menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
+                Log.d(TAG, jso.toString());
+                if(jso.has("valor")){
+                    menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
+                }else{
+                    menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("activo"));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -258,11 +263,14 @@ public class MainActivity extends AppCompatActivity
         }
         protected void onPostExecute(Bitmap result){
             try{
-                Resources resources = getResources();
-                RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, result);
-                dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight())/2.0f);
-                //bmImage.setImageBitmap(Bitmap.createScaledBitmap(result, 120, 120, false));
-                bmImage.setImageDrawable(dr);
+                Log.d(TAG, "result: " + result);
+                if(result!=null){
+                    Resources resources = getResources();
+                    RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, result);
+                    dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight())/2.0f);
+                    //bmImage.setImageBitmap(Bitmap.createScaledBitmap(result, 120, 120, false));
+                    bmImage.setImageDrawable(dr);
+                }
             }catch (Exception ex){
                 Log.d(TAG, ex.getMessage());
             }
@@ -635,6 +643,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void salir() {
+        stopService(intentReadService);
         switch (TipoAcceso) {
             case 1:
             case 2:
@@ -722,6 +731,14 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Para Servicio");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopService(intentReadService);
+        removeMarks();
+        Log.d(TAG, "Para Servicio");
+    }
+
     public void removeMarks(){
         if(listDispositivosMarks != null){
             for (Dispositivo.DispositivosMarks dm: listDispositivosMarks
@@ -734,40 +751,51 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        getDispositivos();
-    }
-    public void getDispositivos() {
-        if(jsaDispositivos.length()==0){
-            Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
-                        try {
-                            Gson gso = new Gson();
-                            String s1 = gso.toJson(dataSnapshot.getValue());
-                            jsaDispositivos = new JSONArray(s1);
-                            /*inicia servicio*/
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d(TAG, "No regresaron datos desde firebase");
-                }
-            });
-            Log.d(TAG, "Inicia Servicijo");
-        }
         try {
-            iniciaServicioDispositivos();
+            getDispositivos();
         } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
             e.printStackTrace();
         }
     }
+    public void getDispositivos() throws JSONException {
+        /*try {*/
+            Log.d(TAG, "Obtiene Dispositivos:" + jsaDispositivos.length());
+            if(jsaDispositivos.length()==0){
+                Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d(TAG, "dataSnapshot.exists():" + dataSnapshot.exists());
+                        if(dataSnapshot.exists()){
+                            try {
+                                Gson gso = new Gson();
+                                String s1 = gso.toJson(dataSnapshot.getValue());
+                                jsaDispositivos = new JSONArray(s1);
+                                /*inicia servicio*/
+                                Log.d(TAG, jsaDispositivos.toString());
+                                Log.d(TAG, "Inicia Servicio");
+                                iniciaServicioDispositivos();
+                            } catch (JSONException e) {
+                                Log.d(TAG, e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(TAG, "No regresaron datos desde firebase");
+                    }
+                });
+            }else{
+                Log.d(TAG, jsaDispositivos.toString());
+                Log.d(TAG, "Inicia Servicio");
+                iniciaServicioDispositivos();
+            }
+    }
     public void iniciaServicioDispositivos() throws JSONException {
+        Log.d(TAG, "iniciaServicioDispositivos");
         for(int i = 0; i<jsaDispositivos.length();i++){
             JSONObject jso = jsaDispositivos.getJSONObject(i);
             if(!jso.has("valor")){
