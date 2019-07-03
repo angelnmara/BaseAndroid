@@ -257,11 +257,16 @@ public class MainActivity extends AppCompatActivity
             return mIcon11;
         }
         protected void onPostExecute(Bitmap result){
-            Resources resources = getResources();
-            RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, result);
-            dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight())/2.0f);
-            //bmImage.setImageBitmap(Bitmap.createScaledBitmap(result, 120, 120, false));
-            bmImage.setImageDrawable(dr);
+            try{
+                Resources resources = getResources();
+                RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, result);
+                dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight())/2.0f);
+                //bmImage.setImageBitmap(Bitmap.createScaledBitmap(result, 120, 120, false));
+                bmImage.setImageDrawable(dr);
+            }catch (Exception ex){
+                Log.d(TAG, ex.getMessage());
+            }
+
         }
     }
 
