@@ -71,7 +71,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, View.OnClickListener, SlideToUnlock.OnSlideToUnlockEventListener {
 
     Context context = this;
     Utils utils = new Utils();
@@ -284,7 +284,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -296,11 +296,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mEmailView;
             cancel = true;
         }
-        /*else if (!isEmailValid(email)) {
+        else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }*/
+        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -321,7 +321,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 switch (funcion){
                     case 1:
                         /*  autentica usuario por firebase  */
-
                         iAcceso.autenticaUsuarioFirebase();
                         break;
                     case 2:
@@ -429,10 +428,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 funcion = 1;
                 attemptLogin();
                 break;
-            /*case R.id.email_alta_button:
-                funcion = 2;
-                attemptLogin();
-                break;*/
             case R.id.sign_in_button:
                 signIn();
                 break;
@@ -443,6 +438,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onSlideToUnlockCanceled() {
+        Toast.makeText(this, "Operacion cancelada", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSlideToUnlockDone() {
+        funcion = 2;
+        attemptLogin();
     }
 
     private interface ProfileQuery {
