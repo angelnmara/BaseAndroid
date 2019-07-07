@@ -58,6 +58,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.utils.SlideToUnlock;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.security.MessageDigest;
@@ -173,8 +174,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /*  End Facebook */
 
         /*  Boton Registrar */
+        /*
         Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
         mRegistrarButton.setOnClickListener(this);
+        */
         /*  End Boton Registrar*/
         /*  Boton Gmail */
         findViewById(R.id.sign_in_button).setOnClickListener(this);
