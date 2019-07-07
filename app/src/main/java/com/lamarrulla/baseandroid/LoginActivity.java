@@ -107,6 +107,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private int funcion;
     private int tipoAcceso;
 
+    private SlideToUnlock slideToUnlockView2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,6 +179,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /*  Boton Gmail */
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         /*  End Boton Gmail */
+
+        slideToUnlockView2 = (SlideToUnlock) findViewById(R.id.slideToUnlock2);
+        slideToUnlockView2.setExternalListener(this);
+
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -420,13 +426,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 funcion = 1;
                 attemptLogin();
                 break;
-            case R.id.email_alta_button:
+            /*case R.id.email_alta_button:
                 funcion = 2;
                 attemptLogin();
-                break;
+                break;*/
             case R.id.sign_in_button:
                 signIn();
                 break;
+                default:break;
         }
     }
 
