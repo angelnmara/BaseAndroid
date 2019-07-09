@@ -47,7 +47,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -116,7 +118,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                //.requestIdToken(getString(R.string.WebClient))
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode("129048150139-p325stbnhjgm18ck47js8r0qskie3fki.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -180,7 +183,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         */
         /*  End Boton Registrar*/
         /*  Boton Gmail */
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
+        //findViewById(R.id.sign_in_button).setOnClickListener(this);
         /*  End Boton Gmail */
 
         slideToUnlockView2 = (SlideToUnlock) findViewById(R.id.slideToUnlock2);
@@ -428,9 +431,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 funcion = 1;
                 attemptLogin();
                 break;
-            case R.id.sign_in_button:
+            /*case R.id.sign_in_button:
                 signIn();
-                break;
+                break;*/
                 default:break;
         }
     }
@@ -551,7 +554,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String authCode = account.getServerAuthCode();
             firebaseAuthWithGoogle(account);
+            Log.d(TAG, authCode);
             // Signed in successfully, show authenticated UI.
             //updateUI(account);
         } catch (ApiException e) {
