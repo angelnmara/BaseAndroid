@@ -30,11 +30,22 @@
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/auto300"
+                android:layout_gravity="center"
+                android:layout_margin= "50dp"
+                android:tint="@color/colorAccent"/>
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
 
                 <AutoCompleteTextView
                     android:id="@+id/email"
@@ -43,14 +54,16 @@
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:maxLength="40"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+|
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
@@ -61,7 +74,8 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:maxLength="25"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -69,7 +83,7 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_margin="10dp"
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"
                 android:background="@color/colorAccent"
@@ -80,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"/>
+                android:layout_margin="10dp"/>
 
             <!--<com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
@@ -100,11 +114,11 @@
 
             <com.lamarrulla.baseandroid.utils.SlideToUnlock
                 android:id="@+id/slideToUnlock2"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:layout_below="@+id/sing_in_button"
                 android:layout_gravity="center"
-                android:layout_margin="16dp"
+                android:layout_margin="10dp"
                 app:cancelOnYExit="true"
                 app:slideToUnlockBackgroundColor="@color/colorAccent"
                 app:slideToUnlockText="@string/desliza_para_registrar"

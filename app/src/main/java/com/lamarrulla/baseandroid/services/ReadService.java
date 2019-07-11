@@ -110,7 +110,7 @@ public class ReadService extends Service {
                     }
                 }
             };
-            timer.scheduleAtFixedRate(timerTask, 0, 1000);
+            timer.scheduleAtFixedRate(timerTask, 0, 5000);
         }catch(Exception ex){
             stopSelf();
             Log.d(TAG, ex.getMessage());
