@@ -148,7 +148,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(this);
 
-        mLoginFormView = findViewById(R.id.login_form);
+        /*mLoginFormView = findViewById(R.id.login_form);*/
+        mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
 
         /*  Facebook */
