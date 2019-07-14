@@ -76,35 +76,33 @@ public class Utils {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void showProgress(final boolean show, final View ShowView, final View HiddenView, Context context) {
+    public void showProgress(final View ShowView, final View HiddenView, Context context) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = context.getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            ShowView.setVisibility(show ? View.GONE : View.VISIBLE);
-            ShowView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            ShowView.setVisibility(View.VISIBLE);
+            ShowView.animate().setDuration(shortAnimTime).alpha(1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ShowView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    ShowView.setVisibility(View.VISIBLE);
                 }
             });
 
-            HiddenView.setVisibility(show ? View.VISIBLE : View.GONE);
-            HiddenView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            HiddenView.setVisibility(View.GONE);
+            HiddenView.animate().setDuration(shortAnimTime).alpha(0).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    HiddenView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    HiddenView.setVisibility(View.GONE);
                 }
             });
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
-            HiddenView.setVisibility(show ? View.VISIBLE : View.GONE);
-            ShowView.setVisibility(show ? View.GONE : View.VISIBLE);
+            HiddenView.setVisibility(View.GONE);
+            ShowView.setVisibility(View.VISIBLE);
         }
     }
 

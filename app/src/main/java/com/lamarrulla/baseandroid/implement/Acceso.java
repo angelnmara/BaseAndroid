@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,7 +34,7 @@ public class Acceso implements IAcceso {
 
     private FirebaseAuth mAuth;
 
-    private final String TAG = "ACCESO";
+    private final String TAG = Acceso.class.getSimpleName();
 
     API api = new API();
 
@@ -178,7 +179,9 @@ public class Acceso implements IAcceso {
     }
     public void showProgress(){
         View mLoginFormView = ((Activity)context).findViewById(R.id.login_form);
+        EditText passw = mLoginFormView.findViewById(R.id.password);
+        passw.setText("");
         View mProgressView = ((Activity)context).findViewById(R.id.login_progress);
-        utils.showProgress(false, mLoginFormView, mProgressView, context);
+        utils.showProgress(mLoginFormView, mProgressView, context);
     }
 }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.BarcodeFormat;
@@ -38,6 +39,7 @@ public class GeneraCodigoFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ImageView imgCerrar;
 
     private static final String TAG = GeneraCodigoFragment.class.getSimpleName();
 
@@ -93,6 +95,13 @@ public class GeneraCodigoFragment extends Fragment {
         }
         ImageView imageView = view.findViewById(R.id.ivCodigo);
         imageView.setImageBitmap(bitmap);
+        imgCerrar = view.findViewById(R.id.btnCerrar);
+        imgCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().popBackStackImmediate();
+            }
+        });
         return view;
     }
 

@@ -313,7 +313,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            utils.showProgress(true, mLoginFormView, mProgressView, context);
+            utils.showProgress(mLoginFormView, mProgressView, context);
             iAcceso.setContext(context);
             tipoAcceso = getResources().getInteger(R.integer.AccesoUsuarioConstasenna);
             if(tipoAcceso == 1){
