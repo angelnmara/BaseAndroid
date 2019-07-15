@@ -8,28 +8,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.activities.AltaUsuarioActivity;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
 import java.net.NetworkInterface;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -110,6 +103,15 @@ public class Utils {
         FirebaseAPI firebaseAPI = new FirebaseAPI();
         firebaseAPI.writeNewUser();
         Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        context.startActivity(intent);
+    }
+
+    public void OpenAltaUsuario(Context context){
+        FirebaseAPI firebaseAPI = new FirebaseAPI();
+        firebaseAPI.writeNewUser();
+        Intent intent = new Intent(context, AltaUsuarioActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);

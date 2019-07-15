@@ -166,7 +166,8 @@ public class Acceso implements IAcceso {
                             //FirebaseUser user = mAuth.getCurrentUser();
                             //utils.guardaShared((Activity) context, R.string.Token, user.toString());
                             utils.guardaShared((Activity) context, R.string.TipoAcceso, "2");
-                            utils.OpenMain(context);
+                            //utils.OpenMain(context);
+                            utils.OpenAltaUsuario(context);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());

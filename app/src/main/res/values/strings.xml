@@ -75,6 +75,8 @@
     <string name="mac_address">MAC ADDRESS</string>
     <string name="usuario">USUARIO</string>
     <string name="desliza_para_registrar">Desliza para registrar</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="leyendaComenzar">Localizame te da las gracias por darte de alta, da click en SIGUIENTE para comenzar.</string>
 
     <!--firebase-->
 
