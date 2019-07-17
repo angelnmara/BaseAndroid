@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -25,8 +24,6 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.webkit.URLUtil;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -49,7 +46,6 @@ import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.MyDispositivosRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
-import com.lamarrulla.baseandroid.utils.MaskWatcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,6 +72,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
     SurfaceView cameraView;
     private String token = "";
     private String tokenanterior = "";
+    BottomNavigationView bottomNavigationView;
 
     public interface OnItemClickListener {
         void onItemClick(Dispositivo.DispositivoUsuario item);
@@ -266,8 +263,8 @@ public class AltaDeviceActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.altaDispositvo);
 
         mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         final RecyclerView recyclerView = findViewById(R.id.list);
         // Set the adapter
@@ -360,6 +357,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                 adapter.notifyDataSetChanged();
                 dialog.hide();
+                bottomNavigationView.getMenu().getItem(1).setChecked(true);
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

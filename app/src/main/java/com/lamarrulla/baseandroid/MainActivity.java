@@ -418,6 +418,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
+        gmap.getUiSettings().setMapToolbarEnabled(false);
+        gmap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                //Toast.makeText(context, "click map", Toast.LENGTH_SHORT).show();
+            }
+        });
+        gmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                /*Meter aqui el evento para hacer la ruta*/
+                //Toast.makeText(context, "click on marker", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
