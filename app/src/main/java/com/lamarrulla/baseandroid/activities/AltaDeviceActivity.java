@@ -26,6 +26,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -332,6 +333,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
         final AlertDialog dialog = mBuilder.create();
         final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
         final EditText txtUsuario = mViewAgregar.findViewById(R.id.txtUsuario);
+        final ImageView btnCerrar = mViewAgregar.findViewById(R.id.btnCerrar);
         if(item!=null){
             txtMacAddres.setText(item.dispositivo);
         }
@@ -357,11 +359,17 @@ public class AltaDeviceActivity extends AppCompatActivity {
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                 adapter.notifyDataSetChanged();
                 dialog.hide();
-                bottomNavigationView.getMenu().getItem(1).setChecked(true);
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+            }
+        });
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
