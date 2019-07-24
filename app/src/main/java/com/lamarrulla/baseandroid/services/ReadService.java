@@ -69,43 +69,46 @@ public class ReadService extends Service {
                     for(int i=0;i<jsa.length();i++){
                         try {
                             JSONObject jso = jsa.getJSONObject(i);
-                            final String dispositivoJSO =jso.getString("dispositivo").toUpperCase();
-                            Log.d(TAG, dispositivoJSO);
-                            Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
-                            queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()){
-                                        try {
-                                            Gson gso = new Gson();
-                                            String s1 = gso.toJson(dataSnapshot.getValue());
-                                            JSONObject jso = new JSONObject(s1);
-                                            Log.d(TAG, jso.toString());
-                                            if(jso.has("latitude") && jso.has("longitud")){
-                                                Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
-                                                        .putExtra(Constants.LATITUD, jso.getString("latitude"))
-                                                        .putExtra(Constants.LONGITUD, jso.getString("longitude"))
-                                                        .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
-                                                // Emitir el intent a la actividad
-                                                LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
-                                                //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
-                                                //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
-                                                //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                            if(jso.has("valor")){
+                                if(jso.getBoolean("valor")){
+                                    final String dispositivoJSO =jso.getString("dispositivo").toUpperCase();
+                                    Log.d(TAG, dispositivoJSO);
+                                    Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
+                                    queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                try {
+                                                    Gson gso = new Gson();
+                                                    String s1 = gso.toJson(dataSnapshot.getValue());
+                                                    JSONObject jso = new JSONObject(s1);
+                                                    Log.d(TAG, jso.toString());
+                                                    if(jso.has("latitude") && jso.has("longitud")){
+                                                        Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
+                                                                .putExtra(Constants.LATITUD, jso.getString("latitude"))
+                                                                .putExtra(Constants.LONGITUD, jso.getString("longitude"))
+                                                                .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
+                                                        // Emitir el intent a la actividad
+                                                        LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
+                                                        //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
+                                                        //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
+                                                        //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }else{
+                                                timer.cancel();
+                                                stopSelf();
                                             }
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
                                         }
-                                    }else{
-                                        timer.cancel();
-                                        stopSelf();
-                                    }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Log.d(TAG, "Ocurrio un error al consultar la base de datos");
+                                        }
+                                    });
                                 }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.d(TAG, "Ocurrio un error al consultar la base de datos");
-                                }
-                            });
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
