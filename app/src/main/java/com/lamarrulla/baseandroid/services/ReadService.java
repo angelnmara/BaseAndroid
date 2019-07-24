@@ -81,15 +81,17 @@ public class ReadService extends Service {
                                             String s1 = gso.toJson(dataSnapshot.getValue());
                                             JSONObject jso = new JSONObject(s1);
                                             Log.d(TAG, jso.toString());
-                                            Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
-                                                    .putExtra(Constants.LATITUD, jso.getString("latitude"))
-                                                    .putExtra(Constants.LONGITUD, jso.getString("longitude"))
-                                                    .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
-                                            // Emitir el intent a la actividad
-                                            LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
-                                            //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
-                                            //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
-                                            //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                                            if(jso.has("latitude") && jso.has("longitud")){
+                                                Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
+                                                        .putExtra(Constants.LATITUD, jso.getString("latitude"))
+                                                        .putExtra(Constants.LONGITUD, jso.getString("longitude"))
+                                                        .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
+                                                // Emitir el intent a la actividad
+                                                LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
+                                                //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
+                                                //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
+                                                //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                                            }
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }

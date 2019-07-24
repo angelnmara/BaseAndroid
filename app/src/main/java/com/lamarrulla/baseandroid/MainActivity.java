@@ -319,22 +319,24 @@ public class MainActivity extends AppCompatActivity
                             String s1 = gso.toJson(dataSnapshot.getValue());
                             JSONObject jso = new JSONObject(s1);
                             Log.d(TAG, jso.toString());
-                            Double lati = Double.parseDouble(jso.getString("latitude"));
-                            Double longi = Double.parseDouble(jso.getString("longitude"));
-                            //String usuario = jso.getString("usuario");
-                            LatLng sydney = new LatLng(lati, longi);
-                            mo = new MarkerOptions()
-                                    .position(sydney)
-                                    .title(usuario)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
-                                    .anchor(0.5f,0.5f)
-                                    .zIndex(1.0f);
-                            marker = gmap.addMarker(mo);
-                            Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
-                            dispositivosMarks.dispositivo = dispositivo;
-                            dispositivosMarks.marker = marker;
-                            listDispositivosMarks.add(dispositivosMarks);
-                            Log.d(TAG, "se guardan marks");
+                            if(jso.has("latitude") && jso.has("longitude")){
+                                Double lati = Double.parseDouble(jso.getString("latitude"));
+                                Double longi = Double.parseDouble(jso.getString("longitude"));
+                                //String usuario = jso.getString("usuario");
+                                LatLng sydney = new LatLng(lati, longi);
+                                mo = new MarkerOptions()
+                                        .position(sydney)
+                                        .title(usuario)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
+                                        .anchor(0.5f,0.5f)
+                                        .zIndex(1.0f);
+                                marker = gmap.addMarker(mo);
+                                Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
+                                dispositivosMarks.dispositivo = dispositivo;
+                                dispositivosMarks.marker = marker;
+                                listDispositivosMarks.add(dispositivosMarks);
+                                Log.d(TAG, "se guardan marks");
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
