@@ -334,6 +334,10 @@ public class AltaDeviceActivity extends AppCompatActivity {
         final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
         final EditText txtUsuario = mViewAgregar.findViewById(R.id.txtUsuario);
         final ImageView btnCerrar = mViewAgregar.findViewById(R.id.btnCerrar);
+        final TextView txtAlta = mViewAgregar.findViewById(R.id.txtAltaDispositivo);
+        final TextView txtEdita = mViewAgregar.findViewById(R.id.txtEditaDispositivo);
+        txtEdita.setVisibility(View.VISIBLE);
+        txtAlta.setVisibility(View.GONE);
         if(item!=null){
             txtMacAddres.setText(item.dispositivo);
         }

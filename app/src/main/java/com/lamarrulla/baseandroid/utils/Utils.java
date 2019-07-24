@@ -17,10 +17,19 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.activities.AltaUsuarioActivity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.NetworkInterface;
 import java.util.Collections;
@@ -143,6 +152,36 @@ public class Utils {
         } catch (Exception ex) {
             Log.d(TAG, ex.getMessage());
         } // for now eat exceptions
+    }
+
+    public Bitmap getQR(Context context) throws WriterException {
+        Bitmap bitmap;
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        getMAC(context);
+        BitMatrix bitMatrix = multiFormatWriter.encode(getMacAddress(), BarcodeFormat.QR_CODE,200,200);
+        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+        bitmap = barcodeEncoder.createBitmap(bitMatrix);
+        return bitmap;
+    }
+
+    public File createFile(Bitmap myBitmap, Context context) throws IOException {
+        //create a file to write bitmap data
+        File f = new File(context.getExternalCacheDir(), "myQR.PNG");
+        //getCacheDir()
+        f.createNewFile();
+
+        //Convert bitmap to byte array
+        Bitmap bitmap = Bitmap.createScaledBitmap(myBitmap, 500, 500, false);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100 /*ignored for PNG*/, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //write the bytes in file
+        FileOutputStream fos = new FileOutputStream(f);
+        fos.write(bitmapdata);
+        fos.flush();
+        fos.close();
+        return f;
     }
 
     public void requestPermissions(Activity activity){

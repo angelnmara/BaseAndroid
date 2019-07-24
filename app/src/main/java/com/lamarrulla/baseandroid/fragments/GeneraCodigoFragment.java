@@ -9,16 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeReader;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.utils.Utils;
 
@@ -85,11 +76,7 @@ public class GeneraCodigoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_genera_codigo, container, false);
         try {
-            utils.getMAC(getContext());
-            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-            BitMatrix bitMatrix = multiFormatWriter.encode(utils.getMacAddress(), BarcodeFormat.QR_CODE,200,200);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            bitmap = utils.getQR(getContext());
         } catch (WriterException e) {
             e.printStackTrace();
         }

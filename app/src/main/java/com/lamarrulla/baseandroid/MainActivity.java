@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -66,6 +67,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.zxing.WriterException;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
@@ -82,6 +84,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -135,6 +138,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -643,7 +649,22 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, TrackerActivity.class));
             /*} else if (id == R.id.nav_manage) {*/
 
-        } else if (id == R.id.nav_manage) {
+        }else if(id == R.id.nav_share){
+            Toast.makeText(context, "Compartir", Toast.LENGTH_LONG).show();
+            final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.setType("image/jpg");
+            final File photoFile;
+            try {
+                photoFile = utils.createFile(utils.getQR(context), context);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photoFile));
+                startActivity(Intent.createChooser(shareIntent, "Share image using"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+        }else if (id == R.id.nav_manage) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.lnlPrincipalFragment, new GeneraCodigoFragment(), "GeneraCodigoFragment").addToBackStack("GeneraCodigoFragment").commit();
