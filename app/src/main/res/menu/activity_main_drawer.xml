@@ -6,8 +6,8 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/alta_de_dispositivo" />
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/administraDispositvo" />
         <item
             android:id="@+id/nav_ubicacion"
             android:icon="@drawable/ic_map_marker"

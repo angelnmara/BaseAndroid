@@ -261,7 +261,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
         lnlAltaScan = (LinearLayout) findViewById(R.id.lnlAltaScan);
         lnlAltaMAC = (CoordinatorLayout) findViewById(R.id.lnlAltaMAC);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.altaDispositvo);
+        getSupportActionBar().setTitle(R.string.escanea_qr);
 
         mTextMessage = (TextView) findViewById(R.id.message);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
