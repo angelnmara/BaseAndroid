@@ -67,6 +67,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.zxing.WriterException;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
@@ -232,10 +233,22 @@ public class MainActivity extends AppCompatActivity
             try {
                 JSONObject jso = jsaDispositivos.getJSONObject(i);
                 Log.d(TAG, jso.toString());
-                if(jso.has("valor")){
-                    menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
-                }else{
-                    menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("activo"));
+
+                /*
+                   if(jso.has("activo")){
+                        jso.put("valor", jso.getBoolean("activo"));
+                    }else{
+                        jso.put("valor", false);
+                    }
+                */
+                //menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
+
+                if(jso.has("activo")) {
+                    if (jso.getBoolean("activo")) {
+                        if (jso.has("valor")) {
+                            menu.add(0, i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
+                        }
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -623,12 +636,15 @@ public class MainActivity extends AppCompatActivity
         if (item.isChecked()) item.setChecked(false);
         else item.setChecked(true);
 
+
+
         try {
+
             JSONObject jso = jsaDispositivos.getJSONObject(item.getItemId());
             if(jso.has("valor")){
-                jso.remove("valor");
+                //jso.remove("valor");
+                jso.put("valor", valor);
             }
-            jso.put("valor", valor);
             removeMarks();
             getDispositivos();
         } catch (JSONException e) {
@@ -796,10 +812,22 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
+
+    public void compareJSA(JSONArray jsa1, JSONArray jsa2) throws JSONException {
+        if(jsa1.length()==jsa2.length()){
+            for(int i = 0; i< jsa1.length(); i++){
+                JSONObject jso1 = jsa1.getJSONObject(i);
+                JSONObject jso2 = jsa2.getJSONObject(i);
+                jso2.put("valor", jso1.getBoolean("valor"));
+            }
+        }
+        jsaDispositivos = jsa2;
+    }
+
     public void getDispositivos() throws JSONException {
         /*try {*/
             Log.d(TAG, "Obtiene Dispositivos:" + jsaDispositivos.length());
-            if(jsaDispositivos.length()==0){
+            //if(jsaDispositivos.length()==0){
                 Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -809,7 +837,8 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 Gson gso = new Gson();
                                 String s1 = gso.toJson(dataSnapshot.getValue());
-                                jsaDispositivos = new JSONArray(s1);
+                                JSONArray jsaTemp = new JSONArray(s1);
+                                compareJSA(jsaDispositivos, jsaTemp);
                                 /*inicia servicio*/
                                 Log.d(TAG, jsaDispositivos.toString());
                                 Log.d(TAG, "Inicia Servicio");
@@ -826,18 +855,19 @@ public class MainActivity extends AppCompatActivity
                         Log.d(TAG, "No regresaron datos desde firebase");
                     }
                 });
+                /*
             }else{
                 Log.d(TAG, jsaDispositivos.toString());
                 Log.d(TAG, "Inicia Servicio");
                 iniciaServicioDispositivos();
-            }
+            }*/
     }
     public void iniciaServicioDispositivos() throws JSONException {
         Log.d(TAG, "iniciaServicioDispositivos");
         for(int i = 0; i<jsaDispositivos.length();i++){
             JSONObject jso = jsaDispositivos.getJSONObject(i);
             if(!jso.has("valor")){
-                jso.put("valor", true);
+                jso.put("valor", jso.getBoolean("activo"));
             }
             if(jso.getBoolean("valor")){
                 IniciaServicio(jso.getString("dispositivo"), jso.getString("usuario"));
