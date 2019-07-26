@@ -90,12 +90,14 @@ public class AltaDeviceActivity extends AppCompatActivity {
                     lnlAltaScan.setVisibility(View.GONE);
                     lnlAltaMAC.setVisibility(View.VISIBLE);
                     cameraSource.stop();
+                    getSupportActionBar().setTitle(R.string.mis_dispositivos);
                     return true;
                 case R.id.codigo_qr:
                     try {
                         lnlAltaMAC.setVisibility(View.GONE);
                         lnlAltaScan.setVisibility(View.VISIBLE);
                         cameraSource.start(cameraView.getHolder());
+                        getSupportActionBar().setTitle(R.string.escaneaQR);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -261,7 +263,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
         lnlAltaScan = (LinearLayout) findViewById(R.id.lnlAltaScan);
         lnlAltaMAC = (CoordinatorLayout) findViewById(R.id.lnlAltaMAC);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.escanea_qr);
+        getSupportActionBar().setTitle(R.string.escaneaQR);
 
         mTextMessage = (TextView) findViewById(R.id.message);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);

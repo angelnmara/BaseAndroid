@@ -4,7 +4,7 @@
     <item
         android:id="@+id/codigo_qr"
         android:icon="@drawable/ic_qrcode"
-        android:title="@string/escanea_qr" />
+        android:title="@string/escaneaQR" />
 
     <item
         android:id="@+id/mac_address"

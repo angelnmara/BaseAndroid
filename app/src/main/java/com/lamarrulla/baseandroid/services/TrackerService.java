@@ -17,6 +17,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.ColorRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -101,6 +102,7 @@ public class TrackerService extends Service {
         }
     };
 
+    /*
     private void loginToFirebase() {
         // Authenticate with Firebase, and request location updates
         String email = getString(R.string.firebase_email);
@@ -117,12 +119,12 @@ public class TrackerService extends Service {
                 }
             }
         });
-    }
+    }*/
 
     private void requestLocationUpdates() {
         LocationRequest request = new LocationRequest();
         request.setInterval(10000);
-        request.setFastestInterval(5000);
+        request.setFastestInterval(2500);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
         final String path = getString(R.string.firebase_path) + "/" + utils.getMacAddress().toUpperCase();

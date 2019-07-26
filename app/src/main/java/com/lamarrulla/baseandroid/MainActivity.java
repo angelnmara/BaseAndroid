@@ -234,15 +234,6 @@ public class MainActivity extends AppCompatActivity
                 JSONObject jso = jsaDispositivos.getJSONObject(i);
                 Log.d(TAG, jso.toString());
 
-                /*
-                   if(jso.has("activo")){
-                        jso.put("valor", jso.getBoolean("activo"));
-                    }else{
-                        jso.put("valor", false);
-                    }
-                */
-                //menu.add(0,i, Menu.FLAG_PERFORM_NO_CLOSE, jso.getString("usuario")).setChecked(jso.getBoolean("valor"));
-
                 if(jso.has("activo")) {
                     if (jso.getBoolean("activo")) {
                         if (jso.has("valor")) {
@@ -621,15 +612,6 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        /*switch (item.getItemId()) {
-            case 0:
-            case 1:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                return false;
-            default:
-                return super.onOptionsItemSelected(item);
-        }*/
 
         Boolean valor = (item.isChecked()?false:true);
 

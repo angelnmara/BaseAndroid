@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BaseAndroid</string>
+    <string name="app_name">LocalizaMe</string>
     <!-- Facebook ID -->
     <string name="facebook_app_id">408586353024011</string>
     <string name="fb_login_protocol_scheme">fb408586353024011</string>
@@ -60,7 +60,7 @@
     <string name="firebase_path" translatable="false">locations</string>
     <string name="firebase_email" translatable="false">angelnmara@gmail.com</string>
     <string name="firebase_password" translatable="false">M@r@dr1980</string>
-    <string name="notification_text">Tracking, tap to cancel</string>
+    <string name="notification_text">Localizando, toca para cancelar</string>
     <string name="wlan0">wlan0</string>
     <string name="comparitir_mi_ubica">Comparitir mi ubicación</string>
     <string name="title_activity_alta_device">AltaDeviceActivity</string>
@@ -71,12 +71,14 @@
     <string name="administraDispositvo">Administra dispositivos</string>
     <string name="Locations">locations</string>
     <string name="obtener_codigo">Obtener código</string>
-    <string name="escanea_qr">Escanea QR</string>
     <string name="mac_address">MAC ADDRESS</string>
     <string name="usuario">USUARIO</string>
     <string name="desliza_para_registrar">Desliza para registrar</string>
     <string name="siguiente">Siguiente</string>
     <string name="leyendaComenzar">Localizame te da las gracias por darte de alta, da click en SIGUIENTE para comenzar.</string>
+    <string name="escaneaQR">Escanea QR</string>
+    <string name="noConexionInternet">No existe conexión a internet</string>
+    <string name="deslizaAlta">Desliza completamente para dar de alta</string>
 
     <!--firebase-->
 

@@ -137,9 +137,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    funcion = 1;
-                    attemptLogin();
-                    return true;
+                    if(utils.isConnectAvailable(context)){
+                        funcion = 1;
+                        attemptLogin();
+                        return true;
+                    }else{
+                        Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+
                 }
                 return false;
             }
@@ -429,8 +435,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.email_sign_in_button:
-                funcion = 1;
-                attemptLogin();
+                if(utils.isConnectAvailable(context)){
+                    funcion = 1;
+                    attemptLogin();
+                }else{
+                    Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_LONG).show();
+                }
                 break;
             /*case R.id.sign_in_button:
                 signIn();
@@ -446,13 +456,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onSlideToUnlockCanceled() {
-        Toast.makeText(this, "Operacion cancelada", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.deslizaAlta), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onSlideToUnlockDone() {
-        funcion = 2;
-        attemptLogin();
+        if(utils.isConnectAvailable(context)){
+            funcion = 2;
+            attemptLogin();    
+        }else{
+            Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+        }
+        
     }
 
     private interface ProfileQuery {
