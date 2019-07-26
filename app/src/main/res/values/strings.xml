@@ -77,8 +77,10 @@
     <string name="siguiente">Siguiente</string>
     <string name="leyendaComenzar">Localizame te da las gracias por darte de alta, da click en SIGUIENTE para comenzar.</string>
     <string name="escaneaQR">Escanea QR</string>
-    <string name="noConexionInternet">No existe conexión a internet</string>
+    <string name="noConexionInternet">Verifica tu conexión a internet</string>
     <string name="deslizaAlta">Desliza completamente para dar de alta</string>
+    <string name="operacionCancelada">Operación cancelada</string>
+    <string name="errroSesionFacebook">Ocurrio un error al iniciar la session en facebook.</string>
 
     <!--firebase-->
 

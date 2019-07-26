@@ -173,12 +173,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             @Override
             public void onCancel() {
-                Toast.makeText(LoginActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.operacionCancelada), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Error al logear con facebook: " + error);
+                switch (error.getMessage()){
+                    case "CONNECTION_FAILURE: CONNECTION_FAILURE":
+                        Toast.makeText(LoginActivity.this, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+                        break;
+                        default:
+                            Toast.makeText(LoginActivity.this, getString(R.string.errroSesionFacebook), Toast.LENGTH_SHORT).show();
+                            break;
+                }
             }
         });
         /*  End Facebook */
@@ -463,7 +471,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onSlideToUnlockDone() {
         if(utils.isConnectAvailable(context)){
             funcion = 2;
-            attemptLogin();    
+            attemptLogin();
         }else{
             Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
         }
