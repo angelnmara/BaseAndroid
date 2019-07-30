@@ -618,8 +618,6 @@ public class MainActivity extends AppCompatActivity
         if (item.isChecked()) item.setChecked(false);
         else item.setChecked(true);
 
-
-
         try {
 
             JSONObject jso = jsaDispositivos.getJSONObject(item.getItemId());

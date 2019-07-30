@@ -83,7 +83,7 @@ public class ReadService extends Service {
                                                     String s1 = gso.toJson(dataSnapshot.getValue());
                                                     JSONObject jso = new JSONObject(s1);
                                                     Log.d(TAG, jso.toString());
-                                                    if(jso.has("latitude") && jso.has("longitud")){
+                                                    if(jso.has("latitude") && jso.has("longitude")){
                                                         Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
                                                                 .putExtra(Constants.LATITUD, jso.getString("latitude"))
                                                                 .putExtra(Constants.LONGITUD, jso.getString("longitude"))
