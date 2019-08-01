@@ -47,6 +47,7 @@ import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.MyDispositivosRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
+import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,12 +69,14 @@ public class AltaDeviceActivity extends AppCompatActivity {
     Context context = AltaDeviceActivity.this;
     CoordinatorLayout lnlAltaMAC;
     LinearLayout lnlAltaScan;
+    LinearLayout lnlSinConexion;
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     SurfaceView cameraView;
     private String token = "";
     private String tokenanterior = "";
     BottomNavigationView bottomNavigationView;
+    Utils utils = new Utils();
 
     public interface OnItemClickListener {
         void onItemClick(Dispositivo.DispositivoUsuario item);
@@ -85,10 +88,19 @@ public class AltaDeviceActivity extends AppCompatActivity {
         @SuppressLint("MissingPermission")
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            if(!utils.isConnectAvailable(context)){
+                lnlSinConexion.setVisibility(View.VISIBLE);
+                lnlAltaMAC.setVisibility(View.GONE);
+                lnlAltaScan.setVisibility(View.GONE);
+                return false;
+            }
+
             switch (item.getItemId()) {
                 case R.id.mac_address:
                     lnlAltaScan.setVisibility(View.GONE);
                     lnlAltaMAC.setVisibility(View.VISIBLE);
+                    lnlSinConexion.setVisibility(View.GONE);
                     cameraSource.stop();
                     getSupportActionBar().setTitle(R.string.mis_dispositivos);
                     return true;
@@ -96,6 +108,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
                     try {
                         lnlAltaMAC.setVisibility(View.GONE);
                         lnlAltaScan.setVisibility(View.VISIBLE);
+                        lnlSinConexion.setVisibility(View.GONE);
                         cameraSource.start(cameraView.getHolder());
                         getSupportActionBar().setTitle(R.string.escaneaQR);
                     } catch (IOException e) {
@@ -262,6 +275,8 @@ public class AltaDeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alta_device);
         lnlAltaScan = (LinearLayout) findViewById(R.id.lnlAltaScan);
         lnlAltaMAC = (CoordinatorLayout) findViewById(R.id.lnlAltaMAC);
+        lnlSinConexion = findViewById(R.id.lnlSinConexion);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.escaneaQR);
 
@@ -292,15 +307,6 @@ public class AltaDeviceActivity extends AppCompatActivity {
                             Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
                             listDispositivoUsuario.add(dispositivoUsuario);
                         }
-
-                    /*try {
-                        Gson gso = new Gson();
-                        String s1 = gso.toJson(dataSnapshot.getValue());
-                        JSONObject jso = new JSONObject(s1);
-                        Log.d(TAG, jso.toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }*/
                     }
                     adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, new OnItemClickListener(){
                         @Override
@@ -326,6 +332,11 @@ public class AltaDeviceActivity extends AppCompatActivity {
             }
         });
         cargaCamara();
+        if(!utils.isConnectAvailable(context)){
+            lnlSinConexion.setVisibility(View.VISIBLE);
+            lnlAltaMAC.setVisibility(View.GONE);
+            lnlAltaScan.setVisibility(View.GONE);
+        }
     }
 
     public void createDialog(final Dispositivo.DispositivoUsuario item, final int opcion){
@@ -342,6 +353,9 @@ public class AltaDeviceActivity extends AppCompatActivity {
         txtAlta.setVisibility(View.GONE);
         if(item!=null){
             txtMacAddres.setText(item.dispositivo);
+            if(opcion==2){
+                txtUsuario.setText(item.usuario);
+            }
         }
         //txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
         if(token!=null){
@@ -388,6 +402,10 @@ public class AltaDeviceActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
-        firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
+        if(utils.isConnectAvailable(context)){
+            firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
+        }else{
+            Toast.makeText(context, "No existe conexion a internet", Toast.LENGTH_SHORT).show();
+        }
     }
 }

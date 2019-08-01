@@ -390,10 +390,12 @@ public class MainActivity extends AppCompatActivity
                     Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
                     Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
                     LatLng latLng = new LatLng(latitud, longitud);
-                    for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
-                         ) {
-                        if(dispositivoMarks.dispositivo.equals(dispositivo)){
-                            dispositivoMarks.marker.setPosition(latLng);
+                    if(listDispositivosMarks!= null){
+                        for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
+                        ) {
+                            if(dispositivoMarks.dispositivo.equals(dispositivo)){
+                                dispositivoMarks.marker.setPosition(latLng);
+                            }
                         }
                     }
                     //getLocation(Double.parseDouble(intent.getStringExtra(Constants.LATITUD)), Double.parseDouble(intent.getStringExtra(Constants.LONGITUD)), intent.getStringExtra(Constants.DISPOSITIVO));

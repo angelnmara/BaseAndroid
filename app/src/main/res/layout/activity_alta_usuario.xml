@@ -7,10 +7,12 @@
     tools:context=".activities.AltaUsuarioActivity"
     android:background="@color/colorAccent">
 
-    <EditText
+    <TextView
         android:id="@+id/txtLeyenda"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:textAlignment="center"
         android:text="@string/leyendaComenzar"
         android:layout_margin="16dp"
         android:textColor="#FFF"/>
