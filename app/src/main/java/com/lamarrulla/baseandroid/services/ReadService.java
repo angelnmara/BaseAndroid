@@ -72,7 +72,7 @@ public class ReadService extends Service {
                             if(jso.has("valor")){
                                 if(jso.getBoolean("valor")){
                                     final String dispositivoJSO =jso.getString("dispositivo").toUpperCase();
-                                    Log.d(TAG, dispositivoJSO);
+                                    //Log.d(TAG, dispositivoJSO);
                                     Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
                                     queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -82,11 +82,13 @@ public class ReadService extends Service {
                                                     Gson gso = new Gson();
                                                     String s1 = gso.toJson(dataSnapshot.getValue());
                                                     JSONObject jso = new JSONObject(s1);
-                                                    Log.d(TAG, jso.toString());
                                                     if(jso.has("latitude") && jso.has("longitude")){
+                                                        String _latitude = jso.getString(getString(R.string.latitude));
+                                                        String _longitude = jso.getString(getString(R.string.longitude));
+                                                        Log.d(TAG, "recive " + _longitude+ " - " + _latitude);
                                                         Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
-                                                                .putExtra(Constants.LATITUD, jso.getString("latitude"))
-                                                                .putExtra(Constants.LONGITUD, jso.getString("longitude"))
+                                                                .putExtra(Constants.LATITUD, _latitude)
+                                                                .putExtra(Constants.LONGITUD, _longitude)
                                                                 .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
                                                         // Emitir el intent a la actividad
                                                         LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);

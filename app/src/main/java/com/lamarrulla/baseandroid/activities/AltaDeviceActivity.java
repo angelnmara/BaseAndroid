@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AltaDeviceActivity extends AppCompatActivity {
+public class AltaDeviceActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "DispositivosFragment";
     private static final String TAGADSF = "AltaDispositivoScanFragment";
@@ -69,7 +70,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
     Context context = AltaDeviceActivity.this;
     CoordinatorLayout lnlAltaMAC;
     LinearLayout lnlAltaScan;
-    LinearLayout lnlSinConexion;
+    RelativeLayout lnlSinConexion;
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     SurfaceView cameraView;
@@ -77,6 +78,33 @@ public class AltaDeviceActivity extends AppCompatActivity {
     private String tokenanterior = "";
     BottomNavigationView bottomNavigationView;
     Utils utils = new Utils();
+    Button btnReintentar;
+    RecyclerView recyclerView;
+    AlertDialog dialog;
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnReintentar:
+                //Toast.makeText(context, "Click btnReintentar", Toast.LENGTH_SHORT).show();
+                if(utils.isConnectAvailable(context)){
+                    try {
+                        seleccionaEscanea();
+                        bottomNavigationView.setSelectedItemId(R.id.codigo_qr);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.btnAgregar:
+                createDialog(null, 1);
+                break;
+            default:
+                break;
+        }
+    }
 
     public interface OnItemClickListener {
         void onItemClick(Dispositivo.DispositivoUsuario item);
@@ -85,11 +113,10 @@ public class AltaDeviceActivity extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        @SuppressLint("MissingPermission")
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-            if(!utils.isConnectAvailable(context)){
+            if (!utils.isConnectAvailable(context)) {
                 lnlSinConexion.setVisibility(View.VISIBLE);
                 lnlAltaMAC.setVisibility(View.GONE);
                 lnlAltaScan.setVisibility(View.GONE);
@@ -106,22 +133,26 @@ public class AltaDeviceActivity extends AppCompatActivity {
                     return true;
                 case R.id.codigo_qr:
                     try {
-                        lnlAltaMAC.setVisibility(View.GONE);
-                        lnlAltaScan.setVisibility(View.VISIBLE);
-                        lnlSinConexion.setVisibility(View.GONE);
-                        cameraSource.start(cameraView.getHolder());
-                        getSupportActionBar().setTitle(R.string.escaneaQR);
+                        seleccionaEscanea();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     return true;
-                /*case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
-                    return true;*/
+                default:
+                    return false;
             }
-            return false;
+            //return false;
         }
     };
+
+    @SuppressLint("MissingPermission")
+    private void seleccionaEscanea() throws IOException {
+        lnlAltaMAC.setVisibility(View.GONE);
+        lnlAltaScan.setVisibility(View.VISIBLE);
+        lnlSinConexion.setVisibility(View.GONE);
+        cameraSource.start(cameraView.getHolder());
+        getSupportActionBar().setTitle(R.string.escaneaQR);
+    }
 
     private void cargaCamara() {
         barcodeDetector = new BarcodeDetector
@@ -191,49 +222,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
                                 cameraSource.stop();
                             }
                         });
-                        //lnlAltaScan.setVisibility(View.GONE);
-                        //lnlAltaMAC.setVisibility(View.VISIBLE);
-                        //cameraSource.stop();
-
                     }
-
-                    // verificamos que el token anterior no se igual al actual
-                    // esto es util para evitar multiples llamadas empleando el mismo token
-                    /*if (!token.equals(tokenanterior)) {
-
-                        // guardamos el ultimo token proceado
-                        tokenanterior = token;
-                        Log.i("token", token);
-
-                        if (URLUtil.isValidUrl(token)) {
-                            // si es una URL valida abre el navegador
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(token));
-                            startActivity(browserIntent);
-                        } else {
-                            // comparte en otras apps
-                            Intent shareIntent = new Intent();
-                            shareIntent.setAction(Intent.ACTION_SEND);
-                            shareIntent.putExtra(Intent.EXTRA_TEXT, token);
-                            shareIntent.setType("text/plain");
-                            startActivity(shareIntent);
-                        }
-
-                        new Thread(new Runnable() {
-                            public void run() {
-                                try {
-                                    synchronized (this) {
-                                        wait(5000);
-                                        // limpiamos el token
-                                        tokenanterior = "";
-                                    }
-                                } catch (InterruptedException e) {
-                                    // TODO Auto-generated catch block
-                                    Log.e("Error", "Waiting didnt work!!");
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                    }*/
                 }
             }
         });
@@ -276,6 +265,8 @@ public class AltaDeviceActivity extends AppCompatActivity {
         lnlAltaScan = (LinearLayout) findViewById(R.id.lnlAltaScan);
         lnlAltaMAC = (CoordinatorLayout) findViewById(R.id.lnlAltaMAC);
         lnlSinConexion = findViewById(R.id.lnlSinConexion);
+        btnReintentar = findViewById(R.id.btnReintentar);
+        btnReintentar.setOnClickListener(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.escaneaQR);
@@ -283,8 +274,27 @@ public class AltaDeviceActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        recyclerView = findViewById(R.id.list);
+        FloatingActionButton btnAgregar = findViewById(R.id.btnAgregar);
+        btnAgregar.setOnClickListener(this);
+        /*btnAgregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createDialog(null, 1);
+            }
+        });*/
 
-        final RecyclerView recyclerView = findViewById(R.id.list);
+        cargaDatosLista();
+        cargaCamara();
+
+        if(!utils.isConnectAvailable(context)){
+            lnlSinConexion.setVisibility(View.VISIBLE);
+            lnlAltaMAC.setVisibility(View.GONE);
+            lnlAltaScan.setVisibility(View.GONE);
+        }
+    }
+
+    public void cargaDatosLista(){
         // Set the adapter
         if (recyclerView instanceof RecyclerView) {
             //final RecyclerView recyclerView = (RecyclerView) view;
@@ -324,26 +334,13 @@ public class AltaDeviceActivity extends AppCompatActivity {
                 }
             });
         }
-        FloatingActionButton btnAgregar = findViewById(R.id.btnAgregar);
-        btnAgregar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createDialog(null, 1);
-            }
-        });
-        cargaCamara();
-        if(!utils.isConnectAvailable(context)){
-            lnlSinConexion.setVisibility(View.VISIBLE);
-            lnlAltaMAC.setVisibility(View.GONE);
-            lnlAltaScan.setVisibility(View.GONE);
-        }
     }
 
     public void createDialog(final Dispositivo.DispositivoUsuario item, final int opcion){
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
         View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_alta_dispositivo, null);
         mBuilder.setView(mViewAgregar);
-        final AlertDialog dialog = mBuilder.create();
+        dialog = mBuilder.create();
         final EditText txtMacAddres = mViewAgregar.findViewById(R.id.txtMacAddres);
         final EditText txtUsuario = mViewAgregar.findViewById(R.id.txtUsuario);
         final ImageView btnCerrar = mViewAgregar.findViewById(R.id.btnCerrar);
@@ -355,6 +352,7 @@ public class AltaDeviceActivity extends AppCompatActivity {
             txtMacAddres.setText(item.dispositivo);
             if(opcion==2){
                 txtUsuario.setText(item.usuario);
+                txtMacAddres.setText(item.dispositivo);
             }
         }
         //txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
@@ -405,7 +403,10 @@ public class AltaDeviceActivity extends AppCompatActivity {
         if(utils.isConnectAvailable(context)){
             firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
         }else{
-            Toast.makeText(context, "No existe conexion a internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+        }
+        if(dialog!=null){
+            dialog.dismiss();
         }
     }
 }

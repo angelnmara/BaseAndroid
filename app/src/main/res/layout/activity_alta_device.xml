@@ -59,18 +59,35 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/lnlSinConexion"
+        android:orientation="vertical"
         android:visibility="gone">
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAlignment="center"
+            android:id="@+id/txtSinInternet"
+            android:layout_margin="20dp"
+            android:layout_centerHorizontal="true"
             android:text="Sin conexión a internet"/>
-    </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/dinosaurio_chido"/>
+        <Button
+            android:id="@+id/btnReintentar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reintentar"
+            android:background="@color/colorAccent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="70dp"
+            android:layout_centerHorizontal="true"
+            android:padding="5dp"
+            android:textColor="#FFF"/>
+    </RelativeLayout>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigationView"

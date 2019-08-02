@@ -46,7 +46,32 @@ public class Dispositivo {
         public DispositivosMarks(String dispositivo, Marker marker){
             this.dispositivo = dispositivo;
             this.marker = marker;
-
+        }
+    }
+    public static class MyLocation{
+        public double latitude;
+        public double longitude;
+        public double altitude;
+        public long elapsedRealtimeNanos;
+        public long time;
+        public float bearing;
+        public float bearingAccuracyDegrees;
+        public float speed;
+        public float speedAccuracyMetersPerSecond;
+        public float verticalAccuracyMeters;
+        public float accuracy;
+        public MyLocation(double latitude, double longitude, double altitude, long elapsedRealtimeNanos, long time, float bearing, float bearingAccuracyDegrees, float speed, float speedAccuracyMetersPerSecond, float verticalAccuracyMeters, float accuracy){
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.altitude = altitude;
+            this.elapsedRealtimeNanos = elapsedRealtimeNanos;
+            this.time = time;
+            this.bearing = bearing;
+            this.bearingAccuracyDegrees = bearingAccuracyDegrees;
+            this.speed = speed;
+            this.speedAccuracyMetersPerSecond = speedAccuracyMetersPerSecond;
+            this.verticalAccuracyMeters = verticalAccuracyMeters;
+            this.accuracy = accuracy;
         }
     }
 }

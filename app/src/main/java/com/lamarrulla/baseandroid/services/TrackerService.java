@@ -18,6 +18,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.ColorRes;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -33,10 +34,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -134,13 +138,29 @@ public class TrackerService extends Service {
             // Request location updates and when an update is
             // received, store the location in Firebase
             client.requestLocationUpdates(request, new LocationCallback() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
                     Location location = locationResult.getLastLocation();
                     if (location != null) {
-                        Log.d(TAG, "location update " + location);
-                        ref.setValue(location);
+                        Log.d(TAG, "Envia posición " + location.getLongitude() + " - " + location.getLatitude());
+                        /*Gson gson = new Gson();
+                        String jsonLocation = gson.toJson(location);*/
+                        Dispositivo.MyLocation myLocation = new Dispositivo.MyLocation(
+                                location.getLatitude(),
+                                location.getLongitude(),
+                                location.getAltitude(),
+                                location.getElapsedRealtimeNanos(),
+                                location.getTime(),
+                                location.getBearing(),
+                                location.getBearingAccuracyDegrees(),
+                                location.getSpeed(),
+                                location.getSpeedAccuracyMetersPerSecond(),
+                                location.getVerticalAccuracyMeters(),
+                                location.getAccuracy()
+                        );
+                        ref.setValue(myLocation);
                     }
                 }
             }, null);

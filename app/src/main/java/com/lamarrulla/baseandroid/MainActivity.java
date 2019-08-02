@@ -383,12 +383,10 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Constants.ACTION_RUN_SERVICE:
-                    Log.d(TAG, intent.getStringExtra(Constants.LATITUD));
-                    Log.d(TAG, intent.getStringExtra(Constants.LONGITUD));
-                    Log.d(TAG, intent.getStringExtra(Constants.DISPOSITIVO));
                     String dispositivo = intent.getStringExtra(Constants.DISPOSITIVO);
                     Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
                     Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
+                    Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
                     LatLng latLng = new LatLng(latitud, longitud);
                     if(listDispositivosMarks!= null){
                         for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
