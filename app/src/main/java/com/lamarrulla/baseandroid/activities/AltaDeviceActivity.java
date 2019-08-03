@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -81,6 +82,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
     Button btnReintentar;
     RecyclerView recyclerView;
     AlertDialog dialog;
+    private static final int READ_REQUEST_CODE = 42;
 
     @Override
     public void onClick(View v) {
@@ -99,7 +101,21 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.btnAgregar:
-                createDialog(null, 1);
+                //createDialog(null, 1);
+                Toast.makeText(context, "Boton agregar", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+                // Filter to only show results that can be "opened", such as a
+                // file (as opposed to a list of contacts or timezones)
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                // Filter to show only images, using the image MIME data type.
+                // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+                // To search for all documents available via installed storage providers,
+                // it would be "*/*".
+                intent.setType("image/*");
+
+                startActivityForResult(intent, READ_REQUEST_CODE);
                 break;
             default:
                 break;
@@ -377,6 +393,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                 adapter.notifyDataSetChanged();
                 dialog.hide();
+                Toast.makeText(context, "Click agregar", Toast.LENGTH_SHORT).show();
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
