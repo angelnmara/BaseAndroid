@@ -2,14 +2,16 @@ package com.lamarrulla.baseandroid.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -75,14 +77,15 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     SurfaceView cameraView;
-    private String token = "";
-    private String tokenanterior = "";
+    //private String token = "";
+    //private String tokenanterior = "";
     BottomNavigationView bottomNavigationView;
     Utils utils = new Utils();
     Button btnReintentar;
     RecyclerView recyclerView;
     AlertDialog dialog;
     private static final int READ_REQUEST_CODE = 42;
+    String valorMAC;
 
     @Override
     public void onClick(View v) {
@@ -102,7 +105,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btnAgregar:
                 //createDialog(null, 1);
-                Toast.makeText(context, "Boton agregar", Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(context, "Boton agregar", Toast.LENGTH_SHORT).show();*/
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 
                 // Filter to only show results that can be "opened", such as a
@@ -119,6 +122,38 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                 Intent resultData) {
+
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                Log.i(TAG, "Uri: " + uri.toString());
+                try {
+                    Bitmap bitmap = utils.getBitmapFromUri(uri, context);
+                    valorMAC = utils.getDataQRfromImage(bitmap, context);
+                    //Toast.makeText(context, valorMAC, Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //showImage(uri);
+                Dispositivo.DispositivoUsuario item = new Dispositivo.DispositivoUsuario();
+                item.dispositivo = valorMAC;
+                createDialog(item, 1);
+            }
         }
     }
 
@@ -226,7 +261,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 if (barcodes.size() > 0) {
 
                     // obtenemos el token
-                    token = barcodes.valueAt(0).displayValue.toString();
+                    final String token = barcodes.valueAt(0).displayValue.toString();
 
                     if(!token.isEmpty()){
                         lnlAltaMAC.post(new Runnable() {
@@ -234,7 +269,9 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                             public void run() {
                                 lnlAltaMAC.setVisibility(View.VISIBLE);
                                 lnlAltaScan.setVisibility(View.GONE);
-                                createDialog(null, 1);
+                                Dispositivo.DispositivoUsuario item = new Dispositivo.DispositivoUsuario();
+                                item.dispositivo = token.toString();
+                                createDialog(item, 1);
                                 cameraSource.stop();
                             }
                         });
@@ -362,23 +399,30 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
         final ImageView btnCerrar = mViewAgregar.findViewById(R.id.btnCerrar);
         final TextView txtAlta = mViewAgregar.findViewById(R.id.txtAltaDispositivo);
         final TextView txtEdita = mViewAgregar.findViewById(R.id.txtEditaDispositivo);
-        txtEdita.setVisibility(View.VISIBLE);
-        txtAlta.setVisibility(View.GONE);
-        if(item!=null){
-            txtMacAddres.setText(item.dispositivo);
-            if(opcion==2){
-                txtUsuario.setText(item.usuario);
-                txtMacAddres.setText(item.dispositivo);
-            }
-        }
-        //txtMacAddres.addTextChangedListener(new MaskWatcher("##:##:##:##:##:##"));
-        if(token!=null){
-            txtMacAddres.setText(token);
-        }
         Button btnAgregar = mViewAgregar.findViewById(R.id.btnAgregar);
+
+        txtMacAddres.setText(item.dispositivo.toUpperCase());
+
+        //  Personaliza dialog
+        if(opcion == 1){
+            txtEdita.setVisibility(View.GONE);
+            txtAlta.setVisibility(View.VISIBLE);
+            btnAgregar.setText(getString(R.string.agregar));
+        }else{
+            txtEdita.setVisibility(View.VISIBLE);
+            txtAlta.setVisibility(View.GONE);
+            btnAgregar.setText(getString(R.string.actualizar));
+            txtUsuario.setText(item.usuario);
+        }
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!item.dispositivo.matches(getString(R.string.regxMAC))){
+                    Toast.makeText(context, getString(R.string.errorImagenSeleccionada), Toast.LENGTH_LONG).show();
+                    dialog.hide();
+                    return;
+                }
+
                 if (opcion == 2){
                     listDispositivoUsuario.remove(item);
                 }
@@ -393,7 +437,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                 adapter.notifyDataSetChanged();
                 dialog.hide();
-                Toast.makeText(context, "Click agregar", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Click agregar", Toast.LENGTH_SHORT).show();
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

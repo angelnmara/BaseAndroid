@@ -9,16 +9,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -30,6 +38,7 @@ import com.lamarrulla.baseandroid.activities.AltaUsuarioActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -184,6 +193,33 @@ public class Utils {
         fos.flush();
         fos.close();
         return f;
+    }
+
+    public Bitmap getBitmapFromUri(Uri uri, Context context) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
+    public String getDataQRfromImage(Bitmap bitmap, Context context){
+        String valorDevuelto = "";
+        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context)
+                .build();
+        /*if(barcode.isOperational()){*/
+        SparseArray<Barcode> sparseArray = barcodeDetector.detect(frame);
+        if(sparseArray != null && sparseArray.size() > 0){
+            for (int i = 0; i < sparseArray.size(); i++){
+                Log.d(TAG, "Value: " + sparseArray.valueAt(i).rawValue + "----" + sparseArray.valueAt(i).displayValue);
+                valorDevuelto += sparseArray.valueAt(i).displayValue;
+                //Toast.makeText(context, sparseArray.valueAt(i).rawValue, Toast.LENGTH_SHORT).show();
+            }
+        }else {
+            Log.e(TAG,"SparseArray null or empty");
+        }
+        return valorDevuelto;
     }
 
     public void requestPermissions(Activity activity){

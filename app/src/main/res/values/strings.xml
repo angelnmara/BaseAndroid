@@ -51,7 +51,7 @@
     <string name="AutenticacionInvalida">Usuario o password incorrecto.</string>
     <string name="WebClient">253804100294-cbr3j5hdm4nsbk4h6keckclhlspqopis.apps.googleusercontent.com</string>
     <string name="mac_addres">MAC ADDRES</string>
-    <string name="agregar">Agregar</string>
+    <string name="agregar">AGREGAR</string>
     <string name="mis_dispositivos">Mis dispositivos</string>
     <string name="dispositivos">dispositivos</string>
 
@@ -83,6 +83,9 @@
     <string name="errroSesionFacebook">Ocurrio un error al iniciar la session en facebook.</string>
     <string name="latitude">latitude</string>
     <string name="longitude">longitude</string>
+    <string name="actualizar">ACTUALIZAR</string>
+    <string name="regxMAC">^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$</string>
+    <string name="errorImagenSeleccionada">La imagen seleccionada no puede ser leida por el sistema</string>
 
     <!--firebase-->
 
