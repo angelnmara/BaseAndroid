@@ -85,7 +85,7 @@
     <string name="longitude">longitude</string>
     <string name="actualizar">ACTUALIZAR</string>
     <string name="regxMAC">^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$</string>
-    <string name="errorImagenSeleccionada">La imagen seleccionada no puede ser leida por el sistema</string>
+    <string name="errorImagenSeleccionada">La imagen seleccionada no corresponde a un QR valido</string>
     <string name="usuarioSinNombre">El usuario tiene que tener un nombre</string>
     <string name="usuarioMismoNombre">Ya existe un usuario con ese nombre</string>
     <string name="activarGPS">Se necesita activar el GPS</string>
