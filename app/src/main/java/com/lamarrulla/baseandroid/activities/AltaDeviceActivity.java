@@ -417,9 +417,22 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean salida = false;
+                for (Dispositivo.DispositivoUsuario du:listDispositivoUsuario
+                ) {
+                    if(du.usuario.toUpperCase().equals(txtUsuario.getText().toString().toUpperCase())){
+                        salida = true;
+                    }
+                }
                 if(!item.dispositivo.matches(getString(R.string.regxMAC))){
                     Toast.makeText(context, getString(R.string.errorImagenSeleccionada), Toast.LENGTH_LONG).show();
                     dialog.hide();
+                    return;
+                }else if(txtUsuario.getText().toString().length()<=0){
+                    Toast.makeText(context, getString(R.string.usuarioSinNombre), Toast.LENGTH_LONG).show();
+                    return;
+                }else if(salida){
+                    Toast.makeText(context, getString(R.string.usuarioMismoNombre), Toast.LENGTH_LONG).show();
                     return;
                 }
 

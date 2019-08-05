@@ -18,17 +18,16 @@
             android:title="@string/obtener_codigo" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Comunidad">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Compartir" />
+                android:title="@string/compartir_qr" />
             <item
                 android:id="@+id/nav_exit"
                 android:icon="@drawable/ic_menu_exit"
-                android:title="Salir" />
+                android:title="@string/salir" />
         </menu>
     </item>
-
 </menu>

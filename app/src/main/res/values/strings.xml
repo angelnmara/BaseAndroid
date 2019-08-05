@@ -10,7 +10,7 @@
     <string name="action_registrar">Registrar</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">Correo Electrónico inválido</string>
-    <string name="error_invalid_password">El pasword es demasiado corto</string>
+    <string name="error_invalid_password">El password es demasiado corto</string>
     <string name="error_incorrect_password">El pasword es incorrecto</string>
     <string name="error_field_required">Éste campo es requerido</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
@@ -86,6 +86,14 @@
     <string name="actualizar">ACTUALIZAR</string>
     <string name="regxMAC">^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$</string>
     <string name="errorImagenSeleccionada">La imagen seleccionada no puede ser leida por el sistema</string>
+    <string name="usuarioSinNombre">El usuario tiene que tener un nombre</string>
+    <string name="usuarioMismoNombre">Ya existe un usuario con ese nombre</string>
+    <string name="activarGPS">Se necesita activar el GPS</string>
+    <string name="compartir_qr">Compartir QR</string>
+    <string name="salir">Salir</string>
+    <string name="direccionCorreoOtroUsuario">La dirección de correo esta en uso con otro usuario</string>
+    <string name="emailIsInUse">The email address is already in use by another account.</string>
+    <string name="passworParaContinuar">Se requiere un password para continuar</string>
 
     <!--firebase-->
 

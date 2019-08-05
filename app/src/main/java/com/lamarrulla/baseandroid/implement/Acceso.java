@@ -171,8 +171,12 @@ public class Acceso implements IAcceso {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(context, task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
+                            String error = task.getException().getMessage();
+                            if(error.equals(context.getString(R.string.emailIsInUse))){
+                                error = context.getString(R.string.direccionCorreoOtroUsuario);
+                            }
+
+                            Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                             showProgress();
                         }
                     }

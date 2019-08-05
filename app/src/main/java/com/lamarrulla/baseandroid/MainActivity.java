@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -290,18 +291,25 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressLint("MissingPermission")
     public void getLastLocation(){
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            Toast.makeText(context, getString(R.string.activarGPS), Toast.LENGTH_SHORT).show();
+        }
+        else{
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     public void IniciaServicio(final String dispositivo, final String usuario) throws JSONException {
