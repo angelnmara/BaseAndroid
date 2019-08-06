@@ -92,7 +92,7 @@ public class TrackerService extends Service {
                 .setContentText(getString(R.string.notification_text))
                 .setOngoing(true)
                 .setContentIntent(broadcastIntent)
-                .setSmallIcon(R.drawable.ic_car);
+                .setSmallIcon(R.drawable.ic_stat_name);
         startForeground(1, builder.build());
     }
 
@@ -127,8 +127,8 @@ public class TrackerService extends Service {
 
     private void requestLocationUpdates() {
         LocationRequest request = new LocationRequest();
-        request.setInterval(10000);
-        request.setFastestInterval(2500);
+        request.setInterval(2500);
+        request.setFastestInterval(1000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
         final String path = getString(R.string.firebase_path) + "/" + utils.getMacAddress().toUpperCase();
