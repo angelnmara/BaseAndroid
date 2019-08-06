@@ -10,7 +10,16 @@
     <string name="action_registrar">Registrar</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">Correo Electrónico inválido</string>
-    <string name="error_invalid_password">El password debe de contener por lo menos 1 Letra mayuscula, 1 Letra minuscula, 1 Numero, 1 Caracter especial y debe tener una longitud minima de 8 caracteres</string>
+    <string name="error_invalid_password"><![CDATA[
+    El password debe de contener por lo menos:
+    1 Letra mayúscula.
+    1 Letra minúscula.
+    1 Número.
+    1 Caracter especial.
+    Debe tener una longitud mínima
+    de 8 caracteres.
+    ]]>
+    </string>
     <string name="error_incorrect_password">El pasword es incorrecto</string>
     <string name="error_field_required">Éste campo es requerido</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email

@@ -8,10 +8,10 @@
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/administraDispositvo" />
-        <item
+        <!--<item
             android:id="@+id/nav_ubicacion"
             android:icon="@drawable/ic_map_marker"
-            android:title="@string/comparitir_mi_ubica" />
+            android:title="@string/comparitir_mi_ubica" />-->
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_qrcode"

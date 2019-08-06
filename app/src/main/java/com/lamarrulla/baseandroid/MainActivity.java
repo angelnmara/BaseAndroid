@@ -68,7 +68,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+//import com.google.gson.JsonElement;
 import com.google.zxing.WriterException;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
@@ -223,6 +223,9 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.lnlPrincipalFragment);
         mapFragment.getMapAsync(this);
         /*maps*/
+        /*  inicia localizacion */
+        startActivity(new Intent(MainActivity.this, TrackerActivity.class));
+        /*  inicia localizacion */
     }
 
     @Override
@@ -391,20 +394,23 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Constants.ACTION_RUN_SERVICE:
-                    String dispositivo = intent.getStringExtra(Constants.DISPOSITIVO);
-                    Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
-                    Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
-                    Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
-                    LatLng latLng = new LatLng(latitud, longitud);
-                    if(listDispositivosMarks!= null){
-                        for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
-                        ) {
-                            if(dispositivoMarks.dispositivo.equals(dispositivo)){
-                                dispositivoMarks.marker.setPosition(latLng);
+                    try{
+                        String dispositivo = intent.getStringExtra(Constants.DISPOSITIVO);
+                        Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
+                        Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
+                        Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
+                        LatLng latLng = new LatLng(latitud, longitud);
+                        if(listDispositivosMarks!= null){
+                            for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
+                            ) {
+                                if(dispositivoMarks.dispositivo.equals(dispositivo)){
+                                    dispositivoMarks.marker.setPosition(latLng);
+                                }
                             }
                         }
+                    }catch (Exception ex){
+                        Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    //getLocation(Double.parseDouble(intent.getStringExtra(Constants.LATITUD)), Double.parseDouble(intent.getStringExtra(Constants.LONGITUD)), intent.getStringExtra(Constants.DISPOSITIVO));
                     break;
 
                 case Constants.ACTION_RUN_ISERVICE:
@@ -651,12 +657,14 @@ public class MainActivity extends AppCompatActivity
             /*Toast.makeText(this, "alta dispositivo", Toast.LENGTH_SHORT).show();*/
             Intent intent = new Intent(this, AltaDeviceActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_ubicacion) {
+        }
+        /*else if (id == R.id.nav_ubicacion) {
             startActivity(new Intent(MainActivity.this, TrackerActivity.class));
-            /*} else if (id == R.id.nav_manage) {*/
+            *//*} else if (id == R.id.nav_manage) {*//*
 
-        }else if(id == R.id.nav_share){
-            Toast.makeText(context, "Compartir", Toast.LENGTH_LONG).show();
+        }*/
+        else if(id == R.id.nav_share){
+            //Toast.makeText(context, "Compartir", Toast.LENGTH_LONG).show();
             final Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             shareIntent.setType("image/jpg");
