@@ -223,9 +223,6 @@ public class MainActivity extends AppCompatActivity
                 .findFragmentById(R.id.lnlPrincipalFragment);
         mapFragment.getMapAsync(this);
         /*maps*/
-        /*  inicia localizacion */
-        startActivity(new Intent(MainActivity.this, TrackerActivity.class));
-        /*  inicia localizacion */
     }
 
     @Override
@@ -802,14 +799,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        try {
+            getDispositivos();
+            /*  inicia localizacion */
+            startActivity(new Intent(MainActivity.this, TrackerActivity.class));
+            /*  inicia localizacion */
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
     public void onResume() {
         super.onResume();
-        try {
+        /*try {
             getDispositivos();
         } catch (JSONException e) {
             Log.d(TAG, e.getMessage());
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void compareJSA(JSONArray jsa1, JSONArray jsa2) throws JSONException {
