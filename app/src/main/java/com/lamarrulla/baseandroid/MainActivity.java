@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
 
     Intent intentReadService;
+    Intent intentTrackerServices;
 
     MarkerOptions mo;
     Marker marker;
@@ -149,7 +150,6 @@ public class MainActivity extends AppCompatActivity
         user = mFirebaseAuth.getCurrentUser();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        intentReadService = new Intent(getApplicationContext(), ReadService.class);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         CambiosEnToolBar();
@@ -158,6 +158,12 @@ public class MainActivity extends AppCompatActivity
         //mPrincipalSV = findViewById(R.id.svPrincipal);
 
         sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        intentReadService = new Intent(getApplicationContext(), ReadService.class);
+
+        /*  inicia localizacion */
+        intentTrackerServices = new Intent(MainActivity.this, TrackerActivity.class);
+        /*  inicia localizacion */
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -221,6 +227,7 @@ public class MainActivity extends AppCompatActivity
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.lnlPrincipalFragment);
+
         mapFragment.getMapAsync(this);
         /*maps*/
     }
@@ -312,16 +319,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void IniciaServicio(final String dispositivo, final String usuario) throws JSONException {
-        /*final JSONArray jsa = new JSONArray(jso);
-        for(int i = 0; i< jsa.length(); i++){
-            markersAndObjects = new HashMap<String, Marker>();
-            JSONObject jsobj = jsa.getJSONObject(i);
-            final String dispositivoJSO =jsobj.getString("dispositivo").toUpperCase();
-            Log.d(TAG, dispositivoJSO);*/
+    public void getListaDispositivos(final String dispositivo, final String usuario) {
         listDispositivosMarks = new ArrayList<>();
             Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivo);
-            //final int finalI = i;
             queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -334,7 +334,6 @@ public class MainActivity extends AppCompatActivity
                             if(jso.has("latitude") && jso.has("longitude")){
                                 Double lati = Double.parseDouble(jso.getString("latitude"));
                                 Double longi = Double.parseDouble(jso.getString("longitude"));
-                                //String usuario = jso.getString("usuario");
                                 LatLng sydney = new LatLng(lati, longi);
                                 mo = new MarkerOptions()
                                         .position(sydney)
@@ -359,7 +358,6 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "Ocurrio un error al consultar la base de datos");
                 }
             });
-        //}
     }
 
     private void ejecutaIntent(String jsa){
@@ -372,8 +370,7 @@ public class MainActivity extends AppCompatActivity
         filter.addAction(Constants.ACTION_PROGRESS_EXIT);
 
         // Crear un nuevo ResponseReceiver
-        ResponseReceiver receiver =
-                new ResponseReceiver();
+        ResponseReceiver receiver = new ResponseReceiver();
         // Registrar el receiver y su filtro
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 receiver,
@@ -467,15 +464,22 @@ public class MainActivity extends AppCompatActivity
             requestPermissions();
             return;
         }else{
-            iniciaTodo();
+            try {
+                iniciaTodo();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d(TAG, e.getMessage());
+            }
         }
     }
 
     @SuppressLint("MissingPermission")
-    public void iniciaTodo(){
+    public void iniciaTodo() throws JSONException {
         gmap.setMyLocationEnabled(true);
         setMap();
         getMyLocation();
+        startActivity(intentTrackerServices);
+        getDispositivos();
     }
 
     public void requestPermissions(){
@@ -509,7 +513,12 @@ public class MainActivity extends AppCompatActivity
                     // permission was granted, yay! Do the
                     // contacts-
                     Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show();
-                    iniciaTodo();
+                    try {
+                        iniciaTodo();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, e.getMessage());
+                    }
                 } else {
 
                     // permission denied, boo! Disable the
@@ -656,7 +665,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
         /*else if (id == R.id.nav_ubicacion) {
-            startActivity(new Intent(MainActivity.this, TrackerActivity.class));
+            startActivity(new Intent(MainActivity.this, c.class));
             *//*} else if (id == R.id.nav_manage) {*//*
 
         }*/
@@ -801,24 +810,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart(){
         super.onStart();
-        try {
+        /*try {
             getDispositivos();
-            /*  inicia localizacion */
-            startActivity(new Intent(MainActivity.this, TrackerActivity.class));
-            /*  inicia localizacion */
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
     }
     @Override
     public void onResume() {
         super.onResume();
-        /*try {
-            getDispositivos();
-        } catch (JSONException e) {
-            Log.d(TAG, e.getMessage());
-            e.printStackTrace();
+        /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            return;
         }*/
+        startService(intentReadService);
     }
 
     public void compareJSA(JSONArray jsa1, JSONArray jsa2) throws JSONException {
@@ -878,7 +890,7 @@ public class MainActivity extends AppCompatActivity
                 jso.put("valor", jso.getBoolean("activo"));
             }
             if(jso.getBoolean("valor")){
-                IniciaServicio(jso.getString("dispositivo"), jso.getString("usuario"));
+                getListaDispositivos(jso.getString("dispositivo"), jso.getString("usuario"));
             }
         }
         ejecutaIntent(jsaDispositivos.toString());

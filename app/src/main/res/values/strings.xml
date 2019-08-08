@@ -88,7 +88,7 @@
     <string name="escaneaQR">Escanea QR</string>
     <string name="noConexionInternet">Verifica tu conexión a internet</string>
     <string name="deslizaAlta">Desliza completamente para dar de alta</string>
-    <string name="operacionCancelada">Operación cancelada</string>
+    <string name="operacionCancelada">Inicio por facebook cancelado</string>
     <string name="errroSesionFacebook">Ocurrio un error al iniciar la session en facebook.</string>
     <string name="latitude">latitude</string>
     <string name="longitude">longitude</string>

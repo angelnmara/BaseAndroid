@@ -42,7 +42,7 @@ public class ReadService extends Service {
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
     TimerTask timerTask;
-    Timer timer;
+    Timer timer = new Timer();
     List<Dispositivo.DispositivoUsuario> ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
 
     public ReadService() {
@@ -64,7 +64,7 @@ public class ReadService extends Service {
             Bundle extras = intent.getExtras();
             final JSONArray jsa = new JSONArray(extras.getString("listaDispositivos"));
             //final HashMap<String, Marker> markersAndObjects = (HashMap<String, Marker>)intent.getSerializableExtra("listaDispositivos");
-            timer = new Timer();
+            //timer = new Timer();
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -132,7 +132,7 @@ public class ReadService extends Service {
     public void onDestroy() {
         timer.purge();
         timer.cancel();
-        timerTask.cancel();
+        //timerTask.cancel();
         stopSelf();
         Intent localIntent = new Intent(Constants.ACTION_MEMORY_EXIT);
 
