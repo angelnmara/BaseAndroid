@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d(TAG, "OnCreate");
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
@@ -808,28 +810,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStart(){
-        super.onStart();
-        /*try {
-            getDispositivos();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-    }
-    @Override
     public void onResume() {
         super.onResume();
-        /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            return;
-        }*/
         startService(intentReadService);
     }
 
@@ -844,10 +826,8 @@ public class MainActivity extends AppCompatActivity
         jsaDispositivos = jsa2;
     }
 
-    public void getDispositivos() throws JSONException {
-        /*try {*/
+    public void getDispositivos() {
             Log.d(TAG, "Obtiene Dispositivos:" + jsaDispositivos.length());
-            //if(jsaDispositivos.length()==0){
                 Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -869,18 +849,11 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.d(TAG, "No regresaron datos desde firebase");
                     }
                 });
-                /*
-            }else{
-                Log.d(TAG, jsaDispositivos.toString());
-                Log.d(TAG, "Inicia Servicio");
-                iniciaServicioDispositivos();
-            }*/
     }
     public void iniciaServicioDispositivos() throws JSONException {
         Log.d(TAG, "iniciaServicioDispositivos");
