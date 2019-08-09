@@ -87,11 +87,15 @@ public class ReadService extends Service {
                                                     if(jso.has("latitude") && jso.has("longitude")){
                                                         String _latitude = jso.getString(getString(R.string.latitude));
                                                         String _longitude = jso.getString(getString(R.string.longitude));
+                                                        String _bearing = jso.getString(getString(R.string.bearing));
+                                                        String _speed = jso.getString(getString(R.string.speed));
                                                         Log.d(TAG, "recive " + _longitude+ " - " + _latitude);
                                                         Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
                                                                 .putExtra(Constants.LATITUD, _latitude)
                                                                 .putExtra(Constants.LONGITUD, _longitude)
-                                                                .putExtra(Constants.DISPOSITIVO, dispositivoJSO);
+                                                                .putExtra(Constants.DISPOSITIVO, dispositivoJSO)
+                                                                .putExtra(Constants.BEARING, _bearing)
+                                                                .putExtra(Constants.SPEED, _speed);
                                                         // Emitir el intent a la actividad
                                                         LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
                                                         //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));

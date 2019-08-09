@@ -10,6 +10,8 @@ public class Constants {
     public static final String LATITUD = "com.lamarrulla.baseandroid.extra.LATITUD";
     public static final String LONGITUD = "com.lamarrulla.baseandroid.extra.LONGITUD";
     public static final String DISPOSITIVO = "com.lamarrulla.baseandroid.extra.DISPOSITIVO";
+    public static final String BEARING = "com.lamarrulla.baseandroid.extra.BEARING";
+    public static final String SPEED = "com.lamarrulla.baseandroid.extra.SPEED";
 
     /**
      * Constantes para {@link ProgressIntentService}

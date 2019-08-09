@@ -394,6 +394,8 @@ public class MainActivity extends AppCompatActivity
                         String dispositivo = intent.getStringExtra(Constants.DISPOSITIVO);
                         Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
                         Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
+                        Double speed = Double.parseDouble(intent.getStringExtra(Constants.SPEED));
+                        Integer bearing = speed==0?0:Integer.parseInt(intent.getStringExtra(Constants.BEARING)) + 90;
                         Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
                         LatLng latLng = new LatLng(latitud, longitud);
                         if(listDispositivosMarks!= null){
@@ -401,6 +403,7 @@ public class MainActivity extends AppCompatActivity
                             ) {
                                 if(dispositivoMarks.dispositivo.equals(dispositivo)){
                                     dispositivoMarks.marker.setPosition(latLng);
+                                    dispositivoMarks.marker.setRotation(bearing);
                                 }
                             }
                         }
@@ -452,6 +455,10 @@ public class MainActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 /*Meter aqui el evento para hacer la ruta*/
                 //Toast.makeText(context, "click on marker", Toast.LENGTH_LONG).show();
+                Double latitude = marker.getPosition().latitude;
+                Double longitude = marker.getPosition().longitude;
+                LatLng latLng = new LatLng(latitude, longitude);
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                 return false;
             }
         });
@@ -788,7 +795,7 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
         stopService(intentReadService);
-        removeMarks();
+        //removeMarks();
         Log.d(TAG, "Para Servicio");
     }
 

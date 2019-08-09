@@ -103,6 +103,8 @@
     <string name="direccionCorreoOtroUsuario">La dirección de correo esta en uso con otro usuario</string>
     <string name="emailIsInUse">The email address is already in use by another account.</string>
     <string name="passworParaContinuar">Se requiere un password para continuar</string>
+    <string name="bearing">bearing</string>
+    <string name="speed">speed</string>
 
     <!--firebase-->
 
