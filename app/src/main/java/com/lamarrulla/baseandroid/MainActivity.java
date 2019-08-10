@@ -76,10 +76,12 @@ import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
+import com.lamarrulla.baseandroid.interfaces.LatLngInterpolator;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.services.ReadService;
 import com.lamarrulla.baseandroid.utils.Constants;
+import com.lamarrulla.baseandroid.utils.MarkerAnimation;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import org.json.JSONArray;
@@ -135,6 +137,8 @@ public class MainActivity extends AppCompatActivity
     Marker marker;
     HashMap<String, Marker> markersAndObjects;
     List<Dispositivo.DispositivosMarks> listDispositivosMarks;
+
+    MarkerAnimation markerAnimation = new MarkerAnimation();
 
     //Bitmap Icon;
 
@@ -347,6 +351,7 @@ public class MainActivity extends AppCompatActivity
                                 Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
                                 dispositivosMarks.dispositivo = dispositivo;
                                 dispositivosMarks.marker = marker;
+                                dispositivosMarks.dispositivoSeleccionado = false;
                                 listDispositivosMarks.add(dispositivosMarks);
                                 Log.d(TAG, "se guardan marks");
                             }
@@ -402,8 +407,17 @@ public class MainActivity extends AppCompatActivity
                             for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
                             ) {
                                 if(dispositivoMarks.dispositivo.equals(dispositivo)){
-                                    dispositivoMarks.marker.setPosition(latLng);
+                                    //dispositivoMarks.marker.setPosition(latLng);
+                                    LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
+                                    markerAnimation.animateMarkerToGB(dispositivoMarks.marker, latLng, latLngInterpolator);
                                     dispositivoMarks.marker.setRotation(bearing);
+                                    if(dispositivoMarks.dispositivoSeleccionado){
+                                        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+                                        // Zoom in, animating the camera.
+                                        gmap.animateCamera(CameraUpdateFactory.zoomIn());
+                                        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                                        gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 2500, null);
+                                    }
                                 }
                             }
                         }
@@ -444,10 +458,29 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
         gmap.getUiSettings().setMapToolbarEnabled(false);
+        /*gmap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+            @Override
+            public void onCameraMove() {
+                //Toast.makeText(context, "Oncameramove", Toast.LENGTH_SHORT).show();
+                //limpia dispositivo seleccionado
+                for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
+                ) {
+                    if(listDispositivosMarks!=null){
+                        dm.dispositivoSeleccionado = false;
+                    }
+                }
+            }
+        });*/
         gmap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 //Toast.makeText(context, "click map", Toast.LENGTH_SHORT).show();
+                for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
+                ) {
+                    if(listDispositivosMarks!=null){
+                        dm.dispositivoSeleccionado = false;
+                    }
+                }
             }
         });
         gmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -459,6 +492,14 @@ public class MainActivity extends AppCompatActivity
                 Double longitude = marker.getPosition().longitude;
                 LatLng latLng = new LatLng(latitude, longitude);
                 gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+                /*gmap.animateCamera(CameraUpdateFactory.zoomIn());
+                gmap.animateCamera(CameraUpdateFactory.zoomTo(10), 5000, null);*/
+                for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
+                        ) {
+                    if(dm.marker.getId().equals(marker.getId())){
+                        dm.dispositivoSeleccionado = true;
+                    }
+                }
                 return false;
             }
         });

@@ -42,10 +42,12 @@ public class Dispositivo {
     public static class DispositivosMarks{
         public String dispositivo;
         public Marker marker;
+        public boolean dispositivoSeleccionado;
         public DispositivosMarks(){}
-        public DispositivosMarks(String dispositivo, Marker marker){
+        public DispositivosMarks(String dispositivo, Marker marker, boolean dispositivoSeleccionado){
             this.dispositivo = dispositivo;
             this.marker = marker;
+            this.dispositivoSeleccionado = dispositivoSeleccionado;
         }
     }
     public static class MyLocation{

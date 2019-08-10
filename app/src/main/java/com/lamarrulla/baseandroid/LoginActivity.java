@@ -106,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView txtRestablece;
 
     private int funcion;
     private int tipoAcceso;
@@ -113,7 +114,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private SlideToUnlock slideToUnlockView2;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
@@ -157,6 +158,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /*mLoginFormView = findViewById(R.id.login_form);*/
         mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
+        txtRestablece = findViewById(R.id.txtRestablece);
 
         /*  Facebook */
 
@@ -203,6 +205,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         slideToUnlockView2 = (SlideToUnlock) findViewById(R.id.slideToUnlock2);
         slideToUnlockView2.setExternalListener(this);
+
+        txtRestablece.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Click restablece", Toast.LENGTH_SHORT).show();
+                String emailAddress = "user@example.com";
+
+                mAuth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Email sent.");
+                                }
+                            }
+                        });
+            }
+        });
 
     }
 
