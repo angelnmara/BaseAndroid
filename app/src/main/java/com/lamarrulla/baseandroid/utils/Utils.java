@@ -254,4 +254,14 @@ public class Utils {
         return false;
     }
 
+    public boolean isEmailValid(String email) {
+        //TODO: Replace this with your own logic
+        return email.contains("@");
+    }
+
+    public boolean isPasswordValid(String password) {
+        //TODO: Replace this with your own logic
+        return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
+    }
+
 }

@@ -10,6 +10,7 @@
     <string name="action_registrar">Registrar</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">Correo Electrónico inválido</string>
+    <string name="error_no_email">Para reestableces la contraseña es necesario ingresar un correo electronico</string>
     <string name="error_invalid_password"><![CDATA[
     El password debe de contener por lo menos:
     1 Letra mayúscula.

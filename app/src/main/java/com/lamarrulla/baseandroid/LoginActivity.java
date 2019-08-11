@@ -56,7 +56,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
@@ -113,11 +112,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private SlideToUnlock slideToUnlockView2;
 
+    View focusView = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+        mAuth.setLanguageCode("Sp");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .requestServerAuthCode("129048150139-p325stbnhjgm18ck47js8r0qskie3fki.apps.googleusercontent.com")
@@ -206,23 +208,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         slideToUnlockView2 = (SlideToUnlock) findViewById(R.id.slideToUnlock2);
         slideToUnlockView2.setExternalListener(this);
 
-        txtRestablece.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Click restablece", Toast.LENGTH_SHORT).show();
-                String emailAddress = "user@example.com";
-
-                mAuth.sendPasswordResetEmail(emailAddress)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "Email sent.");
-                                }
-                            }
-                        });
-            }
-        });
+        txtRestablece.setOnClickListener(this);
 
     }
 
@@ -319,10 +305,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
-        View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || !utils.isPasswordValid(password)) {
             if(TextUtils.isEmpty(password)){
                 mPasswordView.setError(getString(R.string.passworParaContinuar));
             }else{
@@ -338,7 +323,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mEmailView;
             cancel = true;
         }
-        else if (!isEmailValid(email)) {
+        else if (!utils.isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -372,16 +357,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
     }
 
     /**
@@ -472,6 +447,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     attemptLogin();
                 }else{
                     Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.txtRestablece:
+                //Toast.makeText(context, "Click restablece", Toast.LENGTH_SHORT).show();
+                String emailAddress = mEmailView.getText().toString();
+
+                if(utils.isEmailValid(emailAddress)){
+                    mAuth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //Log.d(TAG, "Email sent.");
+                                        Toast.makeText(context, "La contraseña se reestablecio correctamente, valida tu correo.", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(context, "Ocurrio un error al restablecer tu contraseña.", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                }else{
+                    mEmailView.setError(getString(R.string.error_no_email));
+                    focusView = mEmailView;
+                    focusView.requestFocus();
                 }
                 break;
             /*case R.id.sign_in_button:
