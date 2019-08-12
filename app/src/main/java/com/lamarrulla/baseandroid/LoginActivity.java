@@ -631,7 +631,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(findViewById(R.id.login_form), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.email_login_form), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             showProgress(false);
                             //updateUI(null);
                         }

@@ -183,7 +183,7 @@ public class Acceso implements IAcceso {
                 });
     }
     public void showProgress(){
-        View mLoginFormView = ((Activity)context).findViewById(R.id.login_form);
+        View mLoginFormView = ((Activity)context).findViewById(R.id.email_login_form);
         EditText passw = mLoginFormView.findViewById(R.id.password);
         passw.setText("");
         View mProgressView = ((Activity)context).findViewById(R.id.login_progress);

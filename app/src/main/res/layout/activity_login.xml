@@ -21,17 +21,12 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <ScrollView
-        android:id="@+id/login_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_gravity="center">
+            android:gravity="center">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -146,7 +141,5 @@
                 android:textStyle="bold"/>
 
         </LinearLayout>
-
-    </ScrollView>
 
 </LinearLayout>
