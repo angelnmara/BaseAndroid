@@ -106,6 +106,7 @@
     <string name="passworParaContinuar">Se requiere un password para continuar</string>
     <string name="bearing">bearing</string>
     <string name="speed">speed</string>
+    <string name="c_digo_de_autenticaci_n">Código de autenticación</string>
 
     <!--firebase-->
 

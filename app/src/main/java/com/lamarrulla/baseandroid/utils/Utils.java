@@ -3,12 +3,14 @@ package com.lamarrulla.baseandroid.utils;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -20,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
@@ -63,7 +66,17 @@ public class Utils {
         return macAddress;
     }
 
-    private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+    /*private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;*/
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
 
     public void guardaShared(Activity activity, int variable, String valor) {
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -129,7 +142,7 @@ public class Utils {
         context.startActivity(intent);
     }
 
-    public void OpenAltaUsuario(Context context){
+    public void OpenAltaUsuario(Context context) {
         FirebaseAPI firebaseAPI = new FirebaseAPI();
         firebaseAPI.writeNewUser();
         Intent intent = new Intent(context, AltaUsuarioActivity.class);
@@ -170,7 +183,7 @@ public class Utils {
         Bitmap bitmap;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         getMAC(context);
-        BitMatrix bitMatrix = multiFormatWriter.encode(getMacAddress(), BarcodeFormat.QR_CODE,200,200);
+        BitMatrix bitMatrix = multiFormatWriter.encode(getMacAddress(), BarcodeFormat.QR_CODE, 200, 200);
         BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
         bitmap = barcodeEncoder.createBitmap(bitMatrix);
         return bitmap;
@@ -204,41 +217,40 @@ public class Utils {
         return image;
     }
 
-    public String getDataQRfromImage(Bitmap bitmap, Context context){
+    public String getDataQRfromImage(Bitmap bitmap, Context context) {
         String valorDevuelto = "";
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context)
                 .build();
         /*if(barcode.isOperational()){*/
         SparseArray<Barcode> sparseArray = barcodeDetector.detect(frame);
-        if(sparseArray != null && sparseArray.size() > 0){
-            for (int i = 0; i < sparseArray.size(); i++){
+        if (sparseArray != null && sparseArray.size() > 0) {
+            for (int i = 0; i < sparseArray.size(); i++) {
                 Log.d(TAG, "Value: " + sparseArray.valueAt(i).rawValue + "----" + sparseArray.valueAt(i).displayValue);
                 valorDevuelto += sparseArray.valueAt(i).displayValue;
                 //Toast.makeText(context, sparseArray.valueAt(i).rawValue, Toast.LENGTH_SHORT).show();
             }
-        }else {
-            Log.e(TAG,"SparseArray null or empty");
+        } else {
+            Log.e(TAG, "SparseArray null or empty");
         }
         return valorDevuelto;
     }
 
-    public void requestPermissions(Activity activity){
+    /*public void requestPermissions(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-    }
+    }*/
 
-    public boolean isConnectAvailable(Context context){
+    public boolean isConnectAvailable(Context context) {
         boolean connected = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
             connected = true;
-        }
-        else
+        } else
             connected = false;
 
         return connected;
@@ -264,4 +276,9 @@ public class Utils {
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
     }
 
+    @SuppressLint("MissingPermission")
+    public String getPhoneNumber() {
+        TelephonyManager tMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return tMgr.getLine1Number();
+    }
 }

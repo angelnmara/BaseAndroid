@@ -68,7 +68,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-//import com.google.gson.JsonElement;
 import com.google.zxing.WriterException;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
