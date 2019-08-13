@@ -15,12 +15,24 @@
       },
       "oauth_client": [
         {
-          "client_id": "253804100294-cbr3j5hdm4nsbk4h6keckclhlspqopis.apps.googleusercontent.com",
+          "client_id": "253804100294-bd2bc1mmdlgbju820c73urnl1242t0ck.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lamarrulla.baseandroid",
-            "certificate_hash": "31d2d61e934bf6325251367e77b24f6a577151e9"
+            "certificate_hash": "ba2ffc32b899651002a781b7a8aca24b92c0186a"
           }
+        },
+        {
+          "client_id": "253804100294-h9qro89l1ku909n4ummg8qp0hombn6jp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lamarrulla.baseandroid",
+            "certificate_hash": "b6cbff97e83c9e8b93f5770f5408f01a23df54ca"
+          }
+        },
+        {
+          "client_id": "253804100294-hsg2gkgvt1o03t8t3lnrmutn2ht4fjfq.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [

@@ -281,4 +281,13 @@ public class Utils {
         TelephonyManager tMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tMgr.getLine1Number();
     }
+
+    public String numberToPhone(String number) {
+        if(number.length()>0) {
+            return String.format("%s %s %s %s", number.substring(0,2), number.substring(2,5), number.substring(5,8), number.substring(8, 12));
+            //return number.replace( /\D+/g, "" ).replace( /([0-9]{1,3})([0-9]{3})([0-9]{4}$)/gi, "($1) $2-$3" ); //mask numbers (xxx) xxx-xxxx
+        } else {
+            return "";
+        }
+    };
 }

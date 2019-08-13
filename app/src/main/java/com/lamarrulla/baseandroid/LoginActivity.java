@@ -530,9 +530,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void loginPhone(){
-        String phoneNumber = "+52" + utils.getPhoneNumber();
+        String phoneNumber = "+" + utils.numberToPhone(utils.getPhoneNumber());
         //phoneNumber = "+52 987 654 3210";
-        phoneNumber = "+52 556 800 9630";
+        //phoneNumber = "+52 556 800 9630";
         Log.d(TAG, "phoneNumber: " + phoneNumber);
 
         Toast.makeText(context, getString(R.string.autenticacionTelefonica), Toast.LENGTH_SHORT).show();
@@ -553,7 +553,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         //     detect the incoming verification SMS and perform verification without
                         //     user action.
                         Log.d(TAG, "onVerificationCompleted:" + credential);
-                        Toast.makeText(context, "Verificaion Completa", Toast.LENGTH_SHORT).show();
+                        signInWithPhoneAuthCredential(credential);
+                        //Toast.makeText(context, "Verificaion Completa", Toast.LENGTH_SHORT).show();
 
                         //signInWithPhoneAuthCredential(credential);
                     }
@@ -567,11 +568,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (e instanceof FirebaseAuthInvalidCredentialsException) {
                             // Invalid request
                             // ...
+                            switch (((FirebaseAuthInvalidCredentialsException) e).getErrorCode()){
+                                case "ERROR_APP_NOT_AUTHORIZED":
+                                    Toast.makeText(context, "This app is not authorized to use Firebase Authentication. Please verifythat the correct package name and SHA-1 are configured in the Firebase Console. [ App validation failed. Is app running on a physical device? ]", Toast.LENGTH_SHORT).show();
+                                    break;
+                                    default:
+                                        Toast.makeText(context, "Ocurrio un error al validar las credenciales", Toast.LENGTH_SHORT).show();
+                                        break;
+                            }
                         } else if (e instanceof FirebaseTooManyRequestsException) {
                             // The SMS quota for the project has been exceeded
                             // ...
+                            Toast.makeText(context, "La cuota de SMS se ha excedido", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
                         // Show a message and update the UI
                         // ...
                     }
@@ -886,7 +897,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(context, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
                             //FirebaseUser user = task.getResult().getUser();
                             // ...
                             utils.OpenMain(context);
