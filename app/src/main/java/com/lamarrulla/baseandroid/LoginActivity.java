@@ -531,8 +531,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void loginPhone(){
         String phoneNumber = "+52" + utils.getPhoneNumber();
-        phoneNumber = "+52 987 654 3210";
-        //phoneNumber = "+52 556 800 9630";
+        //phoneNumber = "+52 987 654 3210";
+        phoneNumber = "+52 556 800 9630";
         Log.d(TAG, "phoneNumber: " + phoneNumber);
 
         Toast.makeText(context, getString(R.string.autenticacionTelefonica), Toast.LENGTH_SHORT).show();
@@ -594,8 +594,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
                 });
     }
-
-
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();

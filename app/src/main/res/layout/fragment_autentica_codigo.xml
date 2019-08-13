@@ -28,7 +28,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:maxLength="1"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:textColor="#FFF"/>
 
         <EditText
             android:id="@+id/eT1"
@@ -47,7 +48,8 @@
             app:layout_constraintStart_toEndOf="@+id/eT0"
             app:layout_constraintTop_toTopOf="parent"
             android:maxLength="1"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:textColor="#FFF"/>
 
         <EditText
             android:id="@+id/eT2"
@@ -66,7 +68,8 @@
             app:layout_constraintStart_toEndOf="@+id/eT1"
             app:layout_constraintTop_toTopOf="parent"
             android:maxLength="1"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:textColor="#FFF"/>
 
         <EditText
             android:id="@+id/eT3"
@@ -85,7 +88,8 @@
             app:layout_constraintStart_toEndOf="@+id/eT2"
             app:layout_constraintTop_toTopOf="parent"
             android:maxLength="1"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:textColor="#FFF"/>
 
         <EditText
             android:id="@+id/eT4"
@@ -104,7 +108,8 @@
             app:layout_constraintStart_toEndOf="@+id/eT3"
             app:layout_constraintTop_toTopOf="parent"
             android:maxLength="1"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:textColor="#FFF"/>
 
         <EditText
             android:id="@+id/eT5"
@@ -123,7 +128,8 @@
             app:layout_constraintStart_toEndOf="@+id/eT4"
             app:layout_constraintTop_toTopOf="parent"
             android:maxLength="1"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:textColor="#FFF"/>
 
         <Button
             android:id="@+id/btnEnviar"
