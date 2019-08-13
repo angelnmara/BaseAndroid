@@ -408,14 +408,14 @@ public class MainActivity extends AppCompatActivity
                                 if(dispositivoMarks.dispositivo.equals(dispositivo)){
                                     //dispositivoMarks.marker.setPosition(latLng);
                                     LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
-                                    markerAnimation.animateMarkerToGB(dispositivoMarks.marker, latLng, latLngInterpolator);
+                                    markerAnimation.animateMarkerToGB(dispositivoMarks.marker, latLng, latLngInterpolator, 5000);
                                     dispositivoMarks.marker.setRotation(bearing);
                                     if(dispositivoMarks.dispositivoSeleccionado){
                                         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                                         // Zoom in, animating the camera.
                                         gmap.animateCamera(CameraUpdateFactory.zoomIn());
                                         // Zoom out to zoom level 10, animating with a duration of 2 seconds.
-                                        gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 2500, null);
+                                        gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null);
                                     }
                                 }
                             }

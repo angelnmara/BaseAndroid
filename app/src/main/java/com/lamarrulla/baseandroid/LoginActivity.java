@@ -69,17 +69,14 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.lamarrulla.baseandroid.fragments.AutenticaCodigoFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
-import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.SlideToUnlock;
 import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -538,6 +535,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //phoneNumber = "+52 556 800 9630";
         Log.d(TAG, "phoneNumber: " + phoneNumber);
 
+        Toast.makeText(context, getString(R.string.autenticacionTelefonica), Toast.LENGTH_SHORT).show();
+
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -789,12 +788,86 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         final Button btnEnviar = mViewAgregar.findViewById(R.id.btnEnviar);
         final ImageView btnCerrar = mViewAgregar.findViewById(R.id.btnCerrarAC);
 
+        eT0.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT1.requestFocus();
+                return false;
+            }
+        });
+
+        eT1.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT2.requestFocus();
+                return false;
+            }
+        });
+
+        eT2.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT3.requestFocus();
+                return false;
+            }
+        });
+
+        eT3.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT4.requestFocus();
+                return false;
+            }
+        });
+
+        eT4.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT5.requestFocus();
+                return false;
+            }
+        });
+
+        eT5.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                String eT0T = eT0.getText().toString();
+                String eT1T = eT1.getText().toString();
+                String eT2T = eT2.getText().toString();
+                String eT3T = eT3.getText().toString();
+                String eT4T = eT4.getText().toString();
+                String eT5T = KeyEvent.keyCodeToString(keyCode).replaceFirst("KEYCODE_", "");
+                String TotalET = eT0T + eT1T + eT2T + eT3T + eT4T + eT5T;
+                if(eT0T.length() == 0 || eT1T.length() == 0 | eT2T.length() == 0 || eT3T.length() == 0 || eT4T.length() == 0 || eT5T.length() == 0){
+                    Toast.makeText(context, "Todos los campos tienen que contener por lo menos un caracter", Toast.LENGTH_SHORT).show();
+                }else{
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId,TotalET) ;
+                    //Toast.makeText(context, "Credencial: " + credential, Toast.LENGTH_LONG).show();
+                    signInWithPhoneAuthCredential(credential);
+                    dialog.hide();
+                }
+                return false;
+            }
+        });
+
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, eT0.getText().toString() + eT1.getText().toString() + eT2.getText().toString() + eT3.getText().toString() + eT4.getText().toString() + eT5.getText().toString());
-                Toast.makeText(context, "Credencial: " + credential, Toast.LENGTH_SHORT).show();
-                dialog.hide();
+                String eT0T = eT0.getText().toString();
+                String eT1T = eT1.getText().toString();
+                String eT2T = eT2.getText().toString();
+                String eT3T = eT3.getText().toString();
+                String eT4T = eT4.getText().toString();
+                String eT5T = eT5.getText().toString();
+                String TotalET = eT0T + eT1T + eT2T + eT3T + eT4T + eT5T;
+                if(eT0T.length() == 0 || eT1T.length() == 0 | eT2T.length() == 0 || eT3T.length() == 0 || eT4T.length() == 0 || eT5T.length() == 0){
+                    Toast.makeText(context, "Todos los campos tienen que contener por lo menos un caracter", Toast.LENGTH_SHORT).show();
+                }else{
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId,TotalET) ;
+                    //Toast.makeText(context, "Credencial: " + credential, Toast.LENGTH_LONG).show();
+                    signInWithPhoneAuthCredential(credential);
+                    dialog.hide();
+                }
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -806,4 +879,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
     }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            Toast.makeText(context, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
+                            //FirebaseUser user = task.getResult().getUser();
+                            // ...
+                            utils.OpenMain(context);
+                            showProgress(false);
+                        } else {
+                            // Sign in failed, display a message and update the UI
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                                if(task.getException().getMessage().equals(getString(R.string.CodeVerficacionInvalidoIng))){
+                                    Toast.makeText(context, getString(R.string.CodeVerificacionInvalidoEsp), Toast.LENGTH_LONG).show();
+                                }else{
+                                    Toast.makeText(context, "Ocurrio un error en la autenticación del código", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
 }

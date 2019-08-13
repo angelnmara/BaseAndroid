@@ -107,6 +107,9 @@
     <string name="bearing">bearing</string>
     <string name="speed">speed</string>
     <string name="c_digo_de_autenticaci_n">Código de autenticación</string>
+    <string name="CodeVerficacionInvalidoIng">The sms verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user.</string>
+    <string name="CodeVerificacionInvalidoEsp">El codigo de verificación usado es invalido. Por favor reenvia el codigo de verificación.</string>
+    <string name="autenticacionTelefonica">Envio de autenticación telefónica en curso, por favor espera en lo que es validado el mensaje</string>
 
     <!--firebase-->
 

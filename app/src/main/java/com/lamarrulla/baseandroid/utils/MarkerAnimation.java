@@ -16,12 +16,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.lamarrulla.baseandroid.interfaces.LatLngInterpolator;
 
 public class MarkerAnimation {
-    public static void animateMarkerToGB(final Marker marker, final LatLng finalPosition, final LatLngInterpolator latLngInterpolator) {
+    public static void animateMarkerToGB(final Marker marker, final LatLng finalPosition, final LatLngInterpolator latLngInterpolator, int TimeMs) {
         final LatLng startPosition = marker.getPosition();
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         final Interpolator interpolator = new AccelerateDecelerateInterpolator();
-        final float durationInMs = 3000;
+        final float durationInMs = TimeMs;
 
         handler.post(new Runnable() {
             long elapsed;
