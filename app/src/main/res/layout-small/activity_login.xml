@@ -42,7 +42,7 @@
             android:tint="@color/colorAccent"/>
 
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -58,9 +58,9 @@
                 android:singleLine="true"
                 android:maxLength="40"/>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
@@ -80,7 +80,7 @@
                 android:singleLine="true"
                 android:maxLength="25"/>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button android:id="@+id/email_sign_in_button"
             style="?android:textAppearanceSmall"
@@ -144,7 +144,7 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabTelephone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -13,15 +13,19 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+/*import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;*/
 import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.ColorRes;
+/*import android.support.annotation.ColorRes;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.content.ContextCompat;*/
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;

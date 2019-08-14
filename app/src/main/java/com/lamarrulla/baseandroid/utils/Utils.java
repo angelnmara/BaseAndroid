@@ -18,10 +18,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.support.v4.app.ActivityCompat;
+/*import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager;*/
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.SparseArray;
