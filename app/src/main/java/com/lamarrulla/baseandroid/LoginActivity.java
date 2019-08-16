@@ -82,6 +82,7 @@ import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -105,8 +106,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
-    private static final int MY_PERMISSIONS_REQUEST_PHONE = 0;
+    private static final int REQUEST_PERMISSIONS = 0;
+    //private static final int MY_PERMISSIONS_REQUEST_PHONE = 0;
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -287,11 +288,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
                         public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_PERMISSIONS);
                         }
                     });
         } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_PERMISSIONS);
         }
         return false;
     }
@@ -302,19 +303,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals("android.permission.READ_CONTACTS")) {
                 populateAutoComplete();
-            }
-        }
-        if(requestCode == MY_PERMISSIONS_REQUEST_PHONE){
-            if(grantResults.length>0 && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+            }else if(grantResults.length>0 && grantResults[1] == PackageManager.PERMISSION_GRANTED && permissions[1].equals("android.permission.READ_PHONE_NUMBERS")){
                 Toast.makeText(context, "Se otorgaron los permisos", Toast.LENGTH_SHORT).show();
                 loginPhone();
             }else{
                 Toast.makeText(context, "El logeo telefónico necesita acceder a tu número telefónico, por favor autoriza los permisos", Toast.LENGTH_SHORT).show();
             }
         }
+        /*else if(requestCode == MY_PERMISSIONS_REQUEST_PHONE){
+            if(grantResults.length>0 && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(context, "Se otorgaron los permisos", Toast.LENGTH_SHORT).show();
+                loginPhone();
+            }else{
+                Toast.makeText(context, "El logeo telefónico necesita acceder a tu número telefónico, por favor autoriza los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }*/
     }
 
 
@@ -520,7 +526,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             new String[]{Manifest.permission.READ_SMS,
                                     Manifest.permission.READ_PHONE_NUMBERS,
                                     Manifest.permission.READ_PHONE_STATE},
-                            MY_PERMISSIONS_REQUEST_PHONE);
+                            REQUEST_PERMISSIONS);
                     return;
                 }else{
                     loginPhone();
@@ -536,9 +542,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void loginPhone(){
-        String phoneNumber = "+" + utils.numberToPhone(utils.getPhoneNumber());
+        //String phoneNumber = "+" + utils.numberToPhone(utils.getPhoneNumber());
         //phoneNumber = "+52 987 654 3210";
         //phoneNumber = "+52 556 800 9630";
+        String phoneNumber = "+52 551 398 0540";
         Log.d(TAG, "phoneNumber: " + phoneNumber);
 
         Toast.makeText(context, getString(R.string.autenticacionTelefonica), Toast.LENGTH_SHORT).show();
