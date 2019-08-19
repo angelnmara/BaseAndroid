@@ -162,6 +162,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT) {
+                    if(validaEmail(textView.getText().toString())){
+                        mEmailView.requestFocus();
+                    }
+                }
+                return false;
+            }
+        });
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -346,7 +357,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
+        /*boolean cancel = false;
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password) || !utils.isPasswordValid(password)) {
@@ -357,18 +368,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
             focusView = mPasswordView;
             cancel = true;
-        }
+        }*/
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!utils.isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
+        boolean cancel = validaEmail(email);
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -398,6 +400,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
         }
+    }
+
+    private boolean validaEmail(String email){
+        // Check for a valid email address.
+        boolean vEmail = false;
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            vEmail = true;
+        } else if (!utils.isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            vEmail = true;
+        }
+        return vEmail;
     }
 
     /**

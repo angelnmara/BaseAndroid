@@ -45,7 +45,7 @@ public class ReadService extends Service {
     FirebaseAuth mFirebaseAuth;
     TimerTask timerTask;
     Timer timer = new Timer();
-    List<Dispositivo.DispositivoUsuario> ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();
+    /*List<Dispositivo.DispositivoUsuario> ListDispositivoUsuario = new ArrayList<Dispositivo.DispositivoUsuario>();*/
 
     public ReadService() {
     }
