@@ -40,6 +40,7 @@ import android.support.v7.widget.Toolbar;*/
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +73,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -136,6 +138,9 @@ public class MainActivity extends AppCompatActivity
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     //private final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 0;
     private FusedLocationProviderClient fusedLocationClient;
+
+    private LinearLayout bottomSheet;
+
     JSONArray jsaDispositivos = new JSONArray();
 
     DatabaseReference mDatabase;
@@ -171,6 +176,7 @@ public class MainActivity extends AppCompatActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         setContentView(R.layout.activity_main);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         CambiosEnToolBar();
 
@@ -250,6 +256,43 @@ public class MainActivity extends AppCompatActivity
 
         mapFragment.getMapAsync(this);
         /*maps*/
+
+        bottomSheet = findViewById(R.id.bottomSheet);
+
+        final BottomSheetBehavior bsb = BottomSheetBehavior.from(bottomSheet);
+
+        bsb.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int i) {
+                String nuevoEstado = "";
+
+                switch(i) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        nuevoEstado = "STATE_COLLAPSED";
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        nuevoEstado = "STATE_EXPANDED";
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        nuevoEstado = "STATE_HIDDEN";
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        nuevoEstado = "STATE_DRAGGING";
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        nuevoEstado = "STATE_SETTLING";
+                        break;
+                }
+
+                Log.i("BottomSheets", "Nuevo estado: " + nuevoEstado);
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+                Log.i("BottomSheets", "Offset: " + v);
+            }
+        });
+
     }
 
     @Override
@@ -489,10 +532,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onMapClick(LatLng latLng) {
                 //Toast.makeText(context, "click map", Toast.LENGTH_SHORT).show();
-                for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
-                ) {
-                    if(listDispositivosMarks!=null){
-                        dm.dispositivoSeleccionado = false;
+                if(listDispositivosMarks!=null){
+                    for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
+                    ) {
+                        if(listDispositivosMarks!=null){
+                            dm.dispositivoSeleccionado = false;
+                        }
                     }
                 }
             }

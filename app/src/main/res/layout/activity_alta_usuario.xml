@@ -12,11 +12,14 @@
         android:id="@+id/txtLeyenda"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:textAlignment="center"
-        android:text="@string/leyendaComenzar"
         android:layout_margin="16dp"
-        android:textColor="#FFF"/>
+        android:fontFamily="sans-serif"
+        android:gravity="center_vertical"
+        android:text="@string/leyendaComenzar"
+        android:textAlignment="center"
+        android:textColor="#FFF"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
 
     <Button
         android:id="@+id/btnSiguiente"
