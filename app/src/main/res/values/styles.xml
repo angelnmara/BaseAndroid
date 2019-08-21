@@ -22,6 +22,8 @@
         <item name="shapeAppearanceMediumComponent">@style/AppShapeAppearance.MediumComponent</item>
         <item name="materialButtonStyle">@style/AppButton</item>
         <item name="textInputStyle">@style/AppTextField</item>
+        <item name="autoCompleteTextViewStyle">@style/AppAutoComplete</item>
+        <!--<item name="editTextStyle"></item>-->
         <item name="materialCardViewStyle">@style/AppCard</item>
         <item name="bottomNavigationStyle">@style/AppBottomNavigation</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -45,10 +47,23 @@
         <item name="backgroundTint">?attr/colorSecondary</item>
     </style>
 
-    <style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+    <style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundMode">filled</item>
         <item name="boxBackgroundColor">@color/text_field_background</item>
-        <item name="android:padding">5dp</item>
+        <item name="android:textColorHint">@color/colorAccent</item>
     </style>
+
+    <style name="AppAutoComplete" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!--<style name="AppEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:paddingBottom">-5dp</item>
+        <item name="android:paddingLeft">-5dp</item>
+    </style>-->
 
     <style name="AppCard" parent="Widget.MaterialComponents.CardView">
         <item name="cardElevation">8dp</item>
