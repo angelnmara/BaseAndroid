@@ -58,7 +58,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.fragments.MyDispositivosRecyclerViewAdapter;
+import com.lamarrulla.baseandroid.Adapters.MyDispositivosRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 import com.lamarrulla.baseandroid.utils.Utils;

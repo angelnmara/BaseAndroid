@@ -9,7 +9,6 @@
     app:behavior_hideable="false"
     app:behavior_peekHeight="64dp"
     app:behavior_fitToContents="false"
-
     android:id="@+id/bottomSheet">
 
     <TextView
@@ -20,11 +19,11 @@
         android:text="Mis dispositivos"
         android:textAlignment="center"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:padding="16dp"
-        android:text="Texto de prueba" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

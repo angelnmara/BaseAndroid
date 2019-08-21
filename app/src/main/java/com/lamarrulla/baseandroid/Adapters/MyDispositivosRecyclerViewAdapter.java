@@ -1,4 +1,4 @@
-package com.lamarrulla.baseandroid.fragments;
+package com.lamarrulla.baseandroid.Adapters;
 
 /*import android.support.v7.widget.RecyclerView;*/
 import android.view.LayoutInflater;

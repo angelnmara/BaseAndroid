@@ -56,6 +56,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -86,10 +88,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.zxing.WriterException;
+import com.lamarrulla.baseandroid.Adapters.MyUsersRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
+import com.lamarrulla.baseandroid.fragments.UsersFragment;
+import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.interfaces.LatLngInterpolator;
@@ -141,6 +146,10 @@ public class MainActivity extends AppCompatActivity
 
     private LinearLayout bottomSheet;
 
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
     JSONArray jsaDispositivos = new JSONArray();
 
     DatabaseReference mDatabase;
@@ -165,6 +174,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main);
+
         Log.d(TAG, "OnCreate");
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -174,8 +185,6 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         user = mFirebaseAuth.getCurrentUser();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         CambiosEnToolBar();
@@ -257,6 +266,7 @@ public class MainActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
         /*maps*/
 
+        /*  Manejo del bootomSehhet*/
         bottomSheet = findViewById(R.id.bottomSheet);
 
         final BottomSheetBehavior bsb = BottomSheetBehavior.from(bottomSheet);
@@ -293,6 +303,43 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        /*  termina Manejo del bootomSehhet*/
+    }
+
+    private void cargaDispositivosList(){
+        /*  Inicia menejo del recycler view */
+
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        List<Dispositivo.User> listUser = new ArrayList<>();
+        listUser.add(new Dispositivo.User("jose david rincon","angelnmara@hotmail","","55555555"));
+        listUser.add(new Dispositivo.User("andres rincon","arincon@bdda.co","","654654654"));
+        listUser.add(new Dispositivo.User("angel rincon","kjadhfkljahd@bdda.co","","654654654"));
+
+        List<DummyContent.DummyItem> items = new ArrayList<>();
+        items.add(new DummyContent.DummyItem("1", "dave", ""));
+        items.add(new DummyContent.DummyItem("2", "andres", ""));
+        items.add(new DummyContent.DummyItem("3", "angel", ""));
+        items.add(new DummyContent.DummyItem("4", "byron", ""));
+        UsersFragment.OnListFragmentInteractionListener listener = new UsersFragment.OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(DummyContent.DummyItem item) {
+                Log.d(TAG, "interaccion");
+            }
+        };
+        mAdapter = new MyUsersRecyclerViewAdapter(items, listener);
+        recyclerView.setAdapter(mAdapter);
+
+        /*  termina Inicia menejo del recycler view */
     }
 
     @Override
@@ -589,6 +636,7 @@ public class MainActivity extends AppCompatActivity
         getMyLocation();
         startActivity(intentTrackerServices);
         getDispositivos();
+        cargaDispositivosList();
     }
 
     public void requestPermissions(){
