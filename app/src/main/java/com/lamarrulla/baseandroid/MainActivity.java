@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity
 
     MarkerAnimation markerAnimation = new MarkerAnimation();
 
+    FloatingActionButton fab;
+
     //Bitmap Icon;
 
     @Override
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity
         /*  inicia localizacion */
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -274,11 +276,19 @@ public class MainActivity extends AppCompatActivity
         bsb.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int i) {
+
+                /*if (BottomSheetBehavior.STATE_DRAGGING == i) {
+                    fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                } else if (BottomSheetBehavior.STATE_COLLAPSED == i) {
+                    fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                }else if*/
+
                 String nuevoEstado = "";
 
                 switch(i) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         nuevoEstado = "STATE_COLLAPSED";
+                        fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         nuevoEstado = "STATE_EXPANDED";
@@ -288,18 +298,28 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         nuevoEstado = "STATE_DRAGGING";
+                        fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
                         nuevoEstado = "STATE_SETTLING";
                         break;
+                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                            nuevoEstado = "STATE_HALF_EXPANDED";
+                            fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                            break;
+                            default:
+                                fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                                nuevoEstado = "DEFAULT";
+                                break;
                 }
 
-                Log.i("BottomSheets", "Nuevo estado: " + nuevoEstado);
+                Log.i("BottomSheets", "Nuevo estado: " + nuevoEstado + " : " + i);
             }
 
             @Override
             public void onSlide(@NonNull View view, float v) {
                 Log.i("BottomSheets", "Offset: " + v);
+                fab.animate().scaleX(1 - v).scaleY(1 - v).setDuration(0).start();
             }
         });
 

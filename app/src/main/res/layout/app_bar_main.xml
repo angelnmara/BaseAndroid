@@ -32,8 +32,9 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_crosshairs_gps" />
+        android:layout_margin="@dimen/activity_vertical_margin"
+        app:srcCompat="@drawable/ic_crosshairs_gps"
+        app:layout_anchor="@+id/bottomSheet"
+        app:layout_anchorGravity="top|end"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
