@@ -59,7 +59,7 @@
 
     <style name="AppAutoComplete" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="android:paddingTop">20dp</item>
-        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingBottom">15dp</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:textSize">16sp</item>
     </style>

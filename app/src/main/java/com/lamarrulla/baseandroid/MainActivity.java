@@ -150,6 +150,9 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    private TextView txtDispositivos;
+    private ImageView imgDown;
+
     JSONArray jsaDispositivos = new JSONArray();
 
     DatabaseReference mDatabase;
@@ -274,6 +277,7 @@ public class MainActivity extends AppCompatActivity
 
     private void configuraBottomSheets(){
         /*  Manejo del bootomSehhet*/
+
         bottomSheet = findViewById(R.id.bottomSheet);
 
         final BottomSheetBehavior bsb = BottomSheetBehavior.from(bottomSheet);
@@ -320,6 +324,15 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
 
+                if(nuevoEstado!="STATE_EXPANDED"){
+                    getSupportActionBar().show();
+                    imgDown.setVisibility(View.GONE);
+                }
+                else{
+                    getSupportActionBar().hide();
+                    imgDown.setVisibility(View.VISIBLE);
+                }
+
                 Log.i("BottomSheets", "Nuevo estado: " + nuevoEstado + " : " + i);
             }
 
@@ -327,6 +340,27 @@ public class MainActivity extends AppCompatActivity
             public void onSlide(@NonNull View view, float v) {
                 Log.i("BottomSheets", "Offset: " + v);
                 fab.animate().scaleX(1 - v).scaleY(1 - v).setDuration(0).start();
+            }
+        });
+
+        txtDispositivos = findViewById(R.id.txtDispositivos);
+        imgDown = findViewById(R.id.imgDown);
+
+        txtDispositivos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(bsb.getState()==BottomSheetBehavior.STATE_HALF_EXPANDED){
+                    bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }else{
+                    bsb.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+                }
+            }
+        });
+
+        imgDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
