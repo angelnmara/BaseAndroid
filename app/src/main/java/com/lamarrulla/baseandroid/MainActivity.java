@@ -268,10 +268,17 @@ public class MainActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
         /*maps*/
 
+        configuraBottomSheets();
+
+    }
+
+    private void configuraBottomSheets(){
         /*  Manejo del bootomSehhet*/
         bottomSheet = findViewById(R.id.bottomSheet);
 
         final BottomSheetBehavior bsb = BottomSheetBehavior.from(bottomSheet);
+
+        bsb.setHalfExpandedRatio((float) 0.4);
 
         bsb.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -303,14 +310,14 @@ public class MainActivity extends AppCompatActivity
                     case BottomSheetBehavior.STATE_SETTLING:
                         nuevoEstado = "STATE_SETTLING";
                         break;
-                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
-                            nuevoEstado = "STATE_HALF_EXPANDED";
-                            fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
-                            break;
-                            default:
-                                fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
-                                nuevoEstado = "DEFAULT";
-                                break;
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                        nuevoEstado = "STATE_HALF_EXPANDED";
+                        fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                        break;
+                    default:
+                        fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                        nuevoEstado = "DEFAULT";
+                        break;
                 }
 
                 Log.i("BottomSheets", "Nuevo estado: " + nuevoEstado + " : " + i);
