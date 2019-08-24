@@ -41,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -120,7 +121,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback, androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity
 
     private TextView txtDispositivos;
     private ImageView imgDown;
+    private androidx.appcompat.widget.SearchView srchViewDispositivos;
 
     JSONArray jsaDispositivos = new JSONArray();
 
@@ -345,6 +347,8 @@ public class MainActivity extends AppCompatActivity
 
         txtDispositivos = findViewById(R.id.txtDispositivos);
         imgDown = findViewById(R.id.imgDown);
+        srchViewDispositivos = findViewById(R.id.srchViewDispositivos);
+        srchViewDispositivos.setOnQueryTextListener(this);
 
         txtDispositivos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -429,6 +433,17 @@ public class MainActivity extends AppCompatActivity
         //menu.add(0,2, Menu.CATEGORY_ALTERNATIVE, "primero2");
         menu.setGroupCheckable(0, true, false);
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Toast.makeText(context, query, Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
 
