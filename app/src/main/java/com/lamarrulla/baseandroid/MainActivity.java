@@ -39,6 +39,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;*/
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -121,7 +122,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
-        OnMapReadyCallback, androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        OnMapReadyCallback, SearchView.OnQueryTextListener {
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity
 
     private TextView txtDispositivos;
     private ImageView imgDown;
-    private androidx.appcompat.widget.SearchView srchViewDispositivos;
+    private SearchView srchViewDispositivos;
 
     JSONArray jsaDispositivos = new JSONArray();
 
@@ -296,43 +297,53 @@ public class MainActivity extends AppCompatActivity
                     fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
                 }else if*/
 
-                String nuevoEstado = "";
+                int nuevoEstado = BottomSheetBehavior.STATE_COLLAPSED;
 
                 switch(i) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        nuevoEstado = "STATE_COLLAPSED";
+                        nuevoEstado = BottomSheetBehavior.STATE_COLLAPSED;
                         fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        nuevoEstado = "STATE_EXPANDED";
+                        nuevoEstado = BottomSheetBehavior.STATE_EXPANDED;
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
-                        nuevoEstado = "STATE_HIDDEN";
+                        nuevoEstado = BottomSheetBehavior.STATE_HIDDEN;
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        nuevoEstado = "STATE_DRAGGING";
+                        nuevoEstado = BottomSheetBehavior.STATE_DRAGGING;
                         fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
-                        nuevoEstado = "STATE_SETTLING";
+                        nuevoEstado = BottomSheetBehavior.STATE_SETTLING;
                         break;
                     case BottomSheetBehavior.STATE_HALF_EXPANDED:
-                        nuevoEstado = "STATE_HALF_EXPANDED";
+                        nuevoEstado = BottomSheetBehavior.STATE_HALF_EXPANDED;
                         fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                        fab.animate().translationX(0).translationY(-fab.getHeight()).setDuration(300).setInterpolator(new LinearInterpolator()).start();
                         break;
                     default:
                         fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
-                        nuevoEstado = "DEFAULT";
+                        nuevoEstado = BottomSheetBehavior.STATE_COLLAPSED;
                         break;
                 }
 
-                if(nuevoEstado!="STATE_EXPANDED"){
-                    getSupportActionBar().show();
-                    imgDown.setVisibility(View.GONE);
-                }
-                else{
+                if(nuevoEstado==BottomSheetBehavior.STATE_EXPANDED){
                     getSupportActionBar().hide();
                     imgDown.setVisibility(View.VISIBLE);
+                    srchViewDispositivos.setVisibility(View.GONE);
+                    txtDispositivos.setVisibility(View.VISIBLE);
+                }
+                else if(nuevoEstado==BottomSheetBehavior.STATE_HALF_EXPANDED){
+                    srchViewDispositivos.setVisibility(View.VISIBLE);
+                    txtDispositivos.setVisibility(View.GONE);
+                    getSupportActionBar().show();
+                }
+                else{
+                    getSupportActionBar().show();
+                    imgDown.setVisibility(View.GONE);
+                    srchViewDispositivos.setVisibility(View.GONE);
+                    txtDispositivos.setVisibility(View.VISIBLE);
                 }
 
                 Log.i("BottomSheets", "Nuevo estado: " + nuevoEstado + " : " + i);
@@ -357,6 +368,9 @@ public class MainActivity extends AppCompatActivity
                     bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }else{
                     bsb.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+                    srchViewDispositivos.setFocusable(true);
+                    srchViewDispositivos.setIconified(false);
+                    srchViewDispositivos.requestFocusFromTouch();
                 }
             }
         });
@@ -436,13 +450,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(context, query, Toast.LENGTH_SHORT).show();
+    public boolean onQueryTextSubmit(String s) {
+        Log.d(TAG, s);
         return false;
     }
 
     @Override
-    public boolean onQueryTextChange(String newText) {
+    public boolean onQueryTextChange(String s) {
         return false;
     }
 

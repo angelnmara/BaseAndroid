@@ -22,13 +22,19 @@
         <item name="android:fontFamily">@font/amaranth</item>
         <item name="textAppearanceButton">@style/AppTextAppearance.Button</item>
         <item name="materialButtonStyle">@style/AppButton</item>
-        <item name="textInputStyle">@style/AppTextField</item>
+        <!--<item name="textInputStyle">@style/AppTextField</item>-->
         <item name="autoCompleteTextViewStyle">@style/AppAutoComplete</item>
         <item name="materialCardViewStyle">@style/AppCard</item>
         <item name="bottomNavigationStyle">@style/AppBottomNavigation</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--<item name="searchViewStyle">@style/AppSearchView</item>-->
         <!--<item name="colorAccent">@color/colorAccent</item>-->
     </style>
+
+    <!--<style name="AppSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="boxBackgroundColor">@color/com_facebook_button_background_color</item>
+        <item name="android:paddingEnd">-10dp</item>
+    </style>-->
 
     <style name="AppShapeAppearance.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">cut</item>
@@ -51,11 +57,11 @@
         <item name="backgroundTint">?attr/colorSecondary</item>
     </style>
 
-    <style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <!--<style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundMode">filled</item>
         <item name="boxBackgroundColor">@color/text_field_background</item>
         <item name="android:textColorHint">@color/colorAccent</item>
-    </style>
+    </style>-->
 
     <style name="AppAutoComplete" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="android:paddingTop">20dp</item>
