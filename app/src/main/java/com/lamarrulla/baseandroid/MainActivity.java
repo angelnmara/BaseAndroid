@@ -320,7 +320,6 @@ public class MainActivity extends AppCompatActivity
                     case BottomSheetBehavior.STATE_HALF_EXPANDED:
                         nuevoEstado = BottomSheetBehavior.STATE_HALF_EXPANDED;
                         fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
-                        fab.animate().translationX(0).translationY(-fab.getHeight()).setDuration(300).setInterpolator(new LinearInterpolator()).start();
                         break;
                     default:
                         fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
@@ -353,6 +352,7 @@ public class MainActivity extends AppCompatActivity
             public void onSlide(@NonNull View view, float v) {
                 Log.i("BottomSheets", "Offset: " + v);
                 fab.animate().scaleX(1 - v).scaleY(1 - v).setDuration(0).start();
+                fab.animate().translationX(0).translationY(-fab.getHeight()*v*2).setInterpolator(new LinearInterpolator()).start();
             }
         });
 
