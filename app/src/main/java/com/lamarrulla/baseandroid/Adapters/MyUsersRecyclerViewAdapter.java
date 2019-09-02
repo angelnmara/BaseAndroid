@@ -2,10 +2,13 @@ package com.lamarrulla.baseandroid.Adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.UsersFragment.OnListFragmentInteractionListener;
@@ -18,10 +21,11 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> {
+public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    public static final String TAG = MyUsersRecyclerViewAdapter.class.getSimpleName();
 
     public MyUsersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -41,6 +45,8 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
 
+        holder.mImgFavoritos.setOnClickListener(this);
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,10 +64,24 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         return mValues.size();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.imgFavoritos:
+                Log.d(TAG, "favoritos");
+                break;
+            default:
+                Log.d(TAG, "favoritos");
+                break;
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final ImageView mImgFavoritos;
+
         public DummyItem mItem;
 
         public ViewHolder(View view) {
@@ -69,6 +89,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mImgFavoritos = view.findViewById(R.id.imgFavoritos);
         }
 
         @Override

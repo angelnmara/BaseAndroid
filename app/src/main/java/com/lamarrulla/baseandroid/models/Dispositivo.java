@@ -28,15 +28,18 @@ public class Dispositivo {
         public boolean activo;
         public Date fechaAlta;
         public Date fechaBaja;
+        public boolean favorito;
+
         public DispositivoUsuario(){
             // Default constructor required for calls to DataSnapshot.getValue(Post.class)
         }
-        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Date fechaAlta, Date fechaBaja){
+        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Date fechaAlta, Date fechaBaja, boolean favorito){
             this.dispositivo = dispositivo;
             this.usuario = usuario;
             this.activo = activo;
             this.fechaAlta = fechaAlta;
             this.fechaBaja = fechaBaja;
+            this.favorito = favorito;
         }
     }
     public static class DispositivosMarks{

@@ -455,7 +455,8 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                         txtUsuario.getText().toString().toUpperCase(),
                         true,
                         date,
-                        null
+                        null,
+                        false
                 ));
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                 adapter.notifyDataSetChanged();

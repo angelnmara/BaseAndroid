@@ -24,6 +24,7 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <ImageView
+        android:id="@+id/imgFavoritos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="22"
