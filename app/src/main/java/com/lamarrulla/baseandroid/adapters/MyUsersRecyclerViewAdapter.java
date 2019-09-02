@@ -1,11 +1,18 @@
-package com.lamarrulla.baseandroid.Adapters;
+package com.lamarrulla.baseandroid.adapters;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.UsersFragment.OnListFragmentInteractionListener;
@@ -18,14 +25,18 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> {
+public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final Context mContext;
+    public static final String TAG = MyUsersRecyclerViewAdapter.class.getSimpleName();
+    private final boolean favoritos = false;
 
-    public MyUsersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyUsersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
+        mContext = context;
     }
 
     @Override
@@ -40,6 +51,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
+        holder.mImgFavoritos.setOnClickListener(this);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +70,28 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         return mValues.size();
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.imgFavoritos:
+                Log.d(TAG, "mensajen favoritos");
+                if(!favoritos){
+                    ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.com_facebook_button_background_color)));
+                }else{
+                    ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorOnSecondary)));
+                }
+                break;
+                default:
+                    Log.d(TAG, "default click");
+                    break;
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final ImageView mImgFavoritos;
         public DummyItem mItem;
 
         public ViewHolder(View view) {
@@ -69,6 +99,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mImgFavoritos = (ImageView)view.findViewById(R.id.imgFavoritos);
         }
 
         @Override

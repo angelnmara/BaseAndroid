@@ -24,10 +24,13 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <ImageView
+        android:id="@+id/imgFavoritos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="22"
         android:layout_margin="8dp"
+        android:tint="@color/colorOnSecondary"
+        android:clickable="true"
         android:src="@drawable/ic_favorite_black_24dp">
     </ImageView>
 
