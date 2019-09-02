@@ -1,7 +1,11 @@
-package com.lamarrulla.baseandroid.Adapters;
+package com.lamarrulla.baseandroid.adapters;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +29,14 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final Context mContext;
     public static final String TAG = MyUsersRecyclerViewAdapter.class.getSimpleName();
+    private final boolean favoritos = false;
 
-    public MyUsersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyUsersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
+        mContext = context;
     }
 
     @Override
@@ -44,7 +51,6 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
-
         holder.mImgFavoritos.setOnClickListener(this);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -65,14 +71,19 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
+    public void onClick(View view) {
+        switch (view.getId()){
             case R.id.imgFavoritos:
-                Log.d(TAG, "favoritos");
+                Log.d(TAG, "mensajen favoritos");
+                if(!favoritos){
+                    ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.com_facebook_button_background_color)));
+                }else{
+                    ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorOnSecondary)));
+                }
                 break;
-            default:
-                Log.d(TAG, "favoritos");
-                break;
+                default:
+                    Log.d(TAG, "default click");
+                    break;
         }
     }
 
@@ -81,7 +92,6 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         public final TextView mIdView;
         public final TextView mContentView;
         public final ImageView mImgFavoritos;
-
         public DummyItem mItem;
 
         public ViewHolder(View view) {
@@ -89,7 +99,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
-            mImgFavoritos = view.findViewById(R.id.imgFavoritos);
+            mImgFavoritos = (ImageView)view.findViewById(R.id.imgFavoritos);
         }
 
         @Override

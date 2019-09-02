@@ -90,7 +90,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.zxing.WriterException;
-import com.lamarrulla.baseandroid.Adapters.MyUsersRecyclerViewAdapter;
+import com.lamarrulla.baseandroid.adapters.MyUsersRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
@@ -415,7 +415,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "interaccion");
             }
         };
-        mAdapter = new MyUsersRecyclerViewAdapter(items, listener);
+        mAdapter = new MyUsersRecyclerViewAdapter(items, listener, context);
         recyclerView.setAdapter(mAdapter);
 
         /*  termina Inicia menejo del recycler view */

@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.lamarrulla.baseandroid.Adapters.MyUsersRecyclerViewAdapter;
+import com.lamarrulla.baseandroid.adapters.MyUsersRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
@@ -71,7 +71,7 @@ public class UsersFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyUsersRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyUsersRecyclerViewAdapter(DummyContent.ITEMS, mListener, context));
         }
         return view;
     }
