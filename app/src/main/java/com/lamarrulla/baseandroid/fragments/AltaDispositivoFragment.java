@@ -95,7 +95,7 @@ public class AltaDispositivoFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(getContext(), txtMac.getText(), Toast.LENGTH_LONG).show();
                 List listDispositivoUsuario = new ArrayList();
-                Date date = new Date();
+                Dispositivo.Fecha date = new Dispositivo.Fecha();
                 /*Dispositivo.DispositivoUsuario dispositivoUSuario = new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
                         true,
                         date,
@@ -105,6 +105,7 @@ public class AltaDispositivoFragment extends Fragment {
                         true,
                         date,
                         null,
+                        false,
                         false));
                 /*listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
                         false,

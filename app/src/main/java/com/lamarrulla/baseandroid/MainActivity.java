@@ -89,6 +89,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.WriterException;
 import com.lamarrulla.baseandroid.adapters.MyUsersRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity
 
     FloatingActionButton fab;
 
-    //Bitmap Icon;
+    List<Dispositivo.DispositivoUsuario> dispUsuList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -425,8 +426,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu){
         Log.d(TAG, "onPrepareOptionMenu" + jsaDispositivos.length());
         Log.d(TAG, jsaDispositivos.toString());
-        menu.clear();
-        for(int i = 0; i<jsaDispositivos.length();i++){
+        //menu.clear();
+        /*for(int i = 0; i<jsaDispositivos.length();i++){
             try {
                 JSONObject jso = jsaDispositivos.getJSONObject(i);
                 Log.d(TAG, jso.toString());
@@ -441,11 +442,22 @@ public class MainActivity extends AppCompatActivity
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-        }
+        }*/
         //menu.add(0,1, Menu.CATEGORY_ALTERNATIVE, "primero").setChecked(true);
         //menu.add(0,2, Menu.CATEGORY_ALTERNATIVE, "primero2");
-        menu.setGroupCheckable(0, true, false);
+        //menu.setGroupCheckable(0, true, false);
+
+        if(dispUsuList!=null){
+            int i = 0;
+            for (Dispositivo.DispositivoUsuario du :dispUsuList
+            ) {
+                if(du.activo){
+                    menu.add(0, i, Menu.FLAG_PERFORM_NO_CLOSE, du.usuario).setChecked(du.seleccionado);
+                }
+                i++;
+            }
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -710,17 +722,12 @@ public class MainActivity extends AppCompatActivity
             requestPermissions();
             return;
         }else{
-            try {
-                iniciaTodo();
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.d(TAG, e.getMessage());
-            }
+            iniciaTodo();
         }
     }
 
     @SuppressLint("MissingPermission")
-    public void iniciaTodo() throws JSONException {
+    public void iniciaTodo() {
         gmap.setMyLocationEnabled(true);
         setMap();
         getMyLocation();
@@ -760,12 +767,7 @@ public class MainActivity extends AppCompatActivity
                     // permission was granted, yay! Do the
                     // contacts-
                     Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show();
-                    try {
-                        iniciaTodo();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.d(TAG, e.getMessage());
-                    }
+                    iniciaTodo();
                 } else {
 
                     // permission denied, boo! Disable the
@@ -870,6 +872,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        if(dispUsuList!=null){
+            int i = 0;
+            for (Dispositivo.DispositivoUsuario du :dispUsuList
+            ) {
+                if(du.activo){
+                    menu.add(0, i, Menu.FLAG_PERFORM_NO_CLOSE, du.usuario).setChecked(du.seleccionado);
+                }
+                i++;
+            }
+        }
+
+        menu.setGroupCheckable(0, true, false);
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -880,7 +894,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        Boolean valor = (item.isChecked()?false:true);
+        /*Boolean valor = (item.isChecked()?false:true);
 
         if (item.isChecked()) item.setChecked(false);
         else item.setChecked(true);
@@ -896,7 +910,15 @@ public class MainActivity extends AppCompatActivity
             getDispositivos();
         } catch (JSONException e) {
             e.printStackTrace();
+        }*/
+
+        for (Dispositivo.DispositivoUsuario du :dispUsuList
+             ) {
+            if(du.usuario.equals(item.toString())){
+                du.seleccionado = true;
+            }
         }
+
         return true;
     }
 
@@ -1082,6 +1104,11 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 Gson gso = new Gson();
                                 String s1 = gso.toJson(dataSnapshot.getValue());
+
+                                TypeToken<List<Dispositivo.DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
+                                dispUsuList = gso.fromJson(s1, token.getType());
+
+
                                 JSONArray jsaTemp = new JSONArray(s1);
                                 compareJSA(jsaDispositivos, jsaTemp);
                                 /*inicia servicio*/

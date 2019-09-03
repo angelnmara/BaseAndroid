@@ -449,13 +449,15 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 if (opcion == 2){
                     listDispositivoUsuario.remove(item);
                 }
-                Date date = new Date();
+                //Date date = new Date();
+                Dispositivo.Fecha date = new Dispositivo.Fecha();
                 listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
                         txtMacAddres.getText().toString().toUpperCase(),
                         txtUsuario.getText().toString().toUpperCase(),
                         true,
                         date,
                         null,
+                        false,
                         false
                 ));
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);

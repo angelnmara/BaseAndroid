@@ -21,25 +21,54 @@ public class Dispositivo {
             this.telefono = telefono;
         }
     }
+
+    public static class Fecha{
+        public int date;
+        public int hours;
+        public int seconds;
+        public int month;
+        public int timezoneOffset;
+        public int year;
+        public int minutes;
+        public long time;
+        public int day;
+        public Fecha(){
+            // Default constructor required for calls to DataSnapshot.getValue(Post.class)
+        }
+        public Fecha(int date, int hours, int seconds, int month, int timezoneOffset, int year, int minutes, long time, int day){
+            this.date = date;
+            this.hours = hours;
+            this.seconds = seconds;
+            this.month = month;
+            this.timezoneOffset = timezoneOffset;
+            this.year = year;
+            this.minutes = minutes;
+            this.time = time;
+            this.day = day;
+        }
+    }
+
     @IgnoreExtraProperties
     public static class DispositivoUsuario {
         public String dispositivo;
         public String usuario;
         public boolean activo;
-        public Date fechaAlta;
-        public Date fechaBaja;
+        public Fecha fechaAlta;
+        public Fecha fechaBaja;
         public boolean favorito;
+        public boolean seleccionado;
 
         public DispositivoUsuario(){
             // Default constructor required for calls to DataSnapshot.getValue(Post.class)
         }
-        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Date fechaAlta, Date fechaBaja, boolean favorito){
+        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Fecha fechaAlta, Fecha fechaBaja, boolean favorito, boolean seleccionado){
             this.dispositivo = dispositivo;
             this.usuario = usuario;
             this.activo = activo;
             this.fechaAlta = fechaAlta;
             this.fechaBaja = fechaBaja;
             this.favorito = favorito;
+            this.seleccionado = seleccionado;
         }
     }
     public static class DispositivosMarks{
