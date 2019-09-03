@@ -102,6 +102,7 @@ import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.interfaces.LatLngInterpolator;
 import com.lamarrulla.baseandroid.models.Dispositivo;
+import com.lamarrulla.baseandroid.models.Dispositivo.DispositivoUsuario;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.services.ReadService;
 import com.lamarrulla.baseandroid.utils.Constants;
@@ -177,7 +178,8 @@ public class MainActivity extends AppCompatActivity
 
     FloatingActionButton fab;
 
-    List<Dispositivo.DispositivoUsuario> dispUsuList;
+    List<DispositivoUsuario> dispUsuList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -352,8 +354,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onSlide(@NonNull View view, float v) {
                 Log.i("BottomSheets", "Offset: " + v);
-                fab.animate().scaleX(1 - v).scaleY(1 - v).setDuration(0).start();
-                fab.animate().translationX(0).translationY(-fab.getHeight()*v*2).setInterpolator(new LinearInterpolator()).start();
+                if(v>=0){
+                    fab.animate().scaleX(1 - v).scaleY(1 - v).setDuration(0).start();
+                    fab.animate().translationX(0).translationY(-fab.getHeight()*v*2).setInterpolator(new LinearInterpolator()).start();
+                }
             }
         });
 
@@ -449,7 +453,7 @@ public class MainActivity extends AppCompatActivity
 
         if(dispUsuList!=null){
             int i = 0;
-            for (Dispositivo.DispositivoUsuario du :dispUsuList
+            for (DispositivoUsuario du :dispUsuList
             ) {
                 if(du.activo){
                     menu.add(0, i, Menu.FLAG_PERFORM_NO_CLOSE, du.usuario).setChecked(du.seleccionado);
@@ -557,7 +561,7 @@ public class MainActivity extends AppCompatActivity
                                         .zIndex(1.0f);
                                 marker = gmap.addMarker(mo);
                                 //Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
-                                for (Dispositivo.DispositivoUsuario du :dispUsuList
+                                for (DispositivoUsuario du :dispUsuList
                                      ) {
                                     if(du.dispositivo.equals(dispositivo)){
                                         du.marker = marker;
@@ -637,7 +641,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         }*/
                         if(dispUsuList!=null){
-                            for (Dispositivo.DispositivoUsuario du: dispUsuList
+                            for (DispositivoUsuario du: dispUsuList
                                  ) {
                                 if(du.dispositivo.equals(dispositivo)){
                                     LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
@@ -717,7 +721,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }*/
                 if(dispUsuList!=null){
-                    for (Dispositivo.DispositivoUsuario du: dispUsuList
+                    for (DispositivoUsuario du: dispUsuList
                          ) {
                         du.seleccionado = false;
                     }
@@ -742,7 +746,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }*/
                 if(dispUsuList!=null){
-                    for (Dispositivo.DispositivoUsuario du: dispUsuList
+                    for (DispositivoUsuario du: dispUsuList
                          ) {
                         if(du.marker.getId().equals(marker.getId())){
                             du.seleccionado = true;
@@ -953,7 +957,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }*/
 
-        for (Dispositivo.DispositivoUsuario du :dispUsuList
+        for (DispositivoUsuario du :dispUsuList
              ) {
             if(du.usuario.equals(item.toString())){
                 if (item.isChecked()) {
@@ -1130,7 +1134,7 @@ public class MainActivity extends AppCompatActivity
             }
         }*/
         if(dispUsuList!=null){
-            for (Dispositivo.DispositivoUsuario du: dispUsuList
+            for (DispositivoUsuario du: dispUsuList
                  ) {
                 du.marker.remove();
             }
@@ -1166,12 +1170,12 @@ public class MainActivity extends AppCompatActivity
                                 Gson gso = new Gson();
                                 String s1 = gso.toJson(dataSnapshot.getValue());
 
-                                TypeToken<List<Dispositivo.DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
+                                TypeToken<List<DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
                                 dispUsuList = gso.fromJson(s1, token.getType());
 
-
-                                JSONArray jsaTemp = new JSONArray(s1);
-                                compareJSA(jsaDispositivos, jsaTemp);
+                                jsaDispositivos = new JSONArray(s1);
+                                /*JSONArray jsaTemp = new JSONArray(s1);
+                                compareJSA(jsaDispositivos, jsaTemp);*/
                                 /*inicia servicio*/
                                 Log.d(TAG, jsaDispositivos.toString());
                                 Log.d(TAG, "Inicia Servicio");
@@ -1190,7 +1194,7 @@ public class MainActivity extends AppCompatActivity
     }
     public void iniciaServicioDispositivos() throws JSONException {
         Log.d(TAG, "iniciaServicioDispositivos");
-        for(int i = 0; i<jsaDispositivos.length();i++){
+        /*for(int i = 0; i<jsaDispositivos.length();i++){
             JSONObject jso = jsaDispositivos.getJSONObject(i);
             if(!jso.has("valor")){
                 jso.put("valor", jso.getBoolean("activo"));
@@ -1198,6 +1202,10 @@ public class MainActivity extends AppCompatActivity
             if(jso.getBoolean("valor")){
                 getListaDispositivos(jso.getString("dispositivo"), jso.getString("usuario"));
             }
+        }*/
+        for (DispositivoUsuario du:dispUsuList
+             ) {
+            getListaDispositivos(du.dispositivo, du.usuario);
         }
         ejecutaIntent(jsaDispositivos.toString());
         invalidateOptionsMenu();
