@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
     MarkerOptions mo;
     Marker marker;
     HashMap<String, Marker> markersAndObjects;
-    List<Dispositivo.DispositivosMarks> listDispositivosMarks;
+    //List<Dispositivo.DispositivosMarks> listDispositivosMarks;
 
     MarkerAnimation markerAnimation = new MarkerAnimation();
 
@@ -458,6 +458,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        menu.setGroupCheckable(0, true, false);
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -532,7 +534,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getListaDispositivos(final String dispositivo, final String usuario) {
-        listDispositivosMarks = new ArrayList<>();
+        //listDispositivosMarks = new ArrayList<>();
             Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivo);
             queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -554,11 +556,18 @@ public class MainActivity extends AppCompatActivity
                                         .anchor(0.5f,0.5f)
                                         .zIndex(1.0f);
                                 marker = gmap.addMarker(mo);
-                                Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
-                                dispositivosMarks.dispositivo = dispositivo;
+                                //Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
+                                for (Dispositivo.DispositivoUsuario du :dispUsuList
+                                     ) {
+                                    if(du.dispositivo.equals(dispositivo)){
+                                        du.marker = marker;
+                                    }
+                                }
+
+                                /*dispositivosMarks.dispositivo = dispositivo;
                                 dispositivosMarks.marker = marker;
                                 dispositivosMarks.dispositivoSeleccionado = false;
-                                listDispositivosMarks.add(dispositivosMarks);
+                                listDispositivosMarks.add(dispositivosMarks);*/
                                 Log.d(TAG, "se guardan marks");
                             }
                         } catch (JSONException e) {
@@ -609,7 +618,7 @@ public class MainActivity extends AppCompatActivity
                         Integer bearing = speed==0?0:Integer.parseInt(intent.getStringExtra(Constants.BEARING)) + 90;
                         Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
                         LatLng latLng = new LatLng(latitud, longitud);
-                        if(listDispositivosMarks!= null){
+                        /*if(listDispositivosMarks!= null){
                             for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
                             ) {
                                 if(dispositivoMarks.dispositivo.equals(dispositivo)){
@@ -626,7 +635,25 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
                             }
+                        }*/
+                        if(dispUsuList!=null){
+                            for (Dispositivo.DispositivoUsuario du: dispUsuList
+                                 ) {
+                                if(du.dispositivo.equals(dispositivo)){
+                                    LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
+                                    markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, 5000);
+                                    du.marker.setRotation(bearing);
+                                    if(du.seleccionado){
+                                        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+                                        gmap.animateCamera(CameraUpdateFactory.zoomIn());
+                                        gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null);
+                                    }
+                                }
+                            }
                         }
+
+
+
                     }catch (Exception ex){
                         Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -681,12 +708,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onMapClick(LatLng latLng) {
                 //Toast.makeText(context, "click map", Toast.LENGTH_SHORT).show();
-                if(listDispositivosMarks!=null){
+                /*if(listDispositivosMarks!=null){
                     for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
                     ) {
                         if(listDispositivosMarks!=null){
                             dm.dispositivoSeleccionado = false;
                         }
+                    }
+                }*/
+                if(dispUsuList!=null){
+                    for (Dispositivo.DispositivoUsuario du: dispUsuList
+                         ) {
+                        du.seleccionado = false;
                     }
                 }
             }
@@ -702,10 +735,18 @@ public class MainActivity extends AppCompatActivity
                 gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                 /*gmap.animateCamera(CameraUpdateFactory.zoomIn());
                 gmap.animateCamera(CameraUpdateFactory.zoomTo(10), 5000, null);*/
-                for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
+                /*for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
                         ) {
                     if(dm.marker.getId().equals(marker.getId())){
                         dm.dispositivoSeleccionado = true;
+                    }
+                }*/
+                if(dispUsuList!=null){
+                    for (Dispositivo.DispositivoUsuario du: dispUsuList
+                         ) {
+                        if(du.marker.getId().equals(marker.getId())){
+                            du.seleccionado = true;
+                        }
                     }
                 }
                 return false;
@@ -872,7 +913,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(dispUsuList!=null){
+        /*if(dispUsuList!=null){
             int i = 0;
             for (Dispositivo.DispositivoUsuario du :dispUsuList
             ) {
@@ -883,7 +924,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        menu.setGroupCheckable(0, true, false);
+        menu.setGroupCheckable(0, true, false);*/
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -915,7 +956,21 @@ public class MainActivity extends AppCompatActivity
         for (Dispositivo.DispositivoUsuario du :dispUsuList
              ) {
             if(du.usuario.equals(item.toString())){
-                du.seleccionado = true;
+                if (item.isChecked()) {
+                    du.seleccionado = false;
+                }
+                else {
+                    /*for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
+                    ) {
+                        if(dm.marker.getId().equals(marker.getId())){
+                            dm.dispositivoSeleccionado = true;
+                        }
+                    }*/
+                    du.marker.showInfoWindow();
+                    du.seleccionado = true;
+                }
+            }else{
+                du.seleccionado = false;
             }
         }
 
@@ -1068,10 +1123,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void removeMarks(){
-        if(listDispositivosMarks != null){
+        /*if(listDispositivosMarks != null){
             for (Dispositivo.DispositivosMarks dm: listDispositivosMarks
             ) {
                 dm.marker.remove();
+            }
+        }*/
+        if(dispUsuList!=null){
+            for (Dispositivo.DispositivoUsuario du: dispUsuList
+                 ) {
+                du.marker.remove();
             }
         }
     }

@@ -57,11 +57,12 @@ public class Dispositivo {
         public Fecha fechaBaja;
         public boolean favorito;
         public boolean seleccionado;
+        public Marker marker;
 
         public DispositivoUsuario(){
             // Default constructor required for calls to DataSnapshot.getValue(Post.class)
         }
-        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Fecha fechaAlta, Fecha fechaBaja, boolean favorito, boolean seleccionado){
+        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Fecha fechaAlta, Fecha fechaBaja, boolean favorito, boolean seleccionado, Marker marker){
             this.dispositivo = dispositivo;
             this.usuario = usuario;
             this.activo = activo;
@@ -69,9 +70,11 @@ public class Dispositivo {
             this.fechaBaja = fechaBaja;
             this.favorito = favorito;
             this.seleccionado = seleccionado;
+            this.marker = marker;
         }
     }
-    public static class DispositivosMarks{
+
+    /*public static class DispositivosMarks{
         public String dispositivo;
         public Marker marker;
         public boolean dispositivoSeleccionado;
@@ -81,7 +84,8 @@ public class Dispositivo {
             this.marker = marker;
             this.dispositivoSeleccionado = dispositivoSeleccionado;
         }
-    }
+    }*/
+
     public static class MyLocation{
         public double latitude;
         public double longitude;

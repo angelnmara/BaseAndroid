@@ -458,7 +458,8 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                         date,
                         null,
                         false,
-                        false
+                        false,
+                        null
                 ));
                 adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
                 adapter.notifyDataSetChanged();
