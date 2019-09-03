@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu){
         Log.d(TAG, "onPrepareOptionMenu" + jsaDispositivos.length());
         Log.d(TAG, jsaDispositivos.toString());
-        //menu.clear();
+        menu.clear();
         /*for(int i = 0; i<jsaDispositivos.length();i++){
             try {
                 JSONObject jso = jsaDispositivos.getJSONObject(i);
