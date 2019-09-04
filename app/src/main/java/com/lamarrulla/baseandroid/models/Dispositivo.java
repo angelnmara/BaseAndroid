@@ -3,6 +3,7 @@ package com.lamarrulla.baseandroid.models;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.Date;
+import java.util.List;
 
 public class Dispositivo {
     @IgnoreExtraProperties

@@ -404,7 +404,7 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        List<Dispositivo.User> listUser = new ArrayList<>();
+        /*List<Dispositivo.User> listUser = new ArrayList<>();
         listUser.add(new Dispositivo.User("jose david rincon","angelnmara@hotmail","","55555555"));
         listUser.add(new Dispositivo.User("andres rincon","arincon@bdda.co","","654654654"));
         listUser.add(new Dispositivo.User("angel rincon","kjadhfkljahd@bdda.co","","654654654"));
@@ -413,14 +413,14 @@ public class MainActivity extends AppCompatActivity
         items.add(new DummyContent.DummyItem("1", "dave", ""));
         items.add(new DummyContent.DummyItem("2", "andres", ""));
         items.add(new DummyContent.DummyItem("3", "angel", ""));
-        items.add(new DummyContent.DummyItem("4", "byron", ""));
+        items.add(new DummyContent.DummyItem("4", "byron", ""));*/
         UsersFragment.OnListFragmentInteractionListener listener = new UsersFragment.OnListFragmentInteractionListener() {
             @Override
-            public void onListFragmentInteraction(DummyContent.DummyItem item) {
+            public void onListFragmentInteraction(DispositivoUsuario item) {
                 Log.d(TAG, "interaccion");
             }
         };
-        mAdapter = new MyUsersRecyclerViewAdapter(items, listener, context);
+        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, context);
         recyclerView.setAdapter(mAdapter);
 
         /*  termina Inicia menejo del recycler view */
@@ -778,7 +778,6 @@ public class MainActivity extends AppCompatActivity
         getMyLocation();
         startActivity(intentTrackerServices);
         getDispositivos();
-        cargaDispositivosList();
     }
 
     public void requestPermissions(){
@@ -1172,6 +1171,7 @@ public class MainActivity extends AppCompatActivity
 
                                 TypeToken<List<DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
                                 dispUsuList = gso.fromJson(s1, token.getType());
+                                cargaDispositivosList();
 
                                 jsaDispositivos = new JSONArray(s1);
                                 /*JSONArray jsaTemp = new JSONArray(s1);

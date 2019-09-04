@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.UsersFragment.OnListFragmentInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
+import com.lamarrulla.baseandroid.models.Dispositivo.DispositivoUsuario;
 
 import java.util.List;
 
@@ -27,13 +28,13 @@ import java.util.List;
  */
 public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
 
-    private final List<DummyItem> mValues;
+    private final List<DispositivoUsuario> mValues;
     private final OnListFragmentInteractionListener mListener;
     private final Context mContext;
     public static final String TAG = MyUsersRecyclerViewAdapter.class.getSimpleName();
     private final boolean favoritos = false;
 
-    public MyUsersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener, Context context) {
+    public MyUsersRecyclerViewAdapter(List<DispositivoUsuario> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -49,8 +50,8 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        //holder.mIdView.setText(mValues.get(position).dispositivo);
+        holder.mContentView.setText(mValues.get(position).usuario);
         holder.mImgFavoritos.setOnClickListener(this);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -89,15 +90,15 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        //public final TextView mIdView;
         public final TextView mContentView;
         public final ImageView mImgFavoritos;
-        public DummyItem mItem;
+        public DispositivoUsuario mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
+            //mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
             mImgFavoritos = (ImageView)view.findViewById(R.id.imgFavoritos);
         }

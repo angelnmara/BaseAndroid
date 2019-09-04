@@ -15,7 +15,10 @@ import android.view.ViewGroup;
 import com.lamarrulla.baseandroid.adapters.MyUsersRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
+/*import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;*/
+import com.lamarrulla.baseandroid.models.Dispositivo;
+
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -30,7 +33,7 @@ public class UsersFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -71,7 +74,7 @@ public class UsersFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyUsersRecyclerViewAdapter(DummyContent.ITEMS, mListener, context));
+            recyclerView.setAdapter(new MyUsersRecyclerViewAdapter(listDispositivoUsuario, mListener, context));
         }
         return view;
     }
@@ -106,6 +109,6 @@ public class UsersFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Dispositivo.DispositivoUsuario item);
     }
 }
