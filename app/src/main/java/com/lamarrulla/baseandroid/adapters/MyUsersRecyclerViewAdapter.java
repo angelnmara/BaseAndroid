@@ -48,11 +48,20 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         //holder.mIdView.setText(mValues.get(position).dispositivo);
         holder.mContentView.setText(mValues.get(position).usuario);
-        holder.mImgFavoritos.setOnClickListener(this);
+        holder.mImgFavoritos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!mValues.get(position).favorito){
+                    ImageViewCompat.setImageTintList((ImageView) v, ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorAccent)));
+                }else{
+                    ImageViewCompat.setImageTintList((ImageView) v, ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorOnSecondary)));
+                }
+            }
+        });
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +86,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
             case R.id.imgFavoritos:
                 Log.d(TAG, "mensajen favoritos");
                 if(!favoritos){
-                    ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.com_facebook_button_background_color)));
+                    ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorAccent)));
                 }else{
                     ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorOnSecondary)));
                 }
