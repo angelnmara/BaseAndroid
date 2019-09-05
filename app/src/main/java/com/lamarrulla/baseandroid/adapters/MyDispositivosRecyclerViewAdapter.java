@@ -48,18 +48,20 @@ public class MyDispositivosRecyclerViewAdapter extends RecyclerView.Adapter<MyDi
         holder.mIdView.setText(dispositivo);
         final boolean check = mValues.get(position).activo;
         final String usuario = mValues.get(position).usuario;
+
         holder.mtxtUsuario.setText(usuario);
         holder.mContentView.setChecked(check);
 
         holder.mContentView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked!=holder.mItem.activo){
+                //if(isChecked!=holder.mItem.activo){
                     holder.mContentView.setChecked(isChecked);
                     holder.mItem.activo = isChecked;
-                    mValues.set(position, holder.mItem);
-                    notifyItemChanged(position, null);
-                }
+                    //mValues.set(position, holder.mItem);
+                    //notifyItemChanged(position, null);
+                    notifyDataSetChanged();
+                //}
             }
         });
 

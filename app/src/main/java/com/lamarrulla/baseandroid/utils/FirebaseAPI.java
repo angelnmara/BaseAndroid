@@ -40,8 +40,14 @@ public class FirebaseAPI {
         }
     }
     public void writeNewObject(String path, Object object){
-        mDatabase.child(path).child(mFirebaseAuth.getUid()).setValue(object);
+        try{
+            mDatabase.child(path).child(mFirebaseAuth.getUid()).setValue(object);
+        }catch (Exception ex){
+            Log.d(TAG, ex.getMessage());
+        }
+
     }
+
     public void deleteObject(final String path, final String value, final String key){
         mDatabase.child(path).child(mFirebaseAuth.getUid());
         Query query = mDatabase.child(path).child(mFirebaseAuth.getUid());

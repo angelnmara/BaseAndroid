@@ -106,6 +106,7 @@ import com.lamarrulla.baseandroid.models.Dispositivo.DispositivoUsuario;
 import com.lamarrulla.baseandroid.models.Login;
 import com.lamarrulla.baseandroid.services.ReadService;
 import com.lamarrulla.baseandroid.utils.Constants;
+import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 import com.lamarrulla.baseandroid.utils.MarkerAnimation;
 import com.lamarrulla.baseandroid.utils.Utils;
 
@@ -179,6 +180,8 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton fab;
 
     List<DispositivoUsuario> dispUsuList;
+
+    FirebaseAPI firebaseAPI = new FirebaseAPI();
 
 
     @Override
@@ -1113,7 +1116,15 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
         stopService(intentReadService);
-        //removeMarks();
+
+        if(utils.isConnectAvailable(context)){
+            if(dispUsuList!=null){
+                firebaseAPI.writeNewObject(getString(R.string.dispositivos), dispUsuList);
+            }
+        }else{
+            Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+        }
+
         Log.d(TAG, "Para Servicio");
     }
 

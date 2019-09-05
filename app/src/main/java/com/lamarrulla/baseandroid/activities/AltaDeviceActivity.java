@@ -56,12 +56,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lamarrulla.baseandroid.MainActivity;
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.adapters.MyDispositivosRecyclerViewAdapter;
+
 import com.lamarrulla.baseandroid.models.Dispositivo;
+import com.lamarrulla.baseandroid.models.Dispositivo.DispositivoUsuario;
 import com.lamarrulla.baseandroid.utils.FirebaseAPI;
 import com.lamarrulla.baseandroid.utils.Utils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,7 +84,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
     FirebaseAPI firebaseAPI = new FirebaseAPI();
     DatabaseReference mDatabase;
     FirebaseAuth mFirebaseAuth;
-    List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
+    //List<DispositivoUsuario> listDispositivoUsuario;
     RecyclerView.Adapter adapter;
     Context context = AltaDeviceActivity.this;
     CoordinatorLayout lnlAltaMAC;
@@ -96,6 +102,8 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
     AlertDialog dialog;
     private static final int READ_REQUEST_CODE = 42;
     String valorMAC;
+
+    List<DispositivoUsuario> dispUsuList;
 
     @Override
     public void onClick(View v) {
@@ -143,6 +151,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
 
+        super.onActivityResult(requestCode, resultCode, resultData);
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // The document selected by the user won't be returned in the intent.
             // Instead, a URI to that document will be contained in the return intent
@@ -160,7 +169,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                     e.printStackTrace();
                 }
                 //showImage(uri);
-                Dispositivo.DispositivoUsuario item = new Dispositivo.DispositivoUsuario();
+                DispositivoUsuario item = new DispositivoUsuario();
                 item.dispositivo = valorMAC;
                 createDialog(item, 1);
             }
@@ -168,7 +177,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Dispositivo.DispositivoUsuario item);
+        void onItemClick(DispositivoUsuario item);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -279,7 +288,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                             public void run() {
                                 lnlAltaMAC.setVisibility(View.VISIBLE);
                                 lnlAltaScan.setVisibility(View.GONE);
-                                Dispositivo.DispositivoUsuario item = new Dispositivo.DispositivoUsuario();
+                                DispositivoUsuario item = new DispositivoUsuario();
                                 item.dispositivo = token.toString();
                                 createDialog(item, 1);
                                 cameraSource.stop();
@@ -359,47 +368,46 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
 
     public void cargaDatosLista(){
         // Set the adapter
-        if (recyclerView instanceof RecyclerView) {
-            //final RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            mDatabase = FirebaseDatabase.getInstance().getReference();
-            mFirebaseAuth = FirebaseAuth.getInstance();
 
-            listDispositivoUsuario = new ArrayList();
-            Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
-                        for(DataSnapshot du : dataSnapshot.getChildren()){
-                            Log.d(TAG, du.getValue().toString());
-                            Dispositivo.DispositivoUsuario dispositivoUsuario = du.getValue(Dispositivo.DispositivoUsuario.class);
-                            listDispositivoUsuario.add(dispositivoUsuario);
+            if (recyclerView instanceof RecyclerView) {
+                //final RecyclerView recyclerView = (RecyclerView) view;
+                if (mColumnCount <= 1) {
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                } else {
+                    recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                }
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                mFirebaseAuth = FirebaseAuth.getInstance();
+
+                //listDispositivoUsuario = new ArrayList();
+                Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d(TAG, "dataSnapshot.exists():" + dataSnapshot.exists());
+                        if(dataSnapshot.exists()){
+                            Gson gso = new Gson();
+                            String s1 = gso.toJson(dataSnapshot.getValue());TypeToken<List<Dispositivo.DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
+                            dispUsuList = gso.fromJson(s1, token.getType());
+                            adapter = new com.lamarrulla.baseandroid.adapters.MyDispositivosRecyclerViewAdapter(dispUsuList, new OnItemClickListener(){
+                                @Override
+                                public void onItemClick(Dispositivo.DispositivoUsuario item) {
+                                    Log.d(TAG, "");
+                                    createDialog(item, 2);
+                                }
+                            });
+                            recyclerView.setAdapter(adapter);
                         }
                     }
-                    adapter = new MyDispositivosRecyclerViewAdapter(listDispositivoUsuario, new OnItemClickListener(){
-                        @Override
-                        public void onItemClick(Dispositivo.DispositivoUsuario item) {
-                            Log.d(TAG, "");
-                            createDialog(item, 2);
-                        }
-                    });
-                    recyclerView.setAdapter(adapter);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(TAG, "No regresaron datos desde firebase");
+                    }
+                });
+            }
     }
 
-    public void createDialog(final Dispositivo.DispositivoUsuario item, final int opcion){
+    public void createDialog(final DispositivoUsuario item, final int opcion){
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
         View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_alta_dispositivo, null);
         mBuilder.setView(mViewAgregar);
@@ -428,7 +436,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(View v) {
                 boolean salida = false;
-                for (Dispositivo.DispositivoUsuario du:listDispositivoUsuario
+                for (DispositivoUsuario du:dispUsuList
                 ) {
                     if(du.usuario.toUpperCase().equals(txtUsuario.getText().toString().toUpperCase())){
                         salida = true;
@@ -447,11 +455,11 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 if (opcion == 2){
-                    listDispositivoUsuario.remove(item);
+                    dispUsuList.remove(item);
                 }
                 //Date date = new Date();
                 Dispositivo.Fecha date = new Dispositivo.Fecha();
-                listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(
+                dispUsuList.add(new Dispositivo.DispositivoUsuario(
                         txtMacAddres.getText().toString().toUpperCase(),
                         txtUsuario.getText().toString().toUpperCase(),
                         true,
@@ -461,7 +469,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                         false,
                         null
                 ));
-                adapter.notifyItemInserted(listDispositivoUsuario.size() - 1);
+                adapter.notifyItemInserted(dispUsuList.size() - 1);
                 adapter.notifyDataSetChanged();
                 dialog.hide();
                 //Toast.makeText(context, "Click agregar", Toast.LENGTH_SHORT).show();
@@ -489,7 +497,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
         if(utils.isConnectAvailable(context)){
-            firebaseAPI.writeNewObject(getString(R.string.dispositivos), listDispositivoUsuario);
+            firebaseAPI.writeNewObject(getString(R.string.dispositivos), dispUsuList);
         }else{
             Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
         }
