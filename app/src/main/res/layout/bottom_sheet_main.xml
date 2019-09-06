@@ -7,7 +7,7 @@
     android:background="#FFF"
     app:layout_behavior="@string/bottom_sheet_behavior"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="64dp"
+    app:behavior_peekHeight="128dp"
     app:behavior_fitToContents="false"
     android:id="@+id/bottomSheet">
 

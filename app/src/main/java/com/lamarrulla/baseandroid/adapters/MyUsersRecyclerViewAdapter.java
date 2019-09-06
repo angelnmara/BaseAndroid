@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lamarrulla.baseandroid.R;
+import com.lamarrulla.baseandroid.fragments.UsersFragment;
 import com.lamarrulla.baseandroid.fragments.UsersFragment.OnListFragmentInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
 import com.lamarrulla.baseandroid.models.Dispositivo.DispositivoUsuario;
@@ -27,13 +28,15 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
 
     private final List<DispositivoUsuario> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final UsersFragment.OnRouteInteractionListener mListenerRoute;
     private final Context mContext;
     public static final String TAG = MyUsersRecyclerViewAdapter.class.getSimpleName();
     /*private final boolean favoritos = false;*/
 
-    public MyUsersRecyclerViewAdapter(List<DispositivoUsuario> items, OnListFragmentInteractionListener listener, Context context) {
+    public MyUsersRecyclerViewAdapter(List<DispositivoUsuario> items, OnListFragmentInteractionListener listener, UsersFragment.OnRouteInteractionListener mListenerRoute, Context context) {
         mValues = items;
         mListener = listener;
+        this.mListenerRoute = mListenerRoute;
         mContext = context;
     }
 
@@ -79,6 +82,13 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
                 }
             }
         });
+
+        holder.mImgRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListenerRoute.onRouteInteractionListener(mValues.get(position).dispositivo);
+            }
+        });
     }
 
     @Override
@@ -108,6 +118,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
         //public final TextView mIdView;
         public final TextView mContentView;
         public final ImageView mImgFavoritos;
+        public final ImageView mImgRoute;
         public DispositivoUsuario mItem;
 
         public ViewHolder(View view) {
@@ -116,6 +127,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
             //mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
             mImgFavoritos = (ImageView)view.findViewById(R.id.imgFavoritos);
+            mImgRoute = view.findViewById(R.id.imgRoute);
         }
 
         @Override

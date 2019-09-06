@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/codigo_qr"
+        android:icon="@drawable/ic_location_on_black_24dp"
+        android:title="Explorar" />
+
+    <item
+        android:id="@+id/mac_address"
+        android:icon="@drawable/ic_directions_black_24dp"
+        android:title="Mis rutas" />
+</menu>

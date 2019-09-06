@@ -97,7 +97,6 @@ import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
 import com.lamarrulla.baseandroid.fragments.UsersFragment;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.interfaces.LatLngInterpolator;
@@ -125,7 +124,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AltaDispositivoFragment.OnFragmentAltaDispositivoInteractionListener,
-        OnMapReadyCallback, SearchView.OnQueryTextListener {
+        OnMapReadyCallback, SearchView.OnQueryTextListener{
 
     IAcceso iAcceso = new Acceso();
     Context context = this;
@@ -183,6 +182,8 @@ public class MainActivity extends AppCompatActivity
 
     FirebaseAPI firebaseAPI = new FirebaseAPI();
 
+    SearchView searchMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +192,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Log.d(TAG, "OnCreate");
+
+        searchMap = findViewById(R.id.searchMap);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -423,7 +426,31 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "interaccion");
             }
         };
-        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, context);
+        
+        UsersFragment.OnRouteInteractionListener mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
+            @Override
+            public void onRouteInteractionListener(String dispositivo) {
+                Toast.makeText(context, "Click en ruta", Toast.LENGTH_SHORT).show();
+                searchMap.setVisibility(View.VISIBLE);
+                searchMap.setFocusable(true);
+                searchMap.setIconified(false);
+                searchMap.requestFocusFromTouch();
+                searchMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+            }
+        };
+        
+        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, mListenerRoute, context);
         recyclerView.setAdapter(mAdapter);
 
         /*  termina Inicia menejo del recycler view */
@@ -478,6 +505,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onQueryTextChange(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
         return false;
     }
 

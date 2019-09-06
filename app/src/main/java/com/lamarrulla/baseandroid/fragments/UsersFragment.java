@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.lamarrulla.baseandroid.adapters.MyUsersRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
 /*import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;*/
 import com.lamarrulla.baseandroid.models.Dispositivo;
 
@@ -33,6 +32,7 @@ public class UsersFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private OnRouteInteractionListener mListenerRoute;
     List<Dispositivo.DispositivoUsuario> listDispositivoUsuario;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -74,7 +74,7 @@ public class UsersFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyUsersRecyclerViewAdapter(listDispositivoUsuario, mListener, context));
+            recyclerView.setAdapter(new MyUsersRecyclerViewAdapter(listDispositivoUsuario, mListener, mListenerRoute, context));
         }
         return view;
     }
@@ -110,5 +110,8 @@ public class UsersFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Dispositivo.DispositivoUsuario item);
+    }
+    public interface OnRouteInteractionListener{
+        void onRouteInteractionListener(String dispositivo);
     }
 }
