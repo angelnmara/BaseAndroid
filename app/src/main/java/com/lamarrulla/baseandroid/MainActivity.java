@@ -455,6 +455,7 @@ public class MainActivity extends AppCompatActivity
                 searchMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String s) {
+                        Toast.makeText(context, "TextSubmit" + s, Toast.LENGTH_SHORT).show();
                         return false;
                     }
 
@@ -462,7 +463,10 @@ public class MainActivity extends AppCompatActivity
                     public boolean onQueryTextChange(String s) {
                         Geocoder geocoder = new Geocoder(context);
                         try {
-                            List<Address> addressList = geocoder.getFromLocationName(s, 10);
+                            List<Address> addressList = new ArrayList<>();
+                            if(s!=""){
+                                addressList = geocoder.getFromLocationName(s, 10);
+                            }
                             cargaListaUbicaciones(addressList);
                             //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
