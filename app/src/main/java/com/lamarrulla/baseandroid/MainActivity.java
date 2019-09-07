@@ -14,6 +14,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -96,7 +98,9 @@ import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
+import com.lamarrulla.baseandroid.fragments.MylistaUbicacionesRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.fragments.UsersFragment;
+import com.lamarrulla.baseandroid.fragments.listaUbicacionesFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.interfaces.LatLngInterpolator;
@@ -153,6 +157,10 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    private RecyclerView recyclerViewUbicaciones;
+    private RecyclerView.Adapter mAdapterUbicaciones;
+    private RecyclerView.LayoutManager layoutManagerUbicaciones;
 
     private TextView txtDispositivos;
     private ImageView imgDown;
@@ -294,7 +302,7 @@ public class MainActivity extends AppCompatActivity
 
         final BottomSheetBehavior bsb = BottomSheetBehavior.from(bottomSheet);
 
-        bsb.setHalfExpandedRatio((float) 0.4);
+        //bsb.setHalfExpandedRatio((float) 0.4); // coloca al 40% la barra
 
         bsb.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -435,6 +443,15 @@ public class MainActivity extends AppCompatActivity
                 searchMap.setFocusable(true);
                 searchMap.setIconified(false);
                 searchMap.requestFocusFromTouch();
+                searchMap.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        //Toast.makeText(context, "botonCerrar", Toast.LENGTH_SHORT).show();
+                        List<Address> addressList = new ArrayList<>();
+                        cargaListaUbicaciones(addressList);
+                        return false;
+                    }
+                });
                 searchMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String s) {
@@ -443,7 +460,14 @@ public class MainActivity extends AppCompatActivity
 
                     @Override
                     public boolean onQueryTextChange(String s) {
-                        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+                        Geocoder geocoder = new Geocoder(context);
+                        try {
+                            List<Address> addressList = geocoder.getFromLocationName(s, 10);
+                            cargaListaUbicaciones(addressList);
+                            //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         return false;
                     }
                 });
@@ -454,6 +478,26 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setAdapter(mAdapter);
 
         /*  termina Inicia menejo del recycler view */
+    }
+
+    public void cargaListaUbicaciones(List<Address> listAddres){
+        recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerViewUbicaciones.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManagerUbicaciones = new LinearLayoutManager(this);
+        recyclerViewUbicaciones.setLayoutManager(layoutManagerUbicaciones);
+        listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener = new listaUbicacionesFragment.OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(Address item) {
+                Toast.makeText(context, "Prueba list iteraction", Toast.LENGTH_SHORT).show();
+            }
+        };
+        mAdapterUbicaciones = new MylistaUbicacionesRecyclerViewAdapter(listAddres, listFragmentInteractionListener);
+        recyclerViewUbicaciones.setAdapter(mAdapterUbicaciones);
     }
 
     @Override

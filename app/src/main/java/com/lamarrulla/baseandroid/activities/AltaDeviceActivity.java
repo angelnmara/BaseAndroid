@@ -103,7 +103,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
     private static final int READ_REQUEST_CODE = 42;
     String valorMAC;
 
-    List<DispositivoUsuario> dispUsuList;
+    List<DispositivoUsuario> dispUsuList = new ArrayList<>();
 
     @Override
     public void onClick(View v) {
@@ -436,12 +436,15 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(View v) {
                 boolean salida = false;
-                for (DispositivoUsuario du:dispUsuList
-                ) {
-                    if(du.usuario.toUpperCase().equals(txtUsuario.getText().toString().toUpperCase())){
-                        salida = true;
+                // valida si ya existe un usuario con ese nombre, se agrega validación diferente de null por que cuando no existian usuarios tronaba
+
+                    for (DispositivoUsuario du:dispUsuList
+                    ) {
+                        if(du.usuario.toUpperCase().equals(txtUsuario.getText().toString().toUpperCase())){
+                            salida = true;
+                        }
                     }
-                }
+
                 if(!item.dispositivo.matches(getString(R.string.regxMAC))){
                     Toast.makeText(context, getString(R.string.errorImagenSeleccionada), Toast.LENGTH_LONG).show();
                     dialog.hide();
@@ -463,7 +466,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                         txtMacAddres.getText().toString().toUpperCase(),
                         txtUsuario.getText().toString().toUpperCase(),
                         true,
-                        date,
+                         date,
                         null,
                         false,
                         false,
