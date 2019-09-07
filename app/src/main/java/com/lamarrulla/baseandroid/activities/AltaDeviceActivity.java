@@ -389,15 +389,15 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                             Gson gso = new Gson();
                             String s1 = gso.toJson(dataSnapshot.getValue());TypeToken<List<Dispositivo.DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
                             dispUsuList = gso.fromJson(s1, token.getType());
-                            adapter = new com.lamarrulla.baseandroid.adapters.MyDispositivosRecyclerViewAdapter(dispUsuList, new OnItemClickListener(){
-                                @Override
-                                public void onItemClick(Dispositivo.DispositivoUsuario item) {
-                                    Log.d(TAG, "");
-                                    createDialog(item, 2);
-                                }
-                            });
-                            recyclerView.setAdapter(adapter);
                         }
+                        adapter = new com.lamarrulla.baseandroid.adapters.MyDispositivosRecyclerViewAdapter(dispUsuList, new OnItemClickListener(){
+                            @Override
+                            public void onItemClick(Dispositivo.DispositivoUsuario item) {
+                                Log.d(TAG, "");
+                                createDialog(item, 2);
+                            }
+                        });
+                        recyclerView.setAdapter(adapter);
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
