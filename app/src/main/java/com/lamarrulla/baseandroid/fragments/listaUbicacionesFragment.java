@@ -14,8 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lamarrulla.baseandroid.R;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent;
-import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
+import com.lamarrulla.baseandroid.adapters.MylistaUbicacionesRecyclerViewAdapter;
 
 import java.util.List;
 

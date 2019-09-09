@@ -1,4 +1,4 @@
-package com.lamarrulla.baseandroid.fragments;
+package com.lamarrulla.baseandroid.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,8 +39,14 @@ public class MylistaUbicacionesRecyclerViewAdapter extends RecyclerView.Adapter<
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getFeatureName());
-        holder.mContentView.setText(mValues.get(position).getAdminArea());
+        //holder.mIdView.setText(mValues.get(position).getFeatureName());
+        holder.mContentView.setText(
+                ((mValues.get(position).getThoroughfare()==null) ? "" : mValues.get(position).getThoroughfare() + ", ")
+                        //+ ((mValues.get(position).getFeatureName()==null) ? "" : mValues.get(position).getFeatureName() + ", ")
+                        + ((mValues.get(position).getSubLocality()==null)? "" : mValues.get(position).getSubLocality() + ", ")
+                        + ((mValues.get(position).getLocality()==null)?"":mValues.get(position).getLocality() + ", ")
+                        + ((mValues.get(position).getAdminArea()==null)?"":mValues.get(position).getAdminArea() + ", ")
+                        + ((mValues.get(position).getPostalCode()==null)?"":mValues.get(position).getPostalCode()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,14 +67,14 @@ public class MylistaUbicacionesRecyclerViewAdapter extends RecyclerView.Adapter<
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        //public final TextView mIdView;
         public final TextView mContentView;
         public Address mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
+            //mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 

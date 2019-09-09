@@ -98,7 +98,7 @@ import com.lamarrulla.baseandroid.activities.AltaDeviceActivity;
 import com.lamarrulla.baseandroid.activities.TrackerActivity;
 import com.lamarrulla.baseandroid.fragments.AltaDispositivoFragment;
 import com.lamarrulla.baseandroid.fragments.GeneraCodigoFragment;
-import com.lamarrulla.baseandroid.fragments.MylistaUbicacionesRecyclerViewAdapter;
+import com.lamarrulla.baseandroid.adapters.MylistaUbicacionesRecyclerViewAdapter;
 import com.lamarrulla.baseandroid.fragments.UsersFragment;
 import com.lamarrulla.baseandroid.fragments.listaUbicacionesFragment;
 import com.lamarrulla.baseandroid.implement.Acceso;
@@ -124,6 +124,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -193,6 +194,10 @@ public class MainActivity extends AppCompatActivity
     SearchView searchMap;
 
     Location MyLocation;
+
+    Geocoder geocoder;
+
+    listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener;
 
 
     @Override
@@ -294,6 +299,27 @@ public class MainActivity extends AppCompatActivity
         /*maps*/
 
         configuraBottomSheets();
+
+        /// busqueda de ubicaciones
+        geocoder = new Geocoder(context, Locale.getDefault());
+        recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerViewUbicaciones.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManagerUbicaciones = new LinearLayoutManager(this);
+        recyclerViewUbicaciones.setLayoutManager(layoutManagerUbicaciones);
+        listFragmentInteractionListener = new listaUbicacionesFragment.OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(Address item) {
+                Toast.makeText(context, "Prueba list iteraction", Toast.LENGTH_SHORT).show();
+                LatLng itemLatLong = new LatLng(item.getLatitude(), item.getLongitude());
+                gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));
+            }
+        };
 
     }
 
@@ -463,11 +489,11 @@ public class MainActivity extends AppCompatActivity
 
                     @Override
                     public boolean onQueryTextChange(String s) {
-                        Geocoder geocoder = new Geocoder(context);
                         try {
                             List<Address> addressList = new ArrayList<>();
-                            if(s.length()!=0){
-                                addressList = geocoder.getFromLocationName(s, 5, MyLocation.getLatitude()-1, MyLocation.getLongitude()-1, MyLocation.getLatitude() +1, MyLocation.getLongitude() +1);
+                            if(s.length()>4){
+                                addressList = geocoder.getFromLocationName(s, 5, MyLocation.getLatitude(), MyLocation.getLongitude(), MyLocation.getLatitude(), MyLocation.getLongitude());
+                                //addressList = geocoder.getFromLocationName(s, 5);
                             }
                             cargaListaUbicaciones(addressList);
                             //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
@@ -487,26 +513,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void cargaListaUbicaciones(List<Address> listAddres){
-        recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerViewUbicaciones.setHasFixedSize(true);
-
-        // use a linear layout manager
-        layoutManagerUbicaciones = new LinearLayoutManager(this);
-        recyclerViewUbicaciones.setLayoutManager(layoutManagerUbicaciones);
-        listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener = new listaUbicacionesFragment.OnListFragmentInteractionListener() {
-            @Override
-            public void onListFragmentInteraction(Address item) {
-                Toast.makeText(context, "Prueba list iteraction", Toast.LENGTH_SHORT).show();
-                LatLng itemLatLong = new LatLng(item.getLatitude(), item.getLongitude());
-                gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));
-            }
-        };
         mAdapterUbicaciones = new MylistaUbicacionesRecyclerViewAdapter(listAddres, listFragmentInteractionListener);
-        recyclerViewUbicaciones.setAdapter(mAdapterUbicaciones);
+        recyclerViewUbicaciones.swapAdapter(mAdapterUbicaciones, false);
     }
 
     @Override
