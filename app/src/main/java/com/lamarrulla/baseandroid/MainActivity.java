@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity
 
     SearchView searchMap;
 
+    Location MyLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -464,8 +466,8 @@ public class MainActivity extends AppCompatActivity
                         Geocoder geocoder = new Geocoder(context);
                         try {
                             List<Address> addressList = new ArrayList<>();
-                            if(s!=""){
-                                addressList = geocoder.getFromLocationName(s, 10);
+                            if(s.length()!=0){
+                                addressList = geocoder.getFromLocationName(s, 5, MyLocation.getLatitude()-1, MyLocation.getLongitude()-1, MyLocation.getLatitude() +1, MyLocation.getLongitude() +1);
                             }
                             cargaListaUbicaciones(addressList);
                             //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
@@ -498,6 +500,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onListFragmentInteraction(Address item) {
                 Toast.makeText(context, "Prueba list iteraction", Toast.LENGTH_SHORT).show();
+                LatLng itemLatLong = new LatLng(item.getLatitude(), item.getLongitude());
+                gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));
             }
         };
         mAdapterUbicaciones = new MylistaUbicacionesRecyclerViewAdapter(listAddres, listFragmentInteractionListener);
@@ -605,9 +610,10 @@ public class MainActivity extends AppCompatActivity
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
+                            // Got last known MyLocation. In some rare situations this can be null.
                             if (location != null) {
-                                // Logic to handle location object
+                                // Logic to handle MyLocation object
+                                MyLocation = location;
                                 LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
                                 gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
                             }
@@ -1179,9 +1185,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getMyLocation(){
-        Location location = gmap.getMyLocation();
-            if(location!=null){
-            LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+        MyLocation = gmap.getMyLocation();
+            if(MyLocation !=null){
+            LatLng sydney = new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude());
             gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
         }else{
                 getLastLocation();
