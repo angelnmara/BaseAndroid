@@ -79,6 +79,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -192,6 +194,7 @@ public class MainActivity extends AppCompatActivity
     FirebaseAPI firebaseAPI = new FirebaseAPI();
 
     SearchView searchMap;
+    /*SearchView searchPartidaMap;*/
 
     Location MyLocation;
 
@@ -206,9 +209,14 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
+        Places.initialize(getApplicationContext(), "AIzaSyC6APL_KTN8u7riGJIpRrn9k1Bs4FUf5WU");
+
+        PlacesClient placesClient = Places.createClient(this);
+
         Log.d(TAG, "OnCreate");
 
         searchMap = findViewById(R.id.searchMap);
+        /*searchPartidaMap = findViewById(R.id.searchPartidaMap);*/
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -503,6 +511,42 @@ public class MainActivity extends AppCompatActivity
                         return false;
                     }
                 });
+                /*searchPartidaMap.setVisibility(View.VISIBLE);
+                searchPartidaMap.setFocusable(true);
+                searchPartidaMap.setIconified(false);
+                searchPartidaMap.requestFocusFromTouch();
+                searchPartidaMap.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        //Toast.makeText(context, "botonCerrar", Toast.LENGTH_SHORT).show();
+                        List<Address> addressList = new ArrayList<>();
+                        cargaListaUbicaciones(addressList);
+                        return false;
+                    }
+                });
+                searchPartidaMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        Toast.makeText(context, "TextSubmit" + s, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        try {
+                            List<Address> addressList = new ArrayList<>();
+                            if(s.length()>4){
+                                addressList = geocoder.getFromLocationName(s, 5, MyLocation.getLatitude(), MyLocation.getLongitude(), MyLocation.getLatitude(), MyLocation.getLongitude());
+                                //addressList = geocoder.getFromLocationName(s, 5);
+                            }
+                            cargaListaUbicaciones(addressList);
+                            //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    }
+                });*/
             }
         };
         

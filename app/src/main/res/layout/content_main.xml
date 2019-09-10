@@ -21,8 +21,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:queryHint="Punto de salida"
         android:background="@color/colorOnSecondary">
     </SearchView>
+
+    <fragment android:id="@+id/autocomplete_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        />
+
+ <!--   <SearchView
+        android:id="@+id/searchPartidaMap"
+        android:layout_marginTop="128dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:queryHint="Salida"
+        android:background="@color/colorOnSecondary">
+    </SearchView>-->
 
     <androidx.recyclerview.widget.RecyclerView
         class="androidx.appcompat.app.AlertController$RecycleListView"
@@ -31,7 +50,7 @@
         android:name="com.lamarrulla.baseandroid.fragments.listaUbicacionesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="192dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
