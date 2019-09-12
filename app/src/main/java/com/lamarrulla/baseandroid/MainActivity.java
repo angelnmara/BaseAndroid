@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        Places.initialize(getApplicationContext(), "AIzaSyC6APL_KTN8u7riGJIpRrn9k1Bs4FUf5WU");
+        Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
 
         PlacesClient placesClient = Places.createClient(this);
         // Initialize the AutocompleteSupportFragment.
