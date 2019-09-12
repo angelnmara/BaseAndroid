@@ -28,6 +28,11 @@ import android.util.SparseArray;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -289,5 +294,12 @@ public class Utils {
         } else {
             return "";
         }
-    };
+    }
+    public void newMark(GoogleMap gmap, LatLng latLng, String title){
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        gmap.addMarker(new MarkerOptions().position(latLng)
+                .title(title));
+        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+    }
 }

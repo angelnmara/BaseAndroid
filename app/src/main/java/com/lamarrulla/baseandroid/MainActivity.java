@@ -65,6 +65,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -83,6 +84,7 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -160,13 +162,13 @@ public class MainActivity extends AppCompatActivity
 
     private LinearLayout bottomSheet;
 
-    private RecyclerView recyclerView;
+    /*private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     private RecyclerView recyclerViewUbicaciones;
     private RecyclerView.Adapter mAdapterUbicaciones;
-    private RecyclerView.LayoutManager layoutManagerUbicaciones;
+    private RecyclerView.LayoutManager layoutManagerUbicaciones;*/
 
     private TextView txtDispositivos;
     private ImageView imgDown;
@@ -196,14 +198,14 @@ public class MainActivity extends AppCompatActivity
 
     FirebaseAPI firebaseAPI = new FirebaseAPI();
 
-    SearchView searchMap;
+    /*SearchView searchMap;*/
     /*SearchView searchPartidaMap;*/
 
     Location MyLocation;
 
-    Geocoder geocoder;
+    /*Geocoder geocoder;*/
 
-    listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener;
+    /*listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener;*/
 
 
     @Override
@@ -215,16 +217,33 @@ public class MainActivity extends AppCompatActivity
         Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
 
         PlacesClient placesClient = Places.createClient(this);
+
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-// Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setCountry("MX");
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng());
+                utils.newMark(gmap, place.getLatLng(), place.getName());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
         Log.d(TAG, "OnCreate");
 
-        searchMap = findViewById(R.id.searchMap);
+        /*searchMap = findViewById(R.id.searchMap);*/
         /*searchPartidaMap = findViewById(R.id.searchPartidaMap);*/
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -317,9 +336,9 @@ public class MainActivity extends AppCompatActivity
 
         configuraBottomSheets();
 
-        /// busqueda de ubicaciones
+        /*/// busqueda de ubicaciones
         geocoder = new Geocoder(context, Locale.getDefault());
-        recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);
+        *//*recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);*//*
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -333,10 +352,11 @@ public class MainActivity extends AppCompatActivity
             public void onListFragmentInteraction(Address item) {
                 Toast.makeText(context, "Prueba list iteraction", Toast.LENGTH_SHORT).show();
                 LatLng itemLatLong = new LatLng(item.getLatitude(), item.getLongitude());
-                gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));
+                *//*gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));*//*
+                utils.newMark(gmap, itemLatLong, item.getLocality());
             }
-        };
+        };*/
 
     }
 
@@ -452,7 +472,7 @@ public class MainActivity extends AppCompatActivity
     private void cargaDispositivosList(){
         /*  Inicia menejo del recycler view */
 
-        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        /*recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -460,7 +480,7 @@ public class MainActivity extends AppCompatActivity
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);*/
 
         // specify an adapter (see also next example)
         /*List<Dispositivo.User> listUser = new ArrayList<>();
@@ -480,7 +500,7 @@ public class MainActivity extends AppCompatActivity
             }
         };
         
-        UsersFragment.OnRouteInteractionListener mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
+        /*UsersFragment.OnRouteInteractionListener mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
             @Override
             public void onRouteInteractionListener(String dispositivo) {
                 Toast.makeText(context, "Click en ruta", Toast.LENGTH_SHORT).show();
@@ -520,7 +540,7 @@ public class MainActivity extends AppCompatActivity
                         return false;
                     }
                 });
-                /*searchPartidaMap.setVisibility(View.VISIBLE);
+                *//*searchPartidaMap.setVisibility(View.VISIBLE);
                 searchPartidaMap.setFocusable(true);
                 searchPartidaMap.setIconified(false);
                 searchPartidaMap.requestFocusFromTouch();
@@ -555,20 +575,20 @@ public class MainActivity extends AppCompatActivity
                         }
                         return false;
                     }
-                });*/
+                });*//*
             }
-        };
+        };*/
         
-        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, mListenerRoute, context);
-        recyclerView.setAdapter(mAdapter);
+        /*mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, mListenerRoute, context);
+        recyclerView.setAdapter(mAdapter);*/
 
         /*  termina Inicia menejo del recycler view */
     }
 
-    public void cargaListaUbicaciones(List<Address> listAddres){
+    /*public void cargaListaUbicaciones(List<Address> listAddres){
         mAdapterUbicaciones = new MylistaUbicacionesRecyclerViewAdapter(listAddres, listFragmentInteractionListener);
         recyclerViewUbicaciones.swapAdapter(mAdapterUbicaciones, false);
-    }
+    }*/
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){

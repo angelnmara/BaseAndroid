@@ -13,7 +13,7 @@
         android:id="@+id/lnlPrincipalFragment">
     </fragment>
 
-    <SearchView
+    <!--<SearchView
         android:id="@+id/searchMap"
         android:layout_marginTop="64dp"
         android:layout_marginLeft="16dp"
@@ -23,7 +23,7 @@
         android:visibility="gone"
         android:queryHint="Punto de salida"
         android:background="@color/colorOnSecondary">
-    </SearchView>
+    </SearchView>-->
 
     <fragment
         android:layout_marginTop="64dp"
@@ -45,7 +45,7 @@
         android:background="@color/colorOnSecondary">
     </SearchView>-->
 
-    <androidx.recyclerview.widget.RecyclerView
+    <!--<androidx.recyclerview.widget.RecyclerView
         class="androidx.appcompat.app.AlertController$RecycleListView"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/my_recycler_ubicaciones"
@@ -60,7 +60,7 @@
         tools:listitem="@layout/fragment_listaubicaciones"
         android:orientation="vertical"
         android:background="@color/colorOnSecondary">
-    </androidx.recyclerview.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>-->
 
 </FrameLayout>
 
