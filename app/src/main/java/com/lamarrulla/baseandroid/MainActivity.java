@@ -83,8 +83,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -162,11 +165,11 @@ public class MainActivity extends AppCompatActivity
 
     private LinearLayout bottomSheet;
 
-    /*private RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    private RecyclerView recyclerViewUbicaciones;
+    /*private RecyclerView recyclerViewUbicaciones;
     private RecyclerView.Adapter mAdapterUbicaciones;
     private RecyclerView.LayoutManager layoutManagerUbicaciones;*/
 
@@ -203,6 +206,10 @@ public class MainActivity extends AppCompatActivity
 
     Location MyLocation;
 
+    int AUTOCOMPLETE_REQUEST_CODE = 1;
+
+    BottomSheetBehavior bsb;
+
     /*Geocoder geocoder;*/
 
     /*listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener;*/
@@ -218,7 +225,7 @@ public class MainActivity extends AppCompatActivity
 
         PlacesClient placesClient = Places.createClient(this);
 
-        // Initialize the AutocompleteSupportFragment.
+        /*// Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
@@ -239,7 +246,7 @@ public class MainActivity extends AppCompatActivity
                 // TODO: Handle the error.
                 Log.i(TAG, "An error occurred: " + status);
             }
-        });
+        });*/
 
         Log.d(TAG, "OnCreate");
 
@@ -365,7 +372,7 @@ public class MainActivity extends AppCompatActivity
 
         bottomSheet = findViewById(R.id.bottomSheet);
 
-        final BottomSheetBehavior bsb = BottomSheetBehavior.from(bottomSheet);
+        bsb = BottomSheetBehavior.from(bottomSheet);
 
         //bsb.setHalfExpandedRatio((float) 0.4); // coloca al 40% la barra
 
@@ -472,7 +479,7 @@ public class MainActivity extends AppCompatActivity
     private void cargaDispositivosList(){
         /*  Inicia menejo del recycler view */
 
-        /*recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -480,7 +487,7 @@ public class MainActivity extends AppCompatActivity
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);*/
+        recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
         /*List<Dispositivo.User> listUser = new ArrayList<>();
@@ -500,11 +507,25 @@ public class MainActivity extends AppCompatActivity
             }
         };
         
-        /*UsersFragment.OnRouteInteractionListener mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
+        UsersFragment.OnRouteInteractionListener mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
             @Override
             public void onRouteInteractionListener(String dispositivo) {
-                Toast.makeText(context, "Click en ruta", Toast.LENGTH_SHORT).show();
-                searchMap.setVisibility(View.VISIBLE);
+                //Toast.makeText(context, "Click en ruta", Toast.LENGTH_SHORT).show();
+                // Set the fields to specify which types of place data to
+                // return after the user has made a selection.
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
+
+                // Start the autocomplete intent.
+                Intent intent = new Autocomplete.IntentBuilder(
+                        AutocompleteActivityMode.OVERLAY, fields)
+                        .setCountry("MX")
+                        .setHint("Origen")
+                        .build(context);
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+
+                bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                /*searchMap.setVisibility(View.VISIBLE);
                 searchMap.setFocusable(true);
                 searchMap.setIconified(false);
                 searchMap.requestFocusFromTouch();
@@ -540,7 +561,8 @@ public class MainActivity extends AppCompatActivity
                         return false;
                     }
                 });
-                *//*searchPartidaMap.setVisibility(View.VISIBLE);
+
+                searchPartidaMap.setVisibility(View.VISIBLE);
                 searchPartidaMap.setFocusable(true);
                 searchPartidaMap.setIconified(false);
                 searchPartidaMap.requestFocusFromTouch();
@@ -575,14 +597,31 @@ public class MainActivity extends AppCompatActivity
                         }
                         return false;
                     }
-                });*//*
+                });*/
             }
-        };*/
+        };
         
-        /*mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, mListenerRoute, context);
-        recyclerView.setAdapter(mAdapter);*/
+        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, mListenerRoute, context);
+        recyclerView.setAdapter(mAdapter);
 
         /*  termina Inicia menejo del recycler view */
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                utils.newMark(gmap, place.getLatLng(), place.getName());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
     }
 
     /*public void cargaListaUbicaciones(List<Address> listAddres){
