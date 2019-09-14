@@ -19,6 +19,7 @@ import android.view.View;
 import com.lamarrulla.baseandroid.R;
 
 public class SlideToUnlock extends View {
+
     public interface OnSlideToUnlockEventListener {
         public void onSlideToUnlockCanceled();
 

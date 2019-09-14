@@ -137,7 +137,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     View focusView = null;
 
     AlertDialog dialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,7 +248,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         slideToUnlockView2.setExternalListener(this);
 
         txtRestablece.setOnClickListener(this);
-
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -654,7 +652,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }else{
             Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
         }
-        
     }
 
     private interface ProfileQuery {
@@ -794,6 +791,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     }
                 });
+    }
+
+    public void OpenMain(Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        showProgress(false);
     }
 
     private void validaHash(){

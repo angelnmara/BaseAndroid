@@ -5,6 +5,7 @@
     <string name="fb_login_protocol_scheme">fb408586353024011</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Correo Electrónico</string>
+
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Entrar</string>
     <string name="action_registrar">Registrar</string>
