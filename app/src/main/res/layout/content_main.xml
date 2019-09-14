@@ -1,29 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-    <LinearLayout
+    <fragment
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <ProgressBar
-            android:id="@+id/main_progress"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone" />
-        <ScrollView
+        android:id="@+id/lnlPrincipalFragment">
+    </fragment>
+
+    <!--<SearchView
+        android:id="@+id/searchMap"
+        android:layout_marginTop="64dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:queryHint="Punto de salida"
+        android:background="@color/colorOnSecondary">
+    </SearchView>-->
+
+    <!--<fragment
+        android:layout_marginTop="64dp"
+        android:id="@+id/autocomplete_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        />-->
+
+ <!--   <SearchView
+        android:id="@+id/searchPartidaMap"
+        android:layout_marginTop="128dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:queryHint="Salida"
+        android:background="@color/colorOnSecondary">
+    </SearchView>-->
+
+    <!--<androidx.recyclerview.widget.RecyclerView
+        class="androidx.appcompat.app.AlertController$RecycleListView"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/my_recycler_ubicaciones"
+        android:name="com.lamarrulla.baseandroid.fragments.listaUbicacionesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="192dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".fragments.listaUbicacionesFragment"
+        tools:listitem="@layout/fragment_listaubicaciones"
+        android:orientation="vertical"
+        android:background="@color/colorOnSecondary">
+    </androidx.recyclerview.widget.RecyclerView>-->
+
+</FrameLayout>
+
+    <!--<ProgressBar
+        android:id="@+id/main_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+        <LinearLayout
             android:id="@+id/svPrincipal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </ScrollView>
-    </LinearLayout>
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/lnlPrincipalFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+            </com.google.android.gms.maps.MapView>
+        </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>-->

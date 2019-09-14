@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/codigo_qr"
+        android:icon="@drawable/ic_qrcode"
+        android:title="@string/escaneaQR" />
+
+    <item
+        android:id="@+id/mac_address"
+        android:icon="@drawable/ic_format_list_numbered_black_24dp"
+        android:title="Mis dispositivos" />
+
+    <!--<item
+        android:id="@+id/navigation_notifications"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/title_notifications" />-->
+
+</menu>

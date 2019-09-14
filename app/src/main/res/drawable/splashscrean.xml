@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimary" />
+        </shape>
+    </item>
+    <item>
+        <bitmap android:gravity="center" android:src="@drawable/auto300" android:tint="@color/colorAccent"/>
+    </item>
+</layer-list>
+<!--
+<?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="false">
     <item
-        android:drawable="@drawable/ferrari"
-        android:duration="250" />
+        android:drawable="@drawable/auto_load"
+        android:duration="250"/>
     <item
-        android:drawable="@drawable/yckrgry5i"
+        android:drawable="@drawable/auto_gif"
         android:duration="250" />
     <item
         android:drawable="@drawable/pt7rgrb6c"
@@ -16,4 +28,4 @@
     <item
         android:drawable="@drawable/qibx4qrjt"
         android:duration="250" />
-</animation-list>
+</animation-list>-->

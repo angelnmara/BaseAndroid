@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="100"
+    android:orientation="horizontal">
+
+    <!--<TextView
+        android:id="@+id/item_number"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/text_margin"
+        android:layout_weight="22"
+        android:text="Id"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:visibility="gone"/>-->
+
+    <TextView
+        android:id="@+id/content"
+        android:text="Texto2"
+        android:layout_weight="10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <ImageView
+        android:id="@+id/imgFavoritos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="30"
+        android:layout_margin="8dp"
+        android:tint="@color/colorOnSecondary"
+        android:clickable="true"
+        android:src="@drawable/ic_favorite_black_24dp">
+    </ImageView>
+
+    <ImageView
+        android:id="@+id/imgRoute"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="30"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_directions_black_24dp"
+        android:clickable="true"
+        android:tint="@color/colorOnSecondary">
+    </ImageView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="30"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_settings_black_24dp"
+        android:clickable="true"
+        android:tint="@color/colorOnSecondary">
+    </ImageView>
+
+
+</LinearLayout>

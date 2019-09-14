@@ -2,11 +2,14 @@ package com.lamarrulla.baseandroid.implement;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
+/*import android.content.Intent;
+import android.support.annotation.NonNull;*/
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,7 +36,7 @@ public class Acceso implements IAcceso {
 
     private FirebaseAuth mAuth;
 
-    private final String TAG = "ACCESO";
+    private final String TAG = Acceso.class.getSimpleName();
 
     API api = new API();
 
@@ -162,22 +165,30 @@ public class Acceso implements IAcceso {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            utils.guardaShared((Activity) context, R.string.Token, user.toString());
-                            utils.OpenMain(context);
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //utils.guardaShared((Activity) context, R.string.Token, user.toString());
+                            utils.guardaShared((Activity) context, R.string.TipoAcceso, "2");
+                            //utils.OpenMain(context);
+                            utils.OpenAltaUsuario(context);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(context, task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
+                            String error = task.getException().getMessage();
+                            if(error.equals(context.getString(R.string.emailIsInUse))){
+                                error = context.getString(R.string.direccionCorreoOtroUsuario);
+                            }
+
+                            Toast.makeText(context, error, Toast.LENGTH_LONG).show();
                             showProgress();
                         }
                     }
                 });
     }
     public void showProgress(){
-        View mLoginFormView = ((Activity)context).findViewById(R.id.login_form);
+        View mLoginFormView = ((Activity)context).findViewById(R.id.email_login_form);
+        EditText passw = mLoginFormView.findViewById(R.id.password);
+        passw.setText("");
         View mProgressView = ((Activity)context).findViewById(R.id.login_progress);
-        utils.showProgress(false, mLoginFormView, mProgressView, context);
+        utils.showProgress(mLoginFormView, mProgressView, context);
     }
 }

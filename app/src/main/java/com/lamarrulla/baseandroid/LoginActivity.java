@@ -1,17 +1,23 @@
 package com.lamarrulla.baseandroid;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.support.annotation.NonNull;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+/*import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;*/
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -33,8 +39,13 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -47,15 +58,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.lamarrulla.baseandroid.implement.Acceso;
 import com.lamarrulla.baseandroid.interfaces.IAcceso;
 import com.lamarrulla.baseandroid.utils.SlideToUnlock;
@@ -63,8 +82,10 @@ import com.lamarrulla.baseandroid.utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -85,7 +106,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_PERMISSIONS = 0;
+    //private static final int MY_PERMISSIONS_REQUEST_PHONE = 0;
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -104,19 +126,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView txtRestablece;
+    private FloatingActionButton fabTelephone;
 
     private int funcion;
     private int tipoAcceso;
 
     private SlideToUnlock slideToUnlockView2;
 
+    View focusView = null;
+
+    AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        utils.setContext(context);
+        fabTelephone = findViewById(R.id.fabTelephone);
+        fabTelephone.setOnClickListener(this);
+
         mAuth = FirebaseAuth.getInstance();
+        mAuth.setLanguageCode("Sp");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.WebClient))
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode("129048150139-p325stbnhjgm18ck47js8r0qskie3fki.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -127,6 +161,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT) {
+                    if(validaEmail(textView.getText().toString())){
+                        mEmailView.requestFocus();
+                    }
+                }
+                return false;
+            }
+        });
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -134,9 +179,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    funcion = 1;
-                    attemptLogin();
-                    return true;
+                    if (utils.isConnectAvailable(context)) {
+                        funcion = 1;
+                        attemptLogin();
+                        return true;
+                    } else {
+                        Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+
                 }
                 return false;
             }
@@ -145,12 +196,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(this);
 
-        mLoginFormView = findViewById(R.id.login_form);
+        /*mLoginFormView = findViewById(R.id.login_form);*/
+        mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
+        txtRestablece = findViewById(R.id.txtRestablece);
 
         /*  Facebook */
 
-        LoginButton loginButton = (LoginButton)findViewById(R.id.login_button);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("email", "public_profile");
         //Callback registration
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -163,31 +216,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             @Override
             public void onCancel() {
-                Toast.makeText(LoginActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.operacionCancelada), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Error al logear con facebook: " + error);
+                switch (error.getMessage()) {
+                    case "CONNECTION_FAILURE: CONNECTION_FAILURE":
+                        Toast.makeText(LoginActivity.this, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(LoginActivity.this, getString(R.string.errroSesionFacebook), Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         });
         /*  End Facebook */
 
         /*  Boton Registrar */
-        /*Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
-        mRegistrarButton.setOnClickListener(this);*/
+        /*
+        Button mRegistrarButton = (Button) findViewById(R.id.email_alta_button);
+        mRegistrarButton.setOnClickListener(this);
+        */
         /*  End Boton Registrar*/
         /*  Boton Gmail */
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-
-
-        /*slider*/
-        /*slideToUnlockView = (SlideToUnlock) findViewById(R.id.slideToUnlock);
-        slideToUnlockView.setExternalListener(this);*/
+        //findViewById(R.id.sign_in_button).setOnClickListener(this);
+        /*  End Boton Gmail */
 
         slideToUnlockView2 = (SlideToUnlock) findViewById(R.id.slideToUnlock2);
         slideToUnlockView2.setExternalListener(this);
-        /*slider*/
+
+        txtRestablece.setOnClickListener(this);
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -203,7 +263,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             Log.d(TAG, "signInWithCredential:success");
                             //FirebaseUser user = mAuth.getCurrentUser();
                             //utils.guardaShared((Activity) context, R.string.Token, user.toString());
-                            OpenMain(context);
+                            utils.OpenMain(context);
+                            showProgress(false);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -236,11 +297,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
                         public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_PERMISSIONS);
                         }
                     });
         } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_PERMISSIONS);
         }
         return false;
     }
@@ -251,11 +312,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals("android.permission.READ_CONTACTS")) {
                 populateAutoComplete();
+            }else if(grantResults.length>0 && grantResults[1] == PackageManager.PERMISSION_GRANTED && permissions[1].equals("android.permission.READ_PHONE_NUMBERS")){
+                Toast.makeText(context, "Se otorgaron los permisos", Toast.LENGTH_SHORT).show();
+                loginPhone();
+            }else{
+                Toast.makeText(context, "El logeo telefónico necesita acceder a tu número telefónico, por favor autoriza los permisos", Toast.LENGTH_SHORT).show();
             }
         }
+        /*else if(requestCode == MY_PERMISSIONS_REQUEST_PHONE){
+            if(grantResults.length>0 && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(context, "Se otorgaron los permisos", Toast.LENGTH_SHORT).show();
+                loginPhone();
+            }else{
+                Toast.makeText(context, "El logeo telefónico necesita acceder a tu número telefónico, por favor autoriza los permisos", Toast.LENGTH_SHORT).show();
+            }
+        }*/
     }
 
 
@@ -281,31 +355,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+        /*boolean cancel = false;
 
         // Check for a valid password, if the user entered one.
-        if (password.isEmpty() || !isPasswordValid(password)) {
-            if(password.isEmpty()){
-                mPasswordView.setError(getString(R.string.error_empty_password));
-            }else{
+        if (TextUtils.isEmpty(password) || !utils.isPasswordValid(password)) {
+            if (TextUtils.isEmpty(password)) {
+                mPasswordView.setError(getString(R.string.passworParaContinuar));
+            } else {
                 mPasswordView.setError(getString(R.string.error_invalid_password));
             }
             focusView = mPasswordView;
             cancel = true;
-        }
+        }*/
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        }
-        else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
+        boolean cancel = validaEmail(email);
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -314,19 +377,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            utils.showProgress(true, mLoginFormView, mProgressView, context);
+            utils.showProgress(mLoginFormView, mProgressView, context);
             iAcceso.setContext(context);
             tipoAcceso = getResources().getInteger(R.integer.AccesoUsuarioConstasenna);
-            if(tipoAcceso == 1){
+            if (tipoAcceso == 1) {
                 mAuthTask = new UserLoginTask(email, password);
                 mAuthTask.execute((Void) null);
-            }else{
+            } else {
                 iAcceso.setUsername(email);
                 iAcceso.setPassword(password);
-                switch (funcion){
+                switch (funcion) {
                     case 1:
                         /*  autentica usuario por firebase  */
-
                         iAcceso.autenticaUsuarioFirebase();
                         break;
                     case 2:
@@ -338,14 +400,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+    private boolean validaEmail(String email){
+        // Check for a valid email address.
+        boolean vEmail = false;
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            vEmail = true;
+        } else if (!utils.isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            vEmail = true;
+        }
+        return vEmail;
     }
 
     /**
@@ -429,15 +496,142 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.email_sign_in_button:
-                funcion = 1;
-                attemptLogin();
+                if (utils.isConnectAvailable(context)) {
+                    funcion = 1;
+                    attemptLogin();
+                } else {
+                    Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_LONG).show();
+                }
                 break;
-            case R.id.sign_in_button:
+            case R.id.txtRestablece:
+                //Toast.makeText(context, "Click restablece", Toast.LENGTH_SHORT).show();
+                String emailAddress = mEmailView.getText().toString();
+
+                if (utils.isEmailValid(emailAddress)) {
+                    mAuth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //Log.d(TAG, "Email sent.");
+                                        Toast.makeText(context, "La contraseña se reestablecio correctamente, valida tu correo.", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(context, "Ocurrio un error al restablecer tu contraseña.", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                } else {
+                    mEmailView.setError(getString(R.string.error_no_email));
+                    focusView = mEmailView;
+                    focusView.requestFocus();
+                }
+                break;
+            case R.id.fabTelephone:
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_SMS,
+                                    Manifest.permission.READ_PHONE_NUMBERS,
+                                    Manifest.permission.READ_PHONE_STATE},
+                            REQUEST_PERMISSIONS);
+                    return;
+                }else{
+                    loginPhone();
+                }
+
+
+                break;
+            /*case R.id.sign_in_button:
                 signIn();
-                break;
+                break;*/
+                default:break;
         }
+    }
+
+    private void loginPhone(){
+        //String phoneNumber = "+" + utils.numberToPhone(utils.getPhoneNumber());
+        //phoneNumber = "+52 987 654 3210";
+        //phoneNumber = "+52 556 800 9630";
+        String phoneNumber = "+52 551 398 0540";
+        Log.d(TAG, "phoneNumber: " + phoneNumber);
+
+        Toast.makeText(context, getString(R.string.autenticacionTelefonica), Toast.LENGTH_SHORT).show();
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential credential) {
+                        // This callback will be invoked in two situations:
+                        // 1 - Instant verification. In some cases the phone number can be instantly
+                        //     verified without needing to send or enter a verification code.
+                        // 2 - Auto-retrieval. On some devices Google Play services can automatically
+                        //     detect the incoming verification SMS and perform verification without
+                        //     user action.
+                        Log.d(TAG, "onVerificationCompleted:" + credential);
+                        signInWithPhoneAuthCredential(credential);
+                        //Toast.makeText(context, "Verificaion Completa", Toast.LENGTH_SHORT).show();
+
+                        //signInWithPhoneAuthCredential(credential);
+                    }
+
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        // This callback is invoked in an invalid request for verification is made,
+                        // for instance if the the phone number format is not valid.
+                        Log.w(TAG, "onVerificationFailed", e);
+
+                        if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                            // Invalid request
+                            // ...
+                            switch (((FirebaseAuthInvalidCredentialsException) e).getErrorCode()){
+                                case "ERROR_APP_NOT_AUTHORIZED":
+                                    Toast.makeText(context, "This app is not authorized to use Firebase Authentication. Please verifythat the correct package name and SHA-1 are configured in the Firebase Console. [ App validation failed. Is app running on a physical device? ]", Toast.LENGTH_SHORT).show();
+                                    break;
+                                    default:
+                                        Toast.makeText(context, "Ocurrio un error al validar las credenciales", Toast.LENGTH_SHORT).show();
+                                        break;
+                            }
+                        } else if (e instanceof FirebaseTooManyRequestsException) {
+                            // The SMS quota for the project has been exceeded
+                            // ...
+                            Toast.makeText(context, "La cuota de SMS se ha excedido", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        // Show a message and update the UI
+                        // ...
+                    }
+
+                    @Override
+                    public void onCodeSent(String verificationId,
+                                           PhoneAuthProvider.ForceResendingToken token) {
+                        // The SMS verification code has been sent to the provided phone number, we
+                        // now need to ask the user to enter the code and then construct a credential
+                        // by combining the code with a verification ID.
+                        Log.d(TAG, "onCodeSent:" + verificationId);
+
+                        createDialog(verificationId);
+
+                        // Save verification ID and resending token so we can use them later
+                        //mVerificationId = verificationId;
+                        //mResendToken = token;
+
+                        // ...
+                    }
+                });
     }
 
     private void signIn() {
@@ -447,13 +641,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onSlideToUnlockCanceled() {
-        Toast.makeText(this, "Operacion cancelada", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.deslizaAlta), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onSlideToUnlockDone() {
-        funcion = 2;
-        attemptLogin();
+        if(utils.isConnectAvailable(context)){
+            funcion = 2;
+            attemptLogin();
+        }else{
+            Toast.makeText(context, getString(R.string.noConexionInternet), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private interface ProfileQuery {
@@ -544,6 +742,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onActivityResult(requestCode, resultCode, data);
         //Toast.makeText(LoginActivity.this, "ActivityResult", Toast.LENGTH_SHORT).show();
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        Log.d(TAG, data.toString() + requestCode);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
@@ -555,7 +754,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String authCode = account.getServerAuthCode();
             firebaseAuthWithGoogle(account);
+            Log.d(TAG, authCode);
             // Signed in successfully, show authenticated UI.
             //updateUI(account);
         } catch (ApiException e) {
@@ -579,11 +780,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             Log.d(TAG, "signInWithCredential:success");
                             //FirebaseUser user = mAuth.getCurrentUser();
                             //utils.guardaShared((Activity) context, R.string.Token, user.toString());
-                            OpenMain(context);
+                            utils.OpenMain(context);
+                            showProgress(false);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Snackbar.make(findViewById(R.id.login_form), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.email_login_form), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             showProgress(false);
                             //updateUI(null);
                         }
@@ -614,4 +816,140 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             System.out.println(e.getMessage());
         }
     }
+
+    public void createDialog(final String verificationId){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        View mViewAgregar = getLayoutInflater().inflate(R.layout.fragment_autentica_codigo, null);
+        mBuilder.setView(mViewAgregar);
+        dialog = mBuilder.create();
+        final EditText eT0 = mViewAgregar.findViewById(R.id.eT0);
+        final EditText eT1 = mViewAgregar.findViewById(R.id.eT1);
+        final EditText eT2 = mViewAgregar.findViewById(R.id.eT2);
+        final EditText eT3 = mViewAgregar.findViewById(R.id.eT3);
+        final EditText eT4 = mViewAgregar.findViewById(R.id.eT4);
+        final EditText eT5 = mViewAgregar.findViewById(R.id.eT5);
+        final Button btnEnviar = mViewAgregar.findViewById(R.id.btnEnviar);
+        final ImageView btnCerrar = mViewAgregar.findViewById(R.id.btnCerrarAC);
+
+        eT0.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT1.requestFocus();
+                return false;
+            }
+        });
+
+        eT1.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT2.requestFocus();
+                return false;
+            }
+        });
+
+        eT2.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT3.requestFocus();
+                return false;
+            }
+        });
+
+        eT3.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT4.requestFocus();
+                return false;
+            }
+        });
+
+        eT4.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                eT5.requestFocus();
+                return false;
+            }
+        });
+
+        eT5.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                String eT0T = eT0.getText().toString();
+                String eT1T = eT1.getText().toString();
+                String eT2T = eT2.getText().toString();
+                String eT3T = eT3.getText().toString();
+                String eT4T = eT4.getText().toString();
+                String eT5T = KeyEvent.keyCodeToString(keyCode).replaceFirst("KEYCODE_", "");
+                String TotalET = eT0T + eT1T + eT2T + eT3T + eT4T + eT5T;
+                if(eT0T.length() == 0 || eT1T.length() == 0 | eT2T.length() == 0 || eT3T.length() == 0 || eT4T.length() == 0 || eT5T.length() == 0){
+                    Toast.makeText(context, "Todos los campos tienen que contener por lo menos un caracter", Toast.LENGTH_SHORT).show();
+                }else{
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId,TotalET) ;
+                    //Toast.makeText(context, "Credencial: " + credential, Toast.LENGTH_LONG).show();
+                    signInWithPhoneAuthCredential(credential);
+                    dialog.hide();
+                }
+                return false;
+            }
+        });
+
+        btnEnviar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String eT0T = eT0.getText().toString();
+                String eT1T = eT1.getText().toString();
+                String eT2T = eT2.getText().toString();
+                String eT3T = eT3.getText().toString();
+                String eT4T = eT4.getText().toString();
+                String eT5T = eT5.getText().toString();
+                String TotalET = eT0T + eT1T + eT2T + eT3T + eT4T + eT5T;
+                if(eT0T.length() == 0 || eT1T.length() == 0 | eT2T.length() == 0 || eT3T.length() == 0 || eT4T.length() == 0 || eT5T.length() == 0){
+                    Toast.makeText(context, "Todos los campos tienen que contener por lo menos un caracter", Toast.LENGTH_SHORT).show();
+                }else{
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId,TotalET) ;
+                    //Toast.makeText(context, "Credencial: " + credential, Toast.LENGTH_LONG).show();
+                    signInWithPhoneAuthCredential(credential);
+                    dialog.hide();
+                }
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+        btnCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+            }
+        });
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            //Toast.makeText(context, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
+                            //FirebaseUser user = task.getResult().getUser();
+                            // ...
+                            utils.OpenMain(context);
+                            showProgress(false);
+                        } else {
+                            // Sign in failed, display a message and update the UI
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                                if(task.getException().getMessage().equals(getString(R.string.CodeVerficacionInvalidoIng))){
+                                    Toast.makeText(context, getString(R.string.CodeVerificacionInvalidoEsp), Toast.LENGTH_LONG).show();
+                                }else{
+                                    Toast.makeText(context, "Ocurrio un error en la autenticación del código", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
 }

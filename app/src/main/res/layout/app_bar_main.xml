@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+
+        <!--<android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLay"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+-->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                android:elevation="1dp"/>
+        <!--</android.support.design.widget.AppBarLayout>-->
 
-    </android.support.design.widget.AppBarLayout>
+    <include layout="@layout/content_main"/>
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_routes"></include>
 
-    <android.support.design.widget.FloatingActionButton
+    <include layout="@layout/bottom_sheet_main"></include>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        app:menu="@menu/menu_principal">
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_margin="@dimen/activity_vertical_margin"
+        app:srcCompat="@drawable/ic_crosshairs_gps"
+        app:layout_anchor="@+id/bottomSheet"
+        app:layout_anchorGravity="top|end"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

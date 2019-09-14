@@ -32,7 +32,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+        AppEventsLogger.activateApp(getApplication());
 
         /* valida si ya esta logeado con facebook */
         AccessToken accessToken = AccessToken.getCurrentAccessToken();

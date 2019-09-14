@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.AltaDispositivoFragment"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/btnCerrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/com_facebook_close"
+        android:clickable="true"/>
+
+    <TextView
+        android:id="@+id/txtAltaDispositivo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alta dispositivo"
+        android:textAlignment="center"
+        android:layout_margin="16dp"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/colorAccent"/>
+
+    <TextView
+        android:id="@+id/txtEditaDispositivo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Actualiza dispositivo"
+        android:textAlignment="center"
+        android:layout_margin="16dp"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:textColor="@color/colorAccent"/>
+
+    <!-- TODO: Update blank fragment layout -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/txtMacAddres"
+            android:hint="@string/mac_addres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <EditText
+        android:id="@+id/txtUsuario"
+        android:hint="@string/usuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <Button
+        android:id="@+id/btnAgregar"
+        android:text="@string/agregar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@color/colorAccent"
+        android:textColor="#FFFFFF"/>
+
+</LinearLayout>
