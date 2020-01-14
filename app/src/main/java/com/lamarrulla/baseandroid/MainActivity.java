@@ -169,9 +169,9 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    /*private RecyclerView recyclerViewUbicaciones;
+    private RecyclerView recyclerViewUbicaciones;
     private RecyclerView.Adapter mAdapterUbicaciones;
-    private RecyclerView.LayoutManager layoutManagerUbicaciones;*/
+    private RecyclerView.LayoutManager layoutManagerUbicaciones;
 
     private TextView txtDispositivos;
     private ImageView imgDown;
@@ -201,8 +201,8 @@ public class MainActivity extends AppCompatActivity
 
     FirebaseAPI firebaseAPI = new FirebaseAPI();
 
-    /*SearchView searchMap;*/
-    /*SearchView searchPartidaMap;*/
+    SearchView searchMap;
+    SearchView searchPartidaMap;
 
     Location MyLocation;
 
@@ -210,9 +210,9 @@ public class MainActivity extends AppCompatActivity
 
     BottomSheetBehavior bsb;
 
-    /*Geocoder geocoder;*/
+    Geocoder geocoder;
 
-    /*listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener;*/
+    listaUbicacionesFragment.OnListFragmentInteractionListener listFragmentInteractionListener;
 
 
     @Override
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity
 
         PlacesClient placesClient = Places.createClient(this);
 
-        /*// Initialize the AutocompleteSupportFragment.
+        // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
@@ -246,12 +246,12 @@ public class MainActivity extends AppCompatActivity
                 // TODO: Handle the error.
                 Log.i(TAG, "An error occurred: " + status);
             }
-        });*/
+        });
 
         Log.d(TAG, "OnCreate");
 
-        /*searchMap = findViewById(R.id.searchMap);*/
-        /*searchPartidaMap = findViewById(R.id.searchPartidaMap);*/
+        searchMap = findViewById(R.id.searchMap);
+        searchPartidaMap = findViewById(R.id.searchPartidaMap);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -343,9 +343,9 @@ public class MainActivity extends AppCompatActivity
 
         configuraBottomSheets();
 
-        /*/// busqueda de ubicaciones
+        /// busqueda de ubicaciones
         geocoder = new Geocoder(context, Locale.getDefault());
-        *//*recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);*//*
+        recyclerViewUbicaciones = (RecyclerView) findViewById(R.id.my_recycler_ubicaciones);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -359,11 +359,11 @@ public class MainActivity extends AppCompatActivity
             public void onListFragmentInteraction(Address item) {
                 Toast.makeText(context, "Prueba list iteraction", Toast.LENGTH_SHORT).show();
                 LatLng itemLatLong = new LatLng(item.getLatitude(), item.getLongitude());
-                *//*gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
-                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));*//*
+                gmap.addMarker(new MarkerOptions().position(itemLatLong).title(item.getLocality()));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemLatLong, 18));
                 utils.newMark(gmap, itemLatLong, item.getLocality());
             }
-        };*/
+        };
 
     }
 
@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity
 
                 bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-                /*searchMap.setVisibility(View.VISIBLE);
+                searchMap.setVisibility(View.VISIBLE);
                 searchMap.setFocusable(true);
                 searchMap.setIconified(false);
                 searchMap.requestFocusFromTouch();
@@ -597,7 +597,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         return false;
                     }
-                });*/
+                });
             }
         };
         
@@ -624,10 +624,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*public void cargaListaUbicaciones(List<Address> listAddres){
+    public void cargaListaUbicaciones(List<Address> listAddres){
         mAdapterUbicaciones = new MylistaUbicacionesRecyclerViewAdapter(listAddres, listFragmentInteractionListener);
         recyclerViewUbicaciones.swapAdapter(mAdapterUbicaciones, false);
-    }*/
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
