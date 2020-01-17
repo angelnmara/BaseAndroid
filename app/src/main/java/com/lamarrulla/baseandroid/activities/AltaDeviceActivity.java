@@ -43,6 +43,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -470,7 +473,7 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                         null,
                         false,
                         false,
-                        null
+                        new LatLng(0, 0)
                 ));
                 adapter.notifyItemInserted(dispUsuList.size() - 1);
                 adapter.notifyDataSetChanged();

@@ -82,6 +82,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPhotoResponse;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
@@ -126,6 +134,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -166,7 +175,7 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout bottomSheet;
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private MyUsersRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     /*private RecyclerView recyclerViewUbicaciones;
@@ -483,7 +492,7 @@ public class MainActivity extends AppCompatActivity
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
@@ -503,7 +512,8 @@ public class MainActivity extends AppCompatActivity
         UsersFragment.OnListFragmentInteractionListener listener = new UsersFragment.OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(DispositivoUsuario item) {
-                Log.d(TAG, "interaccion");
+                Log.d(TAG, String.valueOf(item.posicion.latitude) + " " +  String.valueOf(item.posicion.longitude));
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(item.posicion, 16));
             }
         };
         
@@ -609,6 +619,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
@@ -679,9 +690,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onQueryTextChange(String s) {
         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+        mAdapter.getFilter().filter(s);
         return false;
     }
-
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>{
         ImageView bmImage;
@@ -769,7 +780,8 @@ public class MainActivity extends AppCompatActivity
                                 for (DispositivoUsuario du :dispUsuList
                                      ) {
                                     if(du.dispositivo.equals(dispositivo)){
-                                        du.marker = marker;
+                                        //du.marker = marker;
+                                        du.posicion = marker.getPosition();
                                     }
                                 }
 
@@ -850,8 +862,15 @@ public class MainActivity extends AppCompatActivity
                                  ) {
                                 if(du.dispositivo.equals(dispositivo)){
                                     LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
-                                    markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, 5000);
-                                    du.marker.setRotation(bearing);
+                                    MarkerOptions moUL = new MarkerOptions()
+                                                    .position(du.posicion)
+                                                    .title(du.usuario)
+                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
+                                                    .anchor(0.5f,0.5f)
+                                                    .zIndex(1.0f);
+                                    Marker markerUL = gmap.addMarker(mo);
+                                    markerAnimation.animateMarkerToGB(markerUL, latLng, latLngInterpolator, 5000);
+                                    markerUL.setRotation(bearing);
                                     if(du.seleccionado){
                                         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                                         gmap.animateCamera(CameraUpdateFactory.zoomIn());
@@ -953,9 +972,10 @@ public class MainActivity extends AppCompatActivity
                 if(dispUsuList!=null){
                     for (DispositivoUsuario du: dispUsuList
                          ) {
-                        if(du.marker.getId().equals(marker.getId())){
+                        Log.d(TAG, du.dispositivo);
+                        /*if(du.marker.getId().equals(marker.getId())){
                             du.seleccionado = true;
-                        }
+                        }*/
                     }
                 }
                 return false;
@@ -1174,7 +1194,7 @@ public class MainActivity extends AppCompatActivity
                             dm.dispositivoSeleccionado = true;
                         }
                     }*/
-                    du.marker.showInfoWindow();
+                    //du.marker.showInfoWindow();
                     du.seleccionado = true;
                 }
             }else{
@@ -1348,7 +1368,8 @@ public class MainActivity extends AppCompatActivity
         if(dispUsuList!=null){
             for (DispositivoUsuario du: dispUsuList
                  ) {
-                du.marker.remove();
+                Log.d(TAG, du.usuario);
+                //du.marker.remove();
             }
         }
     }
@@ -1356,6 +1377,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        getDispositivos();
+        if(mAdapter!=null){
+            mAdapter.notifyDataSetChanged();
+        }
         startService(intentReadService);
     }
 
@@ -1397,6 +1422,9 @@ public class MainActivity extends AppCompatActivity
                                 Log.d(TAG, e.getMessage());
                                 e.printStackTrace();
                             }
+                        }
+                        else{
+                            dispUsuList= new ArrayList<>();
                         }
                     }
                     @Override

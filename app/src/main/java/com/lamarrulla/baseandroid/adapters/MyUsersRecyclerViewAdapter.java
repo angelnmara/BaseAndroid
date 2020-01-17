@@ -5,18 +5,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Adapter;
 
 import com.lamarrulla.baseandroid.R;
 import com.lamarrulla.baseandroid.fragments.UsersFragment;
 import com.lamarrulla.baseandroid.fragments.UsersFragment.OnListFragmentInteractionListener;
 import com.lamarrulla.baseandroid.fragments.dummy.DummyContent.DummyItem;
+//import com.lamarrulla.baseandroid.models.Dispositivo;
 import com.lamarrulla.baseandroid.models.Dispositivo.DispositivoUsuario;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,9 +30,10 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> {
+public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     private final List<DispositivoUsuario> mValues;
+    private List<DispositivoUsuario> mValuesFiltrados;
     private final OnListFragmentInteractionListener mListener;
     private final UsersFragment.OnRouteInteractionListener mListenerRoute;
     private final Context mContext;
@@ -35,6 +42,7 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
 
     public MyUsersRecyclerViewAdapter(List<DispositivoUsuario> items, OnListFragmentInteractionListener listener, UsersFragment.OnRouteInteractionListener mListenerRoute, Context context) {
         mValues = items;
+        mValuesFiltrados = items;
         mListener = listener;
         this.mListenerRoute = mListenerRoute;
         mContext = context;
@@ -94,6 +102,47 @@ public class MyUsersRecyclerViewAdapter extends RecyclerView.Adapter<MyUsersRecy
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mValuesFiltrados = mValues;
+                } else {
+                    List<DispositivoUsuario> filteredList = new ArrayList<>();
+                    for (DispositivoUsuario row : mValues) {
+
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (row.usuario.toLowerCase().contains(charString.toLowerCase()) || row.dispositivo.contains(charSequence)) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    mValuesFiltrados = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mValuesFiltrados;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mValuesFiltrados = (ArrayList<DispositivoUsuario>) filterResults.values;
+                notifyDataSetChanged();
+                /*if (filterResults.count > 0) {
+                    notifyDataSetChanged();
+                }*/
+/*                else {
+
+                }*/
+            }
+        };
     }
 
     /*@Override

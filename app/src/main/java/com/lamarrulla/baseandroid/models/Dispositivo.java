@@ -1,5 +1,6 @@
 package com.lamarrulla.baseandroid.models;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.Date;
@@ -58,12 +59,25 @@ public class Dispositivo {
         public Fecha fechaBaja;
         public boolean favorito;
         public boolean seleccionado;
-        public Marker marker;
+        //public Marker marker;
+        public LatLng posicion;
 
         public DispositivoUsuario(){
             // Default constructor required for calls to DataSnapshot.getValue(Post.class)
         }
-        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Fecha fechaAlta, Fecha fechaBaja, boolean favorito, boolean seleccionado, Marker marker){
+
+        public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Fecha fechaAlta, Fecha fechaBaja, boolean favorito, boolean seleccionado, LatLng posicion){
+            this.dispositivo = dispositivo;
+            this.usuario = usuario;
+            this.activo = activo;
+            this.fechaAlta = fechaAlta;
+            this.fechaBaja = fechaBaja;
+            this.favorito = favorito;
+            this.seleccionado = seleccionado;
+            this.posicion = posicion;
+        }
+
+        /*public DispositivoUsuario(String dispositivo, String usuario, boolean activo, Fecha fechaAlta, Fecha fechaBaja, boolean favorito, boolean seleccionado, Marker marker){
             this.dispositivo = dispositivo;
             this.usuario = usuario;
             this.activo = activo;
@@ -72,7 +86,7 @@ public class Dispositivo {
             this.favorito = favorito;
             this.seleccionado = seleccionado;
             this.marker = marker;
-        }
+        }*/
     }
 
     /*public static class DispositivosMarks{
