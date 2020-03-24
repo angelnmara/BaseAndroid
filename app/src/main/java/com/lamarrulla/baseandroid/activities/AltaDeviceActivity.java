@@ -387,7 +387,8 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                         Log.d(TAG, "dataSnapshot.exists():" + dataSnapshot.exists());
                         if(dataSnapshot.exists()){
                             Gson gso = new Gson();
-                            String s1 = gso.toJson(dataSnapshot.getValue());TypeToken<List<Dispositivo.DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
+                            String s1 = gso.toJson(dataSnapshot.getValue());
+                            TypeToken<List<Dispositivo.DispositivoUsuario>> token = new TypeToken<List<Dispositivo.DispositivoUsuario>>() {};
                             dispUsuList = gso.fromJson(s1, token.getType());
                         }
                         adapter = new com.lamarrulla.baseandroid.adapters.MyDispositivosRecyclerViewAdapter(dispUsuList, new OnItemClickListener(){
@@ -469,8 +470,8 @@ public class AltaDeviceActivity extends AppCompatActivity implements View.OnClic
                          date,
                         null,
                         false,
-                        false,
-                        null
+                        false
+                        //, null
                 ));
                 adapter.notifyItemInserted(dispUsuList.size() - 1);
                 adapter.notifyDataSetChanged();

@@ -106,8 +106,9 @@ public class AltaDispositivoFragment extends Fragment {
                         date,
                         null,
                         false,
-                        false,
-                        null));
+                        false
+                        //, null
+                ));
                 /*listDispositivoUsuario.add(new Dispositivo.DispositivoUsuario(txtMac.getText().toString(),
                         false,
                         date,

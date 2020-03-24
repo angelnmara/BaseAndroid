@@ -49,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -135,6 +136,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -198,6 +200,7 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton fab;
 
     List<DispositivoUsuario> dispUsuList;
+    List<Dispositivo.DUM> listDUM;
 
     FirebaseAPI firebaseAPI = new FirebaseAPI();
 
@@ -209,6 +212,9 @@ public class MainActivity extends AppCompatActivity
     int AUTOCOMPLETE_REQUEST_CODE = 1;
 
     BottomSheetBehavior bsb;
+
+    UsersFragment.OnListFragmentInteractionListener InteractionListenerList;
+    UsersFragment.OnRouteInteractionListener mListenerRoute;
 
     /*Geocoder geocoder;*/
 
@@ -476,13 +482,11 @@ public class MainActivity extends AppCompatActivity
         /*  termina Manejo del bootomSehhet*/
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void cargaDispositivosList(){
         /*  Inicia menejo del recycler view */
-
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -490,24 +494,25 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        /*List<Dispositivo.User> listUser = new ArrayList<>();
-        listUser.add(new Dispositivo.User("jose david rincon","angelnmara@hotmail","","55555555"));
-        listUser.add(new Dispositivo.User("andres rincon","arincon@bdda.co","","654654654"));
-        listUser.add(new Dispositivo.User("angel rincon","kjadhfkljahd@bdda.co","","654654654"));
 
-        List<DummyContent.DummyItem> items = new ArrayList<>();
-        items.add(new DummyContent.DummyItem("1", "dave", ""));
-        items.add(new DummyContent.DummyItem("2", "andres", ""));
-        items.add(new DummyContent.DummyItem("3", "angel", ""));
-        items.add(new DummyContent.DummyItem("4", "byron", ""));*/
-        UsersFragment.OnListFragmentInteractionListener listener = new UsersFragment.OnListFragmentInteractionListener() {
+        InteractionListenerList = new UsersFragment.OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(DispositivoUsuario item) {
                 Log.d(TAG, "interaccion");
+                /*  Selecciona */
+                Dispositivo.DUM dum = listDUM.stream().filter(p->p.du.dispositivo == item.dispositivo).findAny().orElse(null);
+                dum.marker.showInfoWindow();
+                dum.du.seleccionado = true;
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(dum.marker.getPosition(), 18));
+                /*  Deselecciona    */
+
+                listDUM.stream().filter(p->p.du.dispositivo!=item.dispositivo).collect(Collectors.toList()).forEach(a->a.marker.hideInfoWindow());
+                listDUM.stream().filter(p->p.du.dispositivo!=item.dispositivo).collect(Collectors.toList()).forEach(a->a.du.seleccionado=false);
+                bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         };
         
-        UsersFragment.OnRouteInteractionListener mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
+        mListenerRoute = new UsersFragment.OnRouteInteractionListener() {
             @Override
             public void onRouteInteractionListener(String dispositivo) {
                 //Toast.makeText(context, "Click en ruta", Toast.LENGTH_SHORT).show();
@@ -525,83 +530,10 @@ public class MainActivity extends AppCompatActivity
 
                 bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-                /*searchMap.setVisibility(View.VISIBLE);
-                searchMap.setFocusable(true);
-                searchMap.setIconified(false);
-                searchMap.requestFocusFromTouch();
-                searchMap.setOnCloseListener(new SearchView.OnCloseListener() {
-                    @Override
-                    public boolean onClose() {
-                        //Toast.makeText(context, "botonCerrar", Toast.LENGTH_SHORT).show();
-                        List<Address> addressList = new ArrayList<>();
-                        cargaListaUbicaciones(addressList);
-                        return false;
-                    }
-                });
-                searchMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        Toast.makeText(context, "TextSubmit" + s, Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        try {
-                            List<Address> addressList = new ArrayList<>();
-                            if(s.length()>4){
-                                addressList = geocoder.getFromLocationName(s, 5, MyLocation.getLatitude(), MyLocation.getLongitude(), MyLocation.getLatitude(), MyLocation.getLongitude());
-                                //addressList = geocoder.getFromLocationName(s, 5);
-                            }
-                            cargaListaUbicaciones(addressList);
-                            //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return false;
-                    }
-                });
-
-                searchPartidaMap.setVisibility(View.VISIBLE);
-                searchPartidaMap.setFocusable(true);
-                searchPartidaMap.setIconified(false);
-                searchPartidaMap.requestFocusFromTouch();
-                searchPartidaMap.setOnCloseListener(new SearchView.OnCloseListener() {
-                    @Override
-                    public boolean onClose() {
-                        //Toast.makeText(context, "botonCerrar", Toast.LENGTH_SHORT).show();
-                        List<Address> addressList = new ArrayList<>();
-                        cargaListaUbicaciones(addressList);
-                        return false;
-                    }
-                });
-                searchPartidaMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        Toast.makeText(context, "TextSubmit" + s, Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        try {
-                            List<Address> addressList = new ArrayList<>();
-                            if(s.length()>4){
-                                addressList = geocoder.getFromLocationName(s, 5, MyLocation.getLatitude(), MyLocation.getLongitude(), MyLocation.getLatitude(), MyLocation.getLongitude());
-                                //addressList = geocoder.getFromLocationName(s, 5);
-                            }
-                            cargaListaUbicaciones(addressList);
-                            //Toast.makeText(context, addressList.toString(), Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return false;
-                    }
-                });*/
             }
         };
-        
-        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList, listener, mListenerRoute, context);
+
+        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList.stream().filter(p->p.activo==true).collect(Collectors.toList()), InteractionListenerList, mListenerRoute, context);
         recyclerView.setAdapter(mAdapter);
 
         /*  termina Inicia menejo del recycler view */
@@ -609,6 +541,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
@@ -676,10 +609,20 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onQueryTextChange(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-        return false;
+        //Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+        //final List<ExampleModel> filteredModelList = filter(mModels, query);
+        mAdapter = new MyUsersRecyclerViewAdapter(dispUsuList.stream().filter(p->p.activo==true).filter(d->d.usuario.toLowerCase().contains(s.toLowerCase())).collect(Collectors.toList()), InteractionListenerList, mListenerRoute, context);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.scrollToPosition(0);
+        //mAdapter.replaceAll(dispUsuList.stream().filter(p->p.activo==true).filter(d->d.usuario.contains(s)).collect(Collectors.toList()));
+        //mBinding.recyclerView.scrollToPosition(0);
+
+        return true;
+
+        //return false;
     }
 
 
@@ -744,8 +687,11 @@ public class MainActivity extends AppCompatActivity
 
     public void getListaDispositivos(final String dispositivo, final String usuario) {
         //listDispositivosMarks = new ArrayList<>();
+        // se inicialista lista de usuarios marker
+        listDUM = new ArrayList<>();
             Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivo);
             queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()){
@@ -764,12 +710,16 @@ public class MainActivity extends AppCompatActivity
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_car))
                                         .anchor(0.5f,0.5f)
                                         .zIndex(1.0f);
-                                marker = gmap.addMarker(mo);
+
                                 //Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
+
                                 for (DispositivoUsuario du :dispUsuList
                                      ) {
-                                    if(du.dispositivo.equals(dispositivo)){
-                                        du.marker = marker;
+                                    if(du.usuario.equals(usuario)){
+                                        if(du.activo){
+                                            marker = gmap.addMarker(mo);
+                                            listDUM.add(new Dispositivo.DUM(du, marker));
+                                        }
                                     }
                                 }
 
@@ -827,32 +777,15 @@ public class MainActivity extends AppCompatActivity
                         Integer bearing = speed==0?0:Integer.parseInt(intent.getStringExtra(Constants.BEARING)) + 90;
                         Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
                         LatLng latLng = new LatLng(latitud, longitud);
-                        /*if(listDispositivosMarks!= null){
-                            for (Dispositivo.DispositivosMarks dispositivoMarks: listDispositivosMarks
+
+                        if(listDUM!=null){
+                            for (Dispositivo.DUM du: listDUM
                             ) {
-                                if(dispositivoMarks.dispositivo.equals(dispositivo)){
-                                    //dispositivoMarks.marker.setPosition(latLng);
-                                    LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
-                                    markerAnimation.animateMarkerToGB(dispositivoMarks.marker, latLng, latLngInterpolator, 5000);
-                                    dispositivoMarks.marker.setRotation(bearing);
-                                    if(dispositivoMarks.dispositivoSeleccionado){
-                                        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-                                        // Zoom in, animating the camera.
-                                        gmap.animateCamera(CameraUpdateFactory.zoomIn());
-                                        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
-                                        gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null);
-                                    }
-                                }
-                            }
-                        }*/
-                        if(dispUsuList!=null){
-                            for (DispositivoUsuario du: dispUsuList
-                                 ) {
-                                if(du.dispositivo.equals(dispositivo)){
+                                if( du.du.dispositivo.equals(dispositivo)){
                                     LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
                                     markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, 5000);
                                     du.marker.setRotation(bearing);
-                                    if(du.seleccionado){
+                                    if(du.du.seleccionado){
                                         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                                         gmap.animateCamera(CameraUpdateFactory.zoomIn());
                                         gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null);
@@ -860,7 +793,6 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }
                         }
-
 
 
                     }catch (Exception ex){
@@ -942,19 +874,12 @@ public class MainActivity extends AppCompatActivity
                 Double longitude = marker.getPosition().longitude;
                 LatLng latLng = new LatLng(latitude, longitude);
                 gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-                /*gmap.animateCamera(CameraUpdateFactory.zoomIn());
-                gmap.animateCamera(CameraUpdateFactory.zoomTo(10), 5000, null);*/
-                /*for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
-                        ) {
-                    if(dm.marker.getId().equals(marker.getId())){
-                        dm.dispositivoSeleccionado = true;
-                    }
-                }*/
-                if(dispUsuList!=null){
-                    for (DispositivoUsuario du: dispUsuList
-                         ) {
+
+                if(listDUM!=null){
+                    for (Dispositivo.DUM du: listDUM
+                    ) {
                         if(du.marker.getId().equals(marker.getId())){
-                            du.seleccionado = true;
+                            du.du.seleccionado = true;
                         }
                     }
                 }
@@ -1143,42 +1068,29 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        /*Boolean valor = (item.isChecked()?false:true);
-
-        if (item.isChecked()) item.setChecked(false);
-        else item.setChecked(true);
-
-        try {
-
-            JSONObject jso = jsaDispositivos.getJSONObject(item.getItemId());
-            if(jso.has("valor")){
-                //jso.remove("valor");
-                jso.put("valor", valor);
-            }
-            removeMarks();
-            getDispositivos();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-
-        for (DispositivoUsuario du :dispUsuList
-             ) {
-            if(du.usuario.equals(item.toString())){
-                if (item.isChecked()) {
-                    du.seleccionado = false;
-                }
-                else {
-                    /*for (Dispositivo.DispositivosMarks dm : listDispositivosMarks
-                    ) {
-                        if(dm.marker.getId().equals(marker.getId())){
-                            dm.dispositivoSeleccionado = true;
+        if(listDUM!=null){
+            for (Dispositivo.DUM du :listDUM
+            ) {
+                if(du.du.usuario.equals(item.toString())){
+                    if (item.isChecked()) {
+                        du.du.seleccionado = false;
+                        du.marker.hideInfoWindow();
+                        if(gmap!=null){
+                            LatLng sydney = new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude());
+                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18));
                         }
-                    }*/
-                    du.marker.showInfoWindow();
-                    du.seleccionado = true;
+                    }
+                    else {
+                        du.du.seleccionado = true;
+                        if(gmap!=null){
+                            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(du.marker.getPosition(), 18));
+                        }
+                        du.marker.showInfoWindow();
+                    }
+                }else{
+                    du.du.seleccionado = false;
+                    du.marker.hideInfoWindow();
                 }
-            }else{
-                du.seleccionado = false;
             }
         }
 
@@ -1345,9 +1257,15 @@ public class MainActivity extends AppCompatActivity
                 dm.marker.remove();
             }
         }*/
-        if(dispUsuList!=null){
+        /*if(dispUsuList!=null){
             for (DispositivoUsuario du: dispUsuList
                  ) {
+                du.marker.remove();
+            }
+        }*/
+        if(listDUM!=null){
+            for (Dispositivo.DUM du: listDUM
+            ) {
                 du.marker.remove();
             }
         }
@@ -1357,6 +1275,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         startService(intentReadService);
+        getDispositivos();
     }
 
     public void compareJSA(JSONArray jsa1, JSONArray jsa2) throws JSONException {
@@ -1374,6 +1293,7 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "Obtiene Dispositivos:" + jsaDispositivos.length());
                 Query query = mDatabase.child("dispositivos").child(mFirebaseAuth.getUid());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Log.d(TAG, "dataSnapshot.exists():" + dataSnapshot.exists());
