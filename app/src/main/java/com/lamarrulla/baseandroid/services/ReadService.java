@@ -64,69 +64,71 @@ public class ReadService extends Service {
         try{
             Log.d(TAG, "servicio iniciado");
             Bundle extras = intent.getExtras();
-            final JSONArray jsa = new JSONArray(extras.getString("listaDispositivos"));
-            //final HashMap<String, Marker> markersAndObjects = (HashMap<String, Marker>)intent.getSerializableExtra("listaDispositivos");
-            //timer = new Timer();
-            timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    for(int i=0;i<jsa.length();i++){
-                        try {
-                            JSONObject jso = jsa.getJSONObject(i);
-                            if(jso.has("valor")){
-                                if(jso.getBoolean("valor")){
-                                    final String dispositivoJSO =jso.getString("dispositivo").toUpperCase();
-                                    //Log.d(TAG, dispositivoJSO);
-                                    Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
-                                    queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()){
-                                                try {
-                                                    Gson gso = new Gson();
-                                                    String s1 = gso.toJson(dataSnapshot.getValue());
-                                                    JSONObject jso = new JSONObject(s1);
-                                                    if(jso.has("latitude") && jso.has("longitude")){
-                                                        String _latitude = jso.getString(getString(R.string.latitude));
-                                                        String _longitude = jso.getString(getString(R.string.longitude));
-                                                        String _bearing = jso.getString(getString(R.string.bearing));
-                                                        String _speed = jso.getString(getString(R.string.speed));
-                                                        Log.d(TAG, "recive " + _longitude+ " - " + _latitude);
-                                                        Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
-                                                                .putExtra(Constants.LATITUD, _latitude)
-                                                                .putExtra(Constants.LONGITUD, _longitude)
-                                                                .putExtra(Constants.DISPOSITIVO, dispositivoJSO)
-                                                                .putExtra(Constants.BEARING, _bearing)
-                                                                .putExtra(Constants.SPEED, _speed);
-                                                        // Emitir el intent a la actividad
-                                                        LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
-                                                        //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
-                                                        //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
-                                                        //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
+            if(extras!=null){
+                final JSONArray jsa = new JSONArray(extras.getString("listaDispositivos"));
+                //final HashMap<String, Marker> markersAndObjects = (HashMap<String, Marker>)intent.getSerializableExtra("listaDispositivos");
+                //timer = new Timer();
+                timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        for(int i=0;i<jsa.length();i++){
+                            try {
+                                JSONObject jso = jsa.getJSONObject(i);
+                                //if(jso.has("valor")){
+                                //if(jso.getBoolean("valor")){
+                                final String dispositivoJSO =jso.getString("dispositivo").toUpperCase();
+                                //Log.d(TAG, dispositivoJSO);
+                                Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivoJSO);
+                                queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.exists()){
+                                            try {
+                                                Gson gso = new Gson();
+                                                String s1 = gso.toJson(dataSnapshot.getValue());
+                                                JSONObject jso = new JSONObject(s1);
+                                                if(jso.has("latitude") && jso.has("longitude")){
+                                                    String _latitude = jso.getString(getString(R.string.latitude));
+                                                    String _longitude = jso.getString(getString(R.string.longitude));
+                                                    String _bearing = jso.getString(getString(R.string.bearing));
+                                                    String _speed = jso.getString(getString(R.string.speed));
+                                                    Log.d(TAG, "recive " + _longitude+ " - " + _latitude);
+                                                    Intent localIntent = new Intent(Constants.ACTION_RUN_SERVICE)
+                                                            .putExtra(Constants.LATITUD, _latitude)
+                                                            .putExtra(Constants.LONGITUD, _longitude)
+                                                            .putExtra(Constants.DISPOSITIVO, dispositivoJSO)
+                                                            .putExtra(Constants.BEARING, _bearing)
+                                                            .putExtra(Constants.SPEED, _speed);
+                                                    // Emitir el intent a la actividad
+                                                    LocalBroadcastManager.getInstance(ReadService.this).sendBroadcast(localIntent);
+                                                    //LatLng sydney = new LatLng(jso.getDouble("latitude"), jso.getDouble("longitude"));
+                                                    //gmap.addMarker(new MarkerOptions().position(sydney).title(du.dispositivo));
+                                                    //gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
                                                 }
-                                            }else{
-                                                //timer.cancel();
-                                                //stopSelf();
-                                                Log.d(TAG, "datasnapshot dispositivo no existe: " + dispositivoJSO);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
                                             }
+                                        }else{
+                                            //timer.cancel();
+                                            //stopSelf();
+                                            Log.d(TAG, "datasnapshot dispositivo no existe: " + dispositivoJSO);
                                         }
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                            Log.d(TAG, "Ocurrio un error al consultar la base de datos");
-                                        }
-                                    });
-                                }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.d(TAG, "Ocurrio un error al consultar la base de datos");
+                                    }
+                                });
+                                //  }
+                                // }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     }
-                }
-            };
-            timer.scheduleAtFixedRate(timerTask, 0, 5000);
+                };
+                timer.scheduleAtFixedRate(timerTask, 0, 5000);
+            }
         }catch(Exception ex){
             stopSelf();
             Log.d(TAG, ex.getMessage());

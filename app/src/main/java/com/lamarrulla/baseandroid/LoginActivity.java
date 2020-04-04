@@ -596,7 +596,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (e instanceof FirebaseAuthInvalidCredentialsException) {
                             // Invalid request
                             // ...
-                            switch (((FirebaseAuthInvalidCredentialsException) e).getErrorCode()){
+                            switch (((FirebaseAuthInvalidCredentialsException)   e).getErrorCode()){
                                 case "ERROR_APP_NOT_AUTHORIZED":
                                     Toast.makeText(context, "This app is not authorized to use Firebase Authentication. Please verifythat the correct package name and SHA-1 are configured in the Firebase Console. [ App validation failed. Is app running on a physical device? ]", Toast.LENGTH_SHORT).show();
                                     break;

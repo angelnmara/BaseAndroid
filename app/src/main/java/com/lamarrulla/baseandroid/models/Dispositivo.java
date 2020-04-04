@@ -23,6 +23,18 @@ public class Dispositivo {
         }
     }
 
+    @IgnoreExtraProperties
+    public static class DispositivosUbicacion{
+        public String dispositivo;
+        public double latitud;
+        public double longitud;
+        public DispositivosUbicacion(String dispositivo, double latitud, double longitud){
+            this.dispositivo = dispositivo;
+            this.latitud = latitud;
+            this.longitud = longitud;
+        }
+    }
+
     public static class Fecha{
         public int date;
         public int hours;
@@ -58,7 +70,6 @@ public class Dispositivo {
         public Fecha fechaBaja;
         public boolean favorito;
         public boolean seleccionado;
-        //public Marker marker;
 
         public DispositivoUsuario(){
             // Default constructor required for calls to DataSnapshot.getValue(Post.class)

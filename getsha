@@ -1,0 +1,10 @@
+keytool -list -v -keystore BaseAndroid.keystore.old -alias baseandroid -storepass maradr -keypass maradr
+41:02:56:53:60:24:78:FF:3D:8F:95:B9:C9:A3:08:DE:3B:16:7E:74
+
+
+keytool -list -v -keystore BaseAndroid.keystore.old -alias baseandroid
+
+
+----	producción	----
+BA:2F:FC:32:B8:99:65:10:02:A7:81:B7:A8:AC:A2:4B:92:C0:18:6A
+com.lamarrulla.baseandroid

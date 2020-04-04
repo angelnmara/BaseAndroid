@@ -5,10 +5,10 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.lamarrulla.baseandroid"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 28
-        versionCode 5
-        versionName "2.05"
+        versionCode 9
+        versionName "9.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

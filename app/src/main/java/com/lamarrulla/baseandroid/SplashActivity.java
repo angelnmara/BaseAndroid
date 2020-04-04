@@ -84,7 +84,7 @@ public class SplashActivity extends Activity {
                         // Log and toast
                         //String msg = getString(R.string.action_registrar, token);
                         Log.d(TAG, token);
-                        Toast.makeText(SplashActivity.this, token, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SplashActivity.this, token, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

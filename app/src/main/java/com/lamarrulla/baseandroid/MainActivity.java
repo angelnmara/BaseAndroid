@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity
 
     List<DispositivoUsuario> dispUsuList;
     List<Dispositivo.DUM> listDUM;
+    List<Dispositivo.DispositivosUbicacion> listDU = new ArrayList<>();
 
     FirebaseAPI firebaseAPI = new FirebaseAPI();
 
@@ -774,7 +775,8 @@ public class MainActivity extends AppCompatActivity
                         Double latitud = Double.parseDouble(intent.getStringExtra(Constants.LATITUD));
                         Double longitud = Double.parseDouble(intent.getStringExtra(Constants.LONGITUD));
                         Double speed = Double.parseDouble(intent.getStringExtra(Constants.SPEED));
-                        Integer bearing = speed==0?0:Integer.parseInt(intent.getStringExtra(Constants.BEARING)) + 90;
+                        Double dbearing = Double.valueOf(intent.getStringExtra(Constants.BEARING));
+                        Integer bearing = speed==0?0:(int)Math.round(dbearing) + 90;
                         Log.d(TAG, "On reciver: " + dispositivo + " - " + longitud + " - " + latitud);
                         LatLng latLng = new LatLng(latitud, longitud);
 
@@ -782,13 +784,42 @@ public class MainActivity extends AppCompatActivity
                             for (Dispositivo.DUM du: listDUM
                             ) {
                                 if( du.du.dispositivo.equals(dispositivo)){
-                                    LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
-                                    markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, 5000);
-                                    du.marker.setRotation(bearing);
-                                    if(du.du.seleccionado){
-                                        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-                                        gmap.animateCamera(CameraUpdateFactory.zoomIn());
-                                        gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null);
+
+                                    //&& du.du.dispositivo.equals("02:15:B2:00:00:00")
+
+                                    List<Dispositivo.DispositivosUbicacion> ldu = listDU.stream().filter(p->p.dispositivo==dispositivo).collect(Collectors.toList());
+                                    int size =ldu.size();
+
+                                    if(size>0){
+                                        Location loc1 = new Location("");
+                                        loc1.setLatitude(ldu.get(size-1).latitud);
+                                        loc1.setLongitude(ldu.get(size-1).longitud);
+                                        Location loc2 = new Location("");
+                                        loc2.setLatitude(latLng.latitude);
+                                        loc2.setLongitude(latLng.longitude);
+                                        float distance = loc1.distanceTo(loc2);
+                                        if(distance>5){
+                                            listDU.add(new Dispositivo.DispositivosUbicacion(dispositivo, latitud, longitud));
+                                            int tiempoCal = (int)((distance/speed) * 1000);
+                                            if(tiempoCal>10000){
+                                                tiempoCal=10000;
+                                            }
+
+                                            LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
+                                            markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, tiempoCal);
+                                            //du.marker.setPosition(latLng);
+
+                                            Log.d(TAG, "Tiempo: " + String.valueOf(tiempoCal) + " " + "distancia: " + distance + " velocidad: " + speed);
+
+                                            du.marker.setRotation(bearing);
+                                            if(du.du.seleccionado){
+                                                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+                                                gmap.animateCamera(CameraUpdateFactory.zoomIn());
+                                                gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 1000, null);
+                                            }
+                                        }
+                                    }else{
+                                        listDU.add(new Dispositivo.DispositivosUbicacion(dispositivo, latitud, longitud));
                                     }
                                 }
                             }
@@ -1230,6 +1261,7 @@ public class MainActivity extends AppCompatActivity
     public void onPause() {
         super.onPause();
         stopService(intentReadService);
+        removeMarks();
 
         if(utils.isConnectAvailable(context)){
             if(dispUsuList!=null){
@@ -1246,7 +1278,7 @@ public class MainActivity extends AppCompatActivity
     public void onDestroy() {
         super.onDestroy();
         stopService(intentReadService);
-        removeMarks();
+        //removeMarks();
         Log.d(TAG, "Para Servicio");
     }
 
