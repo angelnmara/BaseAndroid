@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton fab;
 
     List<DispositivoUsuario> dispUsuList;
-    List<Dispositivo.DUM> listDUM;
+    List<Dispositivo.DUM> listDUM = new ArrayList<>();
     List<Dispositivo.DispositivosUbicacion> listDU = new ArrayList<>();
 
     FirebaseAPI firebaseAPI = new FirebaseAPI();
@@ -691,7 +691,6 @@ public class MainActivity extends AppCompatActivity
     public void getListaDispositivos(final String dispositivo, final String usuario) {
         //listDispositivosMarks = new ArrayList<>();
         // se inicialista lista de usuarios marker
-        listDUM = new ArrayList<>();
             Query queryLatLong = mDatabase.child(getString(R.string.Locations)).child(dispositivo);
             queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -715,13 +714,14 @@ public class MainActivity extends AppCompatActivity
                                         .zIndex(1.0f);
 
                                 //Dispositivo.DispositivosMarks dispositivosMarks = new Dispositivo.DispositivosMarks();
-
-                                for (DispositivoUsuario du :dispUsuList
-                                     ) {
-                                    if(du.usuario.equals(usuario)){
-                                        if(du.activo){
-                                            marker = gmap.addMarker(mo);
-                                            listDUM.add(new Dispositivo.DUM(du, marker));
+                                if(dispUsuList.size()>listDUM.size()){
+                                    for (DispositivoUsuario du :dispUsuList
+                                    ) {
+                                        if(du.dispositivo.equals(dispositivo) && du.usuario.equals(usuario)){
+                                            if(du.activo){
+                                                marker = gmap.addMarker(mo);
+                                                listDUM.add(new Dispositivo.DUM(du, marker));
+                                            }
                                         }
                                     }
                                 }
@@ -805,7 +805,11 @@ public class MainActivity extends AppCompatActivity
                                             int tiempoCal = (int)((distance/speed) * 1000);
                                             int tiempo = (int)Calendar.getInstance().getTimeInMillis() - (int)ldu.get(size-1).tiempoActual;
                                             if(tiempoCal>7000){
-                                                tiempoCal = tiempo;
+                                                if(tiempo>7000){
+                                                    tiempoCal = 500;
+                                                }else{
+                                                    tiempoCal = tiempo;
+                                                }
                                             }
                                             markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, tiempoCal);
                                             //du.marker.setPosition(latLng);
@@ -939,7 +943,7 @@ public class MainActivity extends AppCompatActivity
         setMap();
         getMyLocation();
         startActivity(intentTrackerServices);
-        getDispositivos();
+        //getDispositivos();
     }
 
     public void requestPermissions(){
@@ -1301,7 +1305,9 @@ public class MainActivity extends AppCompatActivity
             ) {
                 du.marker.remove();
             }
+            listDUM = new ArrayList<>();
         }
+
     }
 
     @Override
@@ -1309,6 +1315,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         startService(intentReadService);
         getDispositivos();
+
     }
 
     public void compareJSA(JSONArray jsa1, JSONArray jsa2) throws JSONException {
