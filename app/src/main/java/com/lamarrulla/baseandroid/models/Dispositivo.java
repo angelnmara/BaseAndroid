@@ -2,6 +2,8 @@ package com.lamarrulla.baseandroid.models;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -28,10 +30,12 @@ public class Dispositivo {
         public String dispositivo;
         public double latitud;
         public double longitud;
+        public long tiempoActual;
         public DispositivosUbicacion(String dispositivo, double latitud, double longitud){
             this.dispositivo = dispositivo;
             this.latitud = latitud;
             this.longitud = longitud;
+            this.tiempoActual = Calendar.getInstance().getTimeInMillis();
         }
     }
 

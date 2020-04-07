@@ -133,6 +133,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -789,7 +791,7 @@ public class MainActivity extends AppCompatActivity
 
                                     List<Dispositivo.DispositivosUbicacion> ldu = listDU.stream().filter(p->p.dispositivo==dispositivo).collect(Collectors.toList());
                                     int size =ldu.size();
-
+                                    LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
                                     if(size>0){
                                         Location loc1 = new Location("");
                                         loc1.setLatitude(ldu.get(size-1).latitud);
@@ -801,11 +803,10 @@ public class MainActivity extends AppCompatActivity
                                         if(distance>5){
                                             listDU.add(new Dispositivo.DispositivosUbicacion(dispositivo, latitud, longitud));
                                             int tiempoCal = (int)((distance/speed) * 1000);
-                                            if(tiempoCal>10000){
-                                                tiempoCal=10000;
+                                            int tiempo = (int)Calendar.getInstance().getTimeInMillis() - (int)ldu.get(size-1).tiempoActual;
+                                            if(tiempoCal>7000){
+                                                tiempoCal = tiempo;
                                             }
-
-                                            LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
                                             markerAnimation.animateMarkerToGB(du.marker, latLng, latLngInterpolator, tiempoCal);
                                             //du.marker.setPosition(latLng);
 
@@ -815,7 +816,7 @@ public class MainActivity extends AppCompatActivity
                                             if(du.du.seleccionado){
                                                 gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                                                 gmap.animateCamera(CameraUpdateFactory.zoomIn());
-                                                gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 1000, null);
+                                                gmap.animateCamera(CameraUpdateFactory.zoomTo(18), 250, null);
                                             }
                                         }
                                     }else{
